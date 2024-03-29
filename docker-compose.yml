@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  pgm-sim:
+    container_name: pgmtransfer
+    build:
+      context: ../../pgmtransfer
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+
+  app:
+    container_name: mproc-swift-server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # web endpoint
+      - "5005:5005" # debug port
+    depends_on:
+       - db
+#         condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/mprocs
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=secret
+
+  db:
+    container_name: mprocs-db
+    image: mysql:8.2.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: mprocs
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_ROOT_HOST: '%'
+#    healthcheck:
+#      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+#      timeout: 30s
+#      retries: 20
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./utils/mysql/schema/schema.sql:/docker-entrypoint-initdb.d/00_schema.sql
+      - ./utils/mysql/data/01_address.sql:/docker-entrypoint-initdb.d/01_address.sql
+      - ./utils/mysql/data/02_user.sql:/docker-entrypoint-initdb.d/02_user.sql
+      - ./utils/mysql/data/03_user-address.sql:/docker-entrypoint-initdb.d/03_user-address.sql
+      - ./utils/mysql/data/04_user-role.sql:/docker-entrypoint-initdb.d/04_user-role.sql
+      - ./utils/mysql/data/05_account_details.sql:/docker-entrypoint-initdb.d/05_account_details.sql
+      - ./utils/mysql/data/06_account.sql:/docker-entrypoint-initdb.d/06_account.sql
+      - ./utils/mysql/data/07_currency.sql:/docker-entrypoint-initdb.d/07_currency.sql
+      - ./utils/mysql/data/09_wallet.sql:/docker-entrypoint-initdb.d/09_wallet.sql
+      - ./utils/mysql/data/10_card.sql:/docker-entrypoint-initdb.d/10_card.sql
+      - ./utils/mysql/data/11_merchant.sql:/docker-entrypoint-initdb.d/11_merchant.sql
+      - ./utils/mysql/data/12_transaction.sql:/docker-entrypoint-initdb.d/12_transaction.sql
+      - ./utils/mysql/data/08_currency_exchange_rate.sql:/docker-entrypoint-initdb.d/08_currency_exchange_rate.sql
+
+volumes:
+  db-data:

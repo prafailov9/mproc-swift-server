@@ -1,0 +1,27 @@
+['BTC',
+'BYR',
+'CUC',
+'EEK',
+'GQE',
+'LTL',
+'LVL',
+'MRO',
+'STD',
+'VEB',
+'ZWR',
+'BTC',
+'BYR',
+'CUC',
+'EEK',
+'GQE',
+'LTL',
+'LVL',
+'MRO',
+'SCR',
+'STD',
+'VEB',
+'ZWR']
+remove - BTC, BYR, CUC, EEK, GQE, LTL, LVL, MRO, STD, VEB, ZWR,
+
+for USD, GBP - SRC
+for EUR - HRK

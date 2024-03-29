@@ -1,0 +1,8 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+logging:
+  level:
+    org.springframework: DEBUG
+
+#R8HWBA167JXNVQDP
