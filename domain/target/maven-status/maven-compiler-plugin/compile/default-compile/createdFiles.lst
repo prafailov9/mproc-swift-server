@@ -18,12 +18,14 @@ com/ntros/mprocswift/dto/transfer/TransferRequest.class
 com/ntros/mprocswift/model/Role.class
 com/ntros/mprocswift/dto/TransactionDTO.class
 com/ntros/mprocswift/dto/transfer/ExternalTransferResponse.class
+com/ntros/mprocswift/dto/cardpayment/CardPaymentRequest.class
 com/ntros/mprocswift/model/card/CardType.class
 com/ntros/mprocswift/dto/RangeRequest.class
 com/ntros/mprocswift/validation/GreaterThanZeroTransferAmount.class
 com/ntros/mprocswift/dto/CardDTO.class
 com/ntros/mprocswift/dto/UniqueWalletDTO.class
 com/ntros/mprocswift/dto/CurrencyDTO.class
+com/ntros/mprocswift/dto/cardpayment/CardPaymentResponse.class
 com/ntros/mprocswift/dto/transfer/WalletToWalletTransferRequest.class
 com/ntros/mprocswift/dto/transfer/InternalTransferRequest.class
 com/ntros/mprocswift/dto/MoneyTransferDTO.class

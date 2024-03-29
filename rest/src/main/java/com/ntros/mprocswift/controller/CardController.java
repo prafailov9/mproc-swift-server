@@ -1,6 +1,6 @@
 package com.ntros.mprocswift.controller;
 
-import com.ntros.mprocswift.dto.cartpayment.CardPaymentRequest;
+import com.ntros.mprocswift.dto.cardpayment.CardPaymentRequest;
 import com.ntros.mprocswift.service.payment.CardPaymentProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

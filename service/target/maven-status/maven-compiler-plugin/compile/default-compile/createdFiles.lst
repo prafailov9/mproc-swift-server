@@ -50,6 +50,7 @@ com/ntros/mprocswift/exceptions/CurrencyNotSupportedException.class
 com/ntros/mprocswift/exceptions/NoMainWalletException.class
 com/ntros/mprocswift/exceptions/WalletDeleteFailedException.class
 com/ntros/mprocswift/exceptions/AddressHashingFailedException.class
+com/ntros/mprocswift/service/payment/CardPaymentProcessingService.class
 com/ntros/mprocswift/exceptions/WalletUpdateFailedException.class
 com/ntros/mprocswift/service/user/UserDataService.class
 com/ntros/mprocswift/service/download/RestDownloadService.class

@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.dto.cartpayment;
+package com.ntros.mprocswift.dto.cardpayment;
 
 public class CardPaymentRequest {
 

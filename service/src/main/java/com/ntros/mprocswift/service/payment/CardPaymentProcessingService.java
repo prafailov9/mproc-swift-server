@@ -1,7 +1,7 @@
 package com.ntros.mprocswift.service.payment;
 
-import com.ntros.mprocswift.dto.cartpayment.CardPaymentRequest;
-import com.ntros.mprocswift.dto.cartpayment.CardPaymentResponse;
+import com.ntros.mprocswift.dto.cardpayment.CardPaymentRequest;
+import com.ntros.mprocswift.dto.cardpayment.CardPaymentResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 

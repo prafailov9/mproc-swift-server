@@ -1,5 +1,6 @@
 com/ntros/mprocswift/controller/AccountController.class
 com/ntros/mprocswift/controller/TransactionController.class
+com/ntros/mprocswift/controller/CardController.class
 com/ntros/mprocswift/handler/RestExceptionHandlerRegistry.class
 com/ntros/mprocswift/controller/transfer/AbstractTransferController.class
 com/ntros/mprocswift/controller/transfer/WalletToWalletTransferController.class
