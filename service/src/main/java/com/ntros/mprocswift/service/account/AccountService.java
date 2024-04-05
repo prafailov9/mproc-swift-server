@@ -2,7 +2,6 @@ package com.ntros.mprocswift.service.account;
 
 import com.ntros.mprocswift.model.account.Account;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -16,7 +15,7 @@ public interface AccountService {
 
     CompletableFuture<List<List<Account>>> getAllAccountsByWalletCountInRange(int origin, int bound);
 
-    CompletableFuture<Account> addAccount(final Account account);
+    CompletableFuture<Account> createAccount(final Account account);
 
     String calculateTotalBalanceForAllAccounts();
     Account updateTotalBalance(final Account account);

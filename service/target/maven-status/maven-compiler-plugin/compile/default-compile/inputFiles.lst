@@ -4,6 +4,7 @@
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/exceptions/WalletException.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/exceptions/AccountNotFoundException.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/service/transfer/ExternalTransferService.java
+/Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/exceptions/CardNotCreatedException.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/service/currency/CurrencyExchangeRateService.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/service/user/UserDataService.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/service/download/RestDownloadService.java
@@ -33,6 +34,7 @@
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/converter/Converter.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/converter/WalletConverter.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/converter/CurrencyConverter.java
+/Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/exceptions/CannotRefreshCardException.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/exceptions/InsufficientFundsException.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/service/transfer/AbstractTransferService.java
 /Users/rafa95/Dev/mpswift/mproc-swift-server/service/src/main/java/com/ntros/mprocswift/service/payment/CardPaymentProcessingService.java

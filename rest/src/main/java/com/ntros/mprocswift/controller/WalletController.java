@@ -61,7 +61,7 @@ public class WalletController extends AbstractApiController {
 
     @PostMapping
     public CompletableFuture<ResponseEntity<?>> createWallet(@RequestBody @Validated WalletDTO walletDTO) {
-        return walletService.saveWallet(walletDTO)
+        return walletService.createWallet(walletDTO)
                 .handleAsync((wallet, ex) -> handleResponseAsync(walletDTO, ex, HttpStatus.CONFLICT), executor);
     }
 

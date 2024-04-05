@@ -10,8 +10,8 @@ import java.util.List;
 public final class CurrencyUtils {
 
     public static final List<String> BASE_CURRENCIES = List.of("USD", "EUR");
-    private static final Integer NUMBER_MAX_DIGIT_COUNT = 20;
-    private static final Integer AFTER_DECIMAL_MAX_DIGIT_COUNT = 6;
+    private static final Integer WHOLE_NUMBER_MAX_DIGIT_COUNT = 20;
+    private static final Integer TRAILING_NUMBER_MAX_DIGIT_COUNT = 6;
 
     /**
      * Method to determine the trailing digit count(scaling factor) after the decimal point.
@@ -42,9 +42,10 @@ public final class CurrencyUtils {
      * Digit count of the whole number (leading digits + trailing digits) should always be <= NUMBER_MAX_DIGIT_COUNT
      */
     private static int doGetScale(int leading, int trailing) {
-        int validScale = Math.min(trailing, AFTER_DECIMAL_MAX_DIGIT_COUNT);
-        return leading + validScale > NUMBER_MAX_DIGIT_COUNT
-                ? AFTER_DECIMAL_MAX_DIGIT_COUNT
+        int validScale = Math.min(trailing, TRAILING_NUMBER_MAX_DIGIT_COUNT);
+
+        return leading + validScale > WHOLE_NUMBER_MAX_DIGIT_COUNT
+                ? TRAILING_NUMBER_MAX_DIGIT_COUNT
                 : validScale;
     }
 
@@ -64,8 +65,8 @@ public final class CurrencyUtils {
                 return Math.max(trailingDigitsString.length() - zeroCount, 1);
             }
         }
-        return trailingDigitsString.length();
 
+        return trailingDigitsString.length();
     }
 
 }

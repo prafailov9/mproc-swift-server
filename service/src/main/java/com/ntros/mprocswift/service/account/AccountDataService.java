@@ -94,7 +94,7 @@ public class AccountDataService implements AccountService {
     }
 
     @Override
-    public CompletableFuture<Account> addAccount(Account account) {
+    public CompletableFuture<Account> createAccount(Account account) {
         return CompletableFuture
                 .supplyAsync(() -> {
                     try {
@@ -118,7 +118,10 @@ public class AccountDataService implements AccountService {
         for (Account account : accounts) {
             List<Wallet> wallets = account.getWallets();
             if (wallets.size() == 1) {
-                BigDecimal balance = wallets.get(0).getBalance().setScale(CurrencyUtils.getScale(wallets.get(0).getBalance()), RoundingMode.HALF_UP);
+                BigDecimal balance = wallets.get(0)
+                        .getBalance()
+                        .setScale(CurrencyUtils.getScale(wallets.get(0).getBalance()), RoundingMode.HALF_UP);
+
                 account.setTotalBalance(balance);
                 res.append(String.format("Total balance for Account [ID: %s]=%s %s for 1 wallet\n",
                         account.getAccountId(), balance, wallets.get(0).getCurrency().getCurrencyCode()));
@@ -162,7 +165,7 @@ public class AccountDataService implements AccountService {
     public CompletableFuture<Account> calculateTotalBalanceForAccount(final Account account) {
         return CompletableFuture
                 .supplyAsync(() -> updateTotalBalance(account))
-                .thenComposeAsync(this::addAccount);
+                .thenComposeAsync(this::createAccount);
     }
 
     private BigDecimal getTotal(List<Wallet> wallets, int accountId, Wallet main) {
@@ -181,16 +184,19 @@ public class AccountDataService implements AccountService {
     }
 
     private Wallet getOrSetMainWallet(List<Wallet> wallets) {
-        Wallet main = wallets.stream().filter(Wallet::isMain).findFirst().orElse(null);
-        if (main == null) {
-            main = wallets.get(0);
-            main.setMain(true);
-        } else {
-            for (Wallet wallet : wallets) {
-                if (!wallet.equals(main)) {
+        Wallet main = null;
+        for (Wallet wallet: wallets) {
+            if (wallet.isMain()) {
+                if (main == null) {
+                    main = wallet;
+                } else {
                     wallet.setMain(false);
                 }
             }
+        }
+        if (main == null) {
+            main = wallets.get(0);
+            main.setMain(true);
         }
         return main;
     }

@@ -13,5 +13,9 @@ public interface CardService {
 
     CompletableFuture<Card> createCard(final Card card);
 
+    void deleteCard(Card card);
+
+    Card refresh(Card card);
+
 
 }

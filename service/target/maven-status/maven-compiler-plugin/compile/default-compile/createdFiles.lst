@@ -31,6 +31,7 @@ com/ntros/mprocswift/exceptions/InsufficientFundsException.class
 com/ntros/mprocswift/exceptions/AddressNotFoundException.class
 com/ntros/mprocswift/converter/Converter.class
 com/ntros/mprocswift/exceptions/TransferProcessingFailedException.class
+com/ntros/mprocswift/exceptions/CardNotCreatedException.class
 com/ntros/mprocswift/service/account/AccountDetailsService.class
 com/ntros/mprocswift/exceptions/AccountConstraintFailureException.class
 com/ntros/mprocswift/service/user/UserService.class
@@ -57,6 +58,7 @@ com/ntros/mprocswift/service/download/RestDownloadService.class
 com/ntros/mprocswift/exceptions/AccountNotFoundException.class
 com/ntros/mprocswift/exceptions/AddressConstraintFailureException.class
 com/ntros/mprocswift/converter/CurrencyConverter.class
+com/ntros/mprocswift/exceptions/CannotRefreshCardException.class
 com/ntros/mprocswift/service/transfer/WalletToWalletTransferService.class
 com/ntros/mprocswift/exceptions/FailedToActivateAllCurrenciesException.class
 com/ntros/mprocswift/service/transfer/AbstractTransferService.class

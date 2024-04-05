@@ -1,7 +1,10 @@
 package com.ntros.mprocswift.service.card;
 
+import com.ntros.mprocswift.exceptions.CannotRefreshCardException;
+import com.ntros.mprocswift.exceptions.CardNotCreatedException;
 import com.ntros.mprocswift.exceptions.CardNotFoundException;
 import com.ntros.mprocswift.model.card.Card;
+import com.ntros.mprocswift.model.card.CardType;
 import com.ntros.mprocswift.repository.CardRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -43,10 +46,24 @@ public class CardDataService implements CardService {
             try {
                 return cardRepository.save(card);
             } catch (DataIntegrityViolationException ex) {
-                log.error("Could not create card {}. {}", card, ex.getMessage());
-                throw new RuntimeException("card not created");
+                log.error("Could not create card {}. {}", card, ex.getMessage(), ex.getCause());
+                throw new CardNotCreatedException(String.format("Could not create card: %s", ex.getMessage()));
             }
         });
+    }
+
+    @Override
+    public void deleteCard(Card card) {
+
+    }
+
+    @Override
+    public Card refresh(Card card) {
+        if (!card.getCardType().equals(CardType.ONE_TIME_VIRTUAL)) {
+            throw new CannotRefreshCardException("Card must be of type ONE_TIME_VIRTUAL.");
+        }
+        
+        return null;
     }
 
 }

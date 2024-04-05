@@ -99,18 +99,18 @@ public class WalletDataService implements WalletService {
     }
 
     @Override
-    public CompletableFuture<Wallet> saveWallet(WalletDTO walletDTO) {
+    public CompletableFuture<Wallet> createWallet(WalletDTO walletDTO) {
         return CompletableFuture
                 .supplyAsync(() -> walletConverter.toModel(walletDTO), executor)
                 .thenApply(wallet ->
                         getAndSetCurrencyAccount(walletDTO.getCurrencyCode(), walletDTO.getAccountNumber(), wallet))
                 .thenApply(this::updateActiveWallet)
-                .thenApply(this::save);
+                .thenApply(this::create);
     }
 
     @Override
-    public CompletableFuture<Wallet> saveWallet(Wallet wallet) {
-        return CompletableFuture.supplyAsync(() -> save(wallet));
+    public CompletableFuture<Wallet> createWallet(Wallet wallet) {
+        return CompletableFuture.supplyAsync(() -> create(wallet));
     }
 
     @Override
@@ -173,7 +173,7 @@ public class WalletDataService implements WalletService {
         return wallet;
     }
 
-    private Wallet save(Wallet wallet) {
+    private Wallet create(Wallet wallet) {
         try {
             return walletRepository.save(wallet);
         } catch (DataIntegrityViolationException ex) {

@@ -23,8 +23,8 @@ public interface WalletService {
     // Wallet doGetWalletByCurrencyNameAndAccountId(final String currencyName, final int accountId);
     CompletableFuture<List<Wallet>> getAllWallets();
     CompletableFuture<List<Wallet>> getAllWalletsByAccount(final int accountId);
-    CompletableFuture<Wallet> saveWallet(final WalletDTO walletDTO);
-    CompletableFuture<Wallet> saveWallet(final Wallet wallet);
+    CompletableFuture<Wallet> createWallet(final WalletDTO walletDTO);
+    CompletableFuture<Wallet> createWallet(final Wallet wallet);
 
     CompletableFuture<Integer> deleteWallet(final UniqueWalletDTO uniqueWalletDTO);
 
