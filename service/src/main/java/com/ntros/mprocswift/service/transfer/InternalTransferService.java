@@ -108,9 +108,11 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
         if (isSender) {
             return walletOptional.orElseThrow(() -> new WalletNotFoundForANException(code, an));
         }
-        return walletOptional.orElse(wallets.stream()
+        return walletOptional
+                .orElse(wallets.stream()
                 .filter(Wallet::isMain)
-                .findFirst().orElseThrow(() -> new NoMainWalletException(code, an)));
+                .findFirst()
+                        .orElseThrow(() -> new NoMainWalletException(code, an)));
     }
 
     private void withdrawFromSender(Wallet sender, BigDecimal amount, String currencyCode, String accountNumber) {

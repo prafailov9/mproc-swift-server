@@ -1,13 +1,5 @@
 version: '3.8'
 services:
-  pgm-sim:
-    container_name: pgmtransfer
-    build:
-      context: ../../pgmtransfer
-      dockerfile: Dockerfile
-    ports:
-      - "8081:8081"
-
   app:
     container_name: mproc-swift-server
     build:
@@ -18,7 +10,6 @@ services:
       - "5005:5005" # debug port
     depends_on:
        - db
-#         condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/mprocs
       - SPRING_DATASOURCE_USERNAME=root
@@ -33,10 +24,6 @@ services:
       MYSQL_DATABASE: mprocs
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_ROOT_HOST: '%'
-#    healthcheck:
-#      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-#      timeout: 30s
-#      retries: 20
     volumes:
       - db-data:/var/lib/mysql
       - ./utils/mysql/schema/schema.sql:/docker-entrypoint-initdb.d/00_schema.sql
