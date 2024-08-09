@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @RestController
-public abstract class AbstractTransferController<T extends TransferRequest, R extends TransferResponse, S> extends AbstractApiController {
+public abstract class AbstractTransferController<T extends TransferRequest, R extends TransferResponse> extends AbstractApiController {
 
     protected final TransferService<T, R> transferService;
 

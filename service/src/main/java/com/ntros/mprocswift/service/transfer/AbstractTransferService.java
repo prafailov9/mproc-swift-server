@@ -45,6 +45,7 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
                     createAndSaveTransaction(sender, receiver, transferRequest);
                     return buildTransferResponse(transferRequest);
 
+
                 }, executor)
                 .exceptionally(ex -> {
                     log.error("Failed to process money transfer: {}", ex.getMessage(), ex.getCause());

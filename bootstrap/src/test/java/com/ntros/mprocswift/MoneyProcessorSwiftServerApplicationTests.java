@@ -7,8 +7,6 @@ import org.springframework.test.context.TestPropertySource;
 
 
 @SpringBootTest
-@ActiveProfiles("test")
-@TestPropertySource(locations="classpath:application-test.yml")
 class MoneyProcessorSwiftServerApplicationTests {
 
 	@Test
