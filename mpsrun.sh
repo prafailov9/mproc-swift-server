@@ -2,7 +2,7 @@
 
 start() {
   echo "Starting containers..."
-  docker-compose up --build -d
+  docker compose up --build -d
 
 }
 # start containers in development mode
@@ -11,14 +11,14 @@ start_dev() {
     # remove volume for fresh start
     docker volume rm mproc-swift_db-data
     # remove docker-compose cache
-    docker-compose down --volumes --remove-orphans
+    docker compose down --volumes --remove-orphans
     # rebuild and start
-    docker-compose up --build -d
+    docker compose up --build -d
 }
 
 stop_containers() {
     echo "Stopping containers..."
-    docker-compose down
+    docker compose down
 }
 
 # Main script logic
