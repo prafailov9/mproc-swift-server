@@ -21,6 +21,6 @@ public interface CurrencyRepository extends JpaRepository<Currency, Integer> {
     Optional<Currency> findByCurrencyCodeActive(@Param("currencyCode") final String currencyCode);
 
     @Query(value = "UPDATE Currency SET isActive = true")
-    Boolean updateActivateAll();
+    Boolean activateAll();
 
 }

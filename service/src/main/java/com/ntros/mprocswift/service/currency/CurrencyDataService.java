@@ -51,7 +51,7 @@ public class CurrencyDataService implements CurrencyService {
     public CompletableFuture<Void> activateAll() {
         return CompletableFuture.runAsync(() -> {
             try {
-                currencyRepository.updateActivateAll();
+                currencyRepository.activateAll();
                 log.info("All currencies activated successfully");
             } catch (DataAccessException ex) {
                 log.error("Error occurred while activating currencies: {}", ex.getMessage(), ex);
