@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
 
+import static com.ntros.mprocswift.service.currency.CurrencyUtils.getScale;
+
 @Service
 @Slf4j
 public class CurrencyExchangeRateDataService implements CurrencyExchangeRateService {
@@ -56,7 +58,7 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
         return currencyExchangeRateRepository.findExchangeRateValueBySourceAndTarget(source, target)
                 .map(rate -> {
                     log.info("Found direct exchange rate: {}", rate);
-                    return amount.multiply(rate.setScale(CurrencyUtils.getScale(rate), RoundingMode.HALF_UP));
+                    return amount.multiply(rate.setScale(getScale(rate), RoundingMode.HALF_UP));
                 })
                 .orElseGet(() -> {
                     log.info("No direct exchange rate found for {}/{}", source.getCurrencyCode(), target.getCurrencyCode());
@@ -80,14 +82,14 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
         CurrencyExchangeRate sourceToBase = getExchangeRateForBase(source, true);
         CurrencyExchangeRate baseToTarget = getExchangeRateForBase(target, false);
         BigDecimal sourceToBaseAmount = amountToConvert.divide(sourceToBase.getExchangeRate(),
-                CurrencyUtils.getScale(amountToConvert), RoundingMode.HALF_UP);
+                getScale(amountToConvert), RoundingMode.HALF_UP);
 
         if (sourceToBase.getTargetCurrency().getCurrencyCode().equals(baseToTarget.getSourceCurrency().getCurrencyCode())) {
             // convert source to base
             BigDecimal baseToTargetAmount = sourceToBaseAmount.multiply(baseToTarget.getExchangeRate());
             log.info("Converted {} {} to {} {} with base currency {}", amountToConvert, source.getCurrencyCode(),
                     baseToTargetAmount, target.getCurrencyCode(), sourceToBase.getTargetCurrency().getCurrencyCode());
-            return baseToTargetAmount.setScale(CurrencyUtils.getScale(baseToTargetAmount), RoundingMode.HALF_UP);
+            return baseToTargetAmount.setScale(getScale(baseToTargetAmount), RoundingMode.HALF_UP);
         }
 
         log.info("Found different bases: {} {}", sourceToBase, baseToTarget);
@@ -110,7 +112,7 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
         log.info("Intermediate amount: {} {}", intermediateAmount, baseToTarget.getSourceCurrency().getCurrencyCode());
 
         BigDecimal targetAmount = intermediateAmount.multiply(baseToTarget.getExchangeRate()
-                .setScale(CurrencyUtils.getScale(baseToTarget.getExchangeRate()), RoundingMode.HALF_UP));
+                .setScale(getScale(baseToTarget.getExchangeRate()), RoundingMode.HALF_UP));
         log.info("Converted amount: {}", targetAmount);
 
         return targetAmount;
