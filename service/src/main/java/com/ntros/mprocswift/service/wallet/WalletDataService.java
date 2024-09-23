@@ -143,9 +143,9 @@ public class WalletDataService implements WalletService {
                 log.error("Modified {} rows after delete.", affectedRows);
                 throw new DataConstraintViolationException(String.format("Deleted multiple wallets for [%s, %s]", code, an));
             }
-            log.error(String.format("Successfully deleted %s wallet for account: %s", code, an));
+            log.error("Successfully deleted {} wallet for account: {}", code, an);
         } catch (DataAccessException ex) {
-            log.error("Could not delete wallet for " + code + ", " + an, ex);
+            log.error("Could not delete wallet for {}, {}", code, an, ex);
             throw new WalletDeleteFailedException(code, an, ex);
         }
         return affectedRows;
