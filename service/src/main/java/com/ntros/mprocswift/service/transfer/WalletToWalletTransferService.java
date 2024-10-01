@@ -37,46 +37,50 @@ public class WalletToWalletTransferService extends AbstractTransferService<Walle
     }
 
     @Override
-    protected void performTransfer(Wallet sender, Wallet receiver, WalletToWalletTransferRequest transferRequest) {
-        sender.setBalance(sender.getBalance().subtract(transferRequest.getAmount()));
+    protected CompletableFuture<Void> performTransfer(Wallet sender, Wallet receiver, WalletToWalletTransferRequest transferRequest) {
+        return CompletableFuture.runAsync(() -> {
+            sender.setBalance(sender.getBalance().subtract(transferRequest.getAmount()));
 
-        BigDecimal convertedAmount = currencyExchangeRateService.convert(
-                transferRequest.getAmount(),
-                sender.getCurrency(),
-                receiver.getCurrency());
+            BigDecimal convertedAmount = currencyExchangeRateService.convert(
+                    transferRequest.getAmount(),
+                    sender.getCurrency(),
+                    receiver.getCurrency());
 
-        receiver.setBalance(receiver.getBalance().add(convertedAmount));
+            receiver.setBalance(receiver.getBalance().add(convertedAmount));
 
-        updateWalletsAndAccounts(sender, receiver);
+            updateWalletsAndAccounts(sender, receiver);
+        }, executor);
     }
 
     @Override
     @Modifying
     @Transactional
-    protected void createAndSaveTransaction(Wallet sender, Wallet receiver, WalletToWalletTransferRequest transferRequest) {
-        Transaction transaction = new Transaction();
-        transaction.setTransactionDate(OffsetDateTime.now());
-        transaction.setCurrency(sender.getCurrency());
-        transaction.setFees(null);
-        transaction.setAmount(transferRequest.getAmount());
-        transaction.setType(TransactionType.WALLET_TO_WALLET_TRANSFER);
-        transaction.setDescription(String.format("Transferred %s from %s to %s.",
-                transferRequest.getAmount(),
-                sender.getCurrency().getCurrencyCode(),
-                receiver.getCurrency().getCurrencyCode()));
-        transaction.setStatus(TransactionStatus.COMPLETED);
+    protected CompletableFuture<Void> createTransferTransaction(Wallet sender, Wallet receiver, WalletToWalletTransferRequest transferRequest) {
+        return CompletableFuture.runAsync(() -> {
+            Transaction transaction = new Transaction();
+            transaction.setTransactionDate(OffsetDateTime.now());
+            transaction.setCurrency(sender.getCurrency());
+            transaction.setFees(null);
+            transaction.setAmount(transferRequest.getAmount());
+            transaction.setType(TransactionType.WALLET_TO_WALLET_TRANSFER);
+            transaction.setDescription(String.format("Transferred %s from %s to %s.",
+                    transferRequest.getAmount(),
+                    sender.getCurrency().getCurrencyCode(),
+                    receiver.getCurrency().getCurrencyCode()));
+            transaction.setStatus(TransactionStatus.COMPLETED);
 
-        // a base transaction must exist before saving a money transfer
-        transaction = transactionRepository.saveAndFlush(transaction);
+            // a base transaction must exist before saving a money transfer
+            transaction = transactionRepository.saveAndFlush(transaction);
 
-        MoneyTransfer moneyTransfer = new MoneyTransfer();
-        moneyTransfer.setTransactionId(transaction.getTransactionId());
-        moneyTransfer.setTransaction(transaction);
-        // sender and receiver wallets should be of the same account
-        moneyTransfer.setSenderAccount(sender.getAccount());
-        moneyTransfer.setReceiverAccount(receiver.getAccount());
-        moneyTransfer.setTargetCurrencyCode(receiver.getCurrency().getCurrencyCode());
-        moneyTransferRepository.save(moneyTransfer);
+            MoneyTransfer moneyTransfer = new MoneyTransfer();
+            moneyTransfer.setTransactionId(transaction.getTransactionId());
+            moneyTransfer.setTransaction(transaction);
+            // sender and receiver wallets should be of the same account
+            moneyTransfer.setSenderAccount(sender.getAccount());
+            moneyTransfer.setReceiverAccount(receiver.getAccount());
+            moneyTransfer.setTargetCurrencyCode(receiver.getCurrency().getCurrencyCode());
+            moneyTransferRepository.save(moneyTransfer);
+        }, executor);
     }
 
 
@@ -91,11 +95,13 @@ public class WalletToWalletTransferService extends AbstractTransferService<Walle
     }
 
     @Override
-    protected WalletToWalletTransferResponse buildTransferResponse(WalletToWalletTransferRequest transferRequest) {
-        WalletToWalletTransferResponse response = new WalletToWalletTransferResponse();
-        response.setTransferRequest(transferRequest);
-        response.setStatus("success");
-        return response;
+    protected CompletableFuture<WalletToWalletTransferResponse> buildTransferResponse(WalletToWalletTransferRequest transferRequest) {
+        return CompletableFuture.supplyAsync(() -> {
+            WalletToWalletTransferResponse response = new WalletToWalletTransferResponse();
+            response.setTransferRequest(transferRequest);
+            response.setStatus("success");
+            return response;
+        }, executor);
     }
 
 }

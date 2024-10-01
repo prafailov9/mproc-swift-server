@@ -23,17 +23,17 @@ public class ExternalTransferService extends AbstractTransferService<ExternalTra
     }
 
     @Override
-    protected void performTransfer(Account sender, Account receiver, ExternalTransferRequest transferRequest) {
-
+    protected CompletableFuture<Void> performTransfer(Account sender, Account receiver, ExternalTransferRequest transferRequest) {
+        return null;
     }
 
     @Override
-    protected void createAndSaveTransaction(Account sender, Account receiver, ExternalTransferRequest transferRequest) {
-
+    protected CompletableFuture<Void> createTransferTransaction(Account sender, Account receiver, ExternalTransferRequest transferRequest) {
+        return null;
     }
 
     @Override
-    protected ExternalTransferResponse buildTransferResponse(ExternalTransferRequest transferRequest) {
+    protected CompletableFuture<ExternalTransferResponse> buildTransferResponse(ExternalTransferRequest transferRequest) {
         return null;
     }
 

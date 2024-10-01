@@ -6,6 +6,7 @@ import com.ntros.mprocswift.service.account.AccountService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/accounts")
+@Slf4j
 public class AccountController extends AbstractApiController {
 
     private final AccountService accountService;

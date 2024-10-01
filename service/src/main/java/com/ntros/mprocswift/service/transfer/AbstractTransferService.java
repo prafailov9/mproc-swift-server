@@ -40,28 +40,26 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
         CompletableFuture<S> senderFuture = getSender(transferRequest);
         CompletableFuture<S> receiverFuture = getReceiver(transferRequest);
 
-        return senderFuture.thenCombineAsync(receiverFuture, (sender, receiver) -> {
-                    performTransfer(sender, receiver, transferRequest);
-                    createAndSaveTransaction(sender, receiver, transferRequest);
-                    return buildTransferResponse(transferRequest);
-
-
-                }, executor)
+        return senderFuture
+                .thenCombineAsync(receiverFuture, (sender, receiver) ->
+                        performTransfer(sender, receiver, transferRequest)
+                                .thenComposeAsync(v -> createTransferTransaction(sender, receiver, transferRequest))
+                                .thenComposeAsync(v -> buildTransferResponse(transferRequest)), executor)
+                .thenComposeAsync(response -> response)
                 .exceptionally(ex -> {
                     log.error("Failed to process money transfer: {}", ex.getMessage(), ex.getCause());
                     throw new TransferProcessingFailedException(ex.getMessage(), ex.getCause());
                 });
-
     }
 
     protected abstract CompletableFuture<S> getSender(T transferRequest);
 
     protected abstract CompletableFuture<S> getReceiver(T transferRequest);
 
-    protected abstract void performTransfer(S sender, S receiver, T transferRequest);
+    protected abstract CompletableFuture<Void> performTransfer(S sender, S receiver, T transferRequest);
 
-    protected abstract void createAndSaveTransaction(S sender, S receiver, T transferRequest);
+    protected abstract CompletableFuture<Void> createTransferTransaction(S sender, S receiver, T transferRequest);
 
-    protected abstract R buildTransferResponse(T transferRequest);
+    protected abstract CompletableFuture<R> buildTransferResponse(T transferRequest);
 
 }
