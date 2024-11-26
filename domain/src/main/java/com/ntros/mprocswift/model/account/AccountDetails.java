@@ -2,11 +2,13 @@ package com.ntros.mprocswift.model.account;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
 @RequiredArgsConstructor
+@EqualsAndHashCode
 public class AccountDetails {
 
     @Id

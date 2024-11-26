@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @RequiredArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"walletId", "account", "currency"})
 public class Wallet {
 
     @Id

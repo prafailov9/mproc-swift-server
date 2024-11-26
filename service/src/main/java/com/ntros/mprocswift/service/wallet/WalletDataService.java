@@ -120,19 +120,17 @@ public class WalletDataService implements WalletService {
     }
 
     @Override
-    public CompletableFuture<Integer> updateBalance(int walletId, BigDecimal balance) {
-        return CompletableFuture.supplyAsync(() -> {
-            int affectedRows;
+    public CompletableFuture<Void> updateBalance(int walletId, BigDecimal balance) {
+        return CompletableFuture.runAsync(() -> {
             try {
-                affectedRows = walletRepository.updateBalance(walletId, balance);
+                walletRepository.updateBalance(walletId, balance);
             } catch (DataAccessException ex) {
                 String error = String.format("Could not update balance for wallet: %s", walletId);
                 log.error(error, ex);
                 // rethrowing as a completion exception so it is caught by exceptionally block in thenCombine
                 throw new CompletionException(error, new WalletUpdateFailedException(error));
             }
-            return affectedRows;
-        });
+        }, executor);
     }
 
     private int delete(String code, String an) {

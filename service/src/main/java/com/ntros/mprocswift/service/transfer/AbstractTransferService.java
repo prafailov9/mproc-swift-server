@@ -43,7 +43,7 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
         return senderFuture
                 .thenCombineAsync(receiverFuture, (sender, receiver) ->
                         performTransfer(sender, receiver, transferRequest)
-                                .thenComposeAsync(v -> createTransferTransaction(sender, receiver, transferRequest))
+                                .thenComposeAsync(v -> createTransferTransaction(sender, receiver, transferRequest), executor)
                                 .thenComposeAsync(v -> buildTransferResponse(transferRequest)), executor)
                 .thenComposeAsync(response -> response)
                 .exceptionally(ex -> {

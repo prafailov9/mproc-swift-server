@@ -6,11 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 public class CardPaymentResponse {
 
-    private boolean success;
+    private String status;
     private String message;
+
+    private String merchant;
+    private double price;
+    private String currency;
+    private String accountNumber;
 
 }

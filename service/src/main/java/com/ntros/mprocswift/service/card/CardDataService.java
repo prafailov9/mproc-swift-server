@@ -3,6 +3,7 @@ package com.ntros.mprocswift.service.card;
 import com.ntros.mprocswift.exceptions.CannotRefreshCardException;
 import com.ntros.mprocswift.exceptions.CardNotCreatedException;
 import com.ntros.mprocswift.exceptions.CardNotFoundException;
+import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.card.Card;
 import com.ntros.mprocswift.model.card.CardType;
 import com.ntros.mprocswift.repository.CardRepository;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -33,6 +33,14 @@ public class CardDataService implements CardService {
     public Card getCard(int cardId) {
         return cardRepository.findById(cardId)
                 .orElseThrow(() -> new CardNotFoundException(String.format("Card with ID: %s not found", cardId)));
+    }
+
+    @Override
+    public CompletableFuture<Card> getCard(String provider, String cardNumber, String expirationDate, String cvv) {
+        return CompletableFuture
+                .supplyAsync(() -> cardRepository
+                        .findByNumberExpirationCvv(provider, cardNumber, expirationDate, cvv)
+                        .orElseThrow(() -> new NotFoundException("Card not found.")));
     }
 
     @Override
