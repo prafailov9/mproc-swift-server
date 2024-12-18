@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -41,5 +42,20 @@ public class Account {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.ALL)
     private List<Wallet> wallets;
+
+    public Wallet getMainWallet() {
+        if (wallets == null || wallets.isEmpty()) {
+            return null;
+        }
+
+        Wallet main = wallets.stream()
+                .filter(Wallet::isMain)
+                .findFirst()
+                .orElse(wallets.get(0));
+
+        // set true just in case
+        main.setMain(true);
+        return main;
+    }
 
 }

@@ -2,6 +2,7 @@ package com.ntros.mprocswift.service.account;
 
 import com.ntros.mprocswift.exceptions.AccountConstraintFailureException;
 import com.ntros.mprocswift.exceptions.AccountNotFoundException;
+import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.exceptions.WalletNotFoundException;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.account.Account;
@@ -24,6 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import static java.lang.String.format;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 
 @Service
 @Transactional
@@ -48,62 +55,51 @@ public class AccountDataService implements AccountService {
 
     @Override
     public CompletableFuture<Account> getAccount(int accountId) {
-        return CompletableFuture
-                .supplyAsync(() -> accountRepository.findById(accountId)
-                        .orElseThrow(() -> new AccountNotFoundException("Account not found for id: " + accountId)));
+        return supplyAsync(() -> accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found for id: " + accountId)));
     }
 
     @Override
     public CompletableFuture<Account> getAccountByAccountNumber(String accountNumber) {
-        return CompletableFuture
-                .supplyAsync(() -> accountRepository.findByAccountNumber(accountNumber)
-                        .orElseThrow(() -> new AccountNotFoundException("Account not found for AN: " + accountNumber)));
+        return supplyAsync(() -> accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found for AN: " + accountNumber)));
     }
 
     @Override
     public CompletableFuture<List<Account>> getAllAccounts() {
-        return CompletableFuture.supplyAsync(accountRepository::findAll);
+        return supplyAsync(accountRepository::findAll);
     }
 
     @Override
     public CompletableFuture<List<Account>> getAllAccountsWalletCount(int walletCount) {
-        return CompletableFuture.supplyAsync(() -> accountRepository.findAllByWalletCount(walletCount));
+        return supplyAsync(() -> accountRepository.findAllByWalletCount(walletCount));
 
     }
 
     @Override
     public CompletableFuture<List<List<Account>>> getAllAccountsByWalletCountInRange(int origin, int bound) {
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    int realBound = bound;
-                    List<Wallet> wallets = walletRepository.findAll();
-                    if (!CollectionUtils.isEmpty(wallets)) {
-                        realBound = wallets.size();
-                    }
-                    List<List<Account>> accountsByWalletCount = new ArrayList<>();
-                    int currentOrigin = origin;
-                    while (currentOrigin <= realBound) {
-                        List<Account> accounts = accountRepository.findAllByWalletCount(currentOrigin);
-                        if (!CollectionUtils.isEmpty(accounts)) {
-                            accountsByWalletCount.add(accounts);
-                        }
-                        currentOrigin++;
-                    }
-                    return accountsByWalletCount;
-                });
+        return supplyAsync(() -> {
+            int realBound = bound;
+            List<Wallet> wallets = walletRepository.findAll();
+            if (!isEmpty(wallets)) {
+                realBound = wallets.size();
+            }
+            List<List<Account>> accountsByWalletCount = new ArrayList<>();
+            int currentOrigin = origin;
+            while (currentOrigin <= realBound) {
+                List<Account> accounts = accountRepository.findAllByWalletCount(currentOrigin);
+                if (!isEmpty(accounts)) {
+                    accountsByWalletCount.add(accounts);
+                }
+                currentOrigin++;
+            }
+            return accountsByWalletCount;
+        });
     }
 
     @Override
     public CompletableFuture<Account> createAccount(Account account) {
-        return CompletableFuture
-                .supplyAsync(() -> {
-                    try {
-                        return accountRepository.save(account);
-                    } catch (DataIntegrityViolationException ex) {
-                        log.error("Could not save account {}. {}", account, ex.getMessage(), ex);
-                        throw new AccountConstraintFailureException(account);
-                    }
-                });
+        return supplyAsync(() -> create(account));
     }
 
     @Override
@@ -112,31 +108,31 @@ public class AccountDataService implements AccountService {
     public String calculateTotalBalanceForAllAccounts() {
         List<Account> accounts = accountRepository.findAll()
                 .stream()
-                .filter(account -> !CollectionUtils.isEmpty(account.getWallets()))
+                .filter(account -> !isEmpty(account.getWallets()))
                 .toList();
+
         StringBuilder res = new StringBuilder();
         for (Account account : accounts) {
             List<Wallet> wallets = account.getWallets();
             if (wallets.size() == 1) {
                 BigDecimal balance = wallets.get(0)
                         .getBalance()
-                        .setScale(CurrencyUtils.getScale(wallets.get(0).getBalance()), RoundingMode.HALF_UP);
+                        .setScale(CurrencyUtils.getScale(wallets.get(0).getBalance()), HALF_UP);
 
                 account.setTotalBalance(balance);
-                res.append(String.format("Total balance for Account [ID: %s]=%s %s for 1 wallet\n",
+                res.append(format("Total balance for Account [ID: %s]=%s %s for 1 wallet\n",
                         account.getAccountId(), balance, wallets.get(0).getCurrency().getCurrencyCode()));
             } else {
-                // get main currency wallet or set 1st to main
-                Wallet main = getOrSetMainWallet(wallets);
+                Wallet main = account.getMainWallet();
                 main.setMain(true);
                 wallets = wallets.stream().filter(wallet -> !wallet.isMain()).collect(Collectors.toList());
                 BigDecimal amount = getTotal(wallets, account.getAccountId(), main);
-                BigDecimal scaledAmount = amount.setScale(CurrencyUtils.getScale(amount), RoundingMode.HALF_UP);
+                BigDecimal scaledAmount = amount.setScale(CurrencyUtils.getScale(amount), HALF_UP);
                 account.setTotalBalance(scaledAmount);
                 log.info("Saving total balance {} {}", account.getTotalBalance(), main.getCurrency().getCurrencyCode());
                 // update balance
                 accountRepository.saveAndFlush(account);
-                res.append(String.format("Total balance for Account [ID: %s]=%s %s for %s wallets\n",
+                res.append(format("Total balance for Account [ID: %s]=%s %s for %s wallets\n",
                         account.getAccountId(), account.getTotalBalance(), main.getCurrency().getCurrencyCode(), account.getWallets().size()));
             }
         }
@@ -144,34 +140,43 @@ public class AccountDataService implements AccountService {
     }
 
     @Override
+    @Modifying
+    @Transactional
     public Account updateTotalBalance(Account account) {
         List<Wallet> wallets = walletRepository.findAllByAccount(account.getAccountId());
-        if (CollectionUtils.isEmpty(wallets)) {
+        if (isEmpty(wallets)) {
             log.info("No wallets tied to account: {}", account.getAccountId());
-            return null;
+            throw new NotFoundException(format(
+                    "No wallets found for account: %s",
+                    account.getAccountDetails().getAccountNumber()));
         }
-        Wallet mainWallet = getOrSetMainWallet(wallets);
+        Wallet mainWallet = account.getMainWallet();
         BigDecimal totalAccountBalance = getTotal(wallets, account.getAccountId(), mainWallet);
 
         account.setTotalBalance(totalAccountBalance);
         log.info("Updated total balance for account: {}", account.getTotalBalance());
-        accountRepository.saveAndFlush(account);
+        accountRepository.save(account);
         return account;
     }
 
     @Override
-    @Modifying
-    @Transactional
     public CompletableFuture<Account> calculateTotalBalanceForAccount(final Account account) {
-        return CompletableFuture
-                .supplyAsync(() -> updateTotalBalance(account))
-                .thenComposeAsync(this::createAccount);
+        return supplyAsync(() -> updateTotalBalance(account));
+    }
+
+    private Account create(Account account) {
+        try {
+            return accountRepository.save(account);
+        } catch (DataIntegrityViolationException ex) {
+            log.error("Could not save account {}. {}", account, ex.getMessage(), ex);
+            throw new AccountConstraintFailureException(account);
+        }
     }
 
     private BigDecimal getTotal(List<Wallet> wallets, int accountId, Wallet main) {
-        if (CollectionUtils.isEmpty(wallets)) {
+        if (isEmpty(wallets)) {
             log.info("No wallets for accountId: {}", accountId);
-            throw new WalletNotFoundException(String.format("No wallets tied to accountId: %s", accountId));
+            throw new WalletNotFoundException(format("No wallets tied to accountId: %s", accountId));
         }
         // convert each to main currency and add
         return wallets
@@ -181,24 +186,6 @@ public class AccountDataService implements AccountService {
                         wallet.getCurrency(),
                         main.getCurrency()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private Wallet getOrSetMainWallet(List<Wallet> wallets) {
-        Wallet main = null;
-        for (Wallet wallet: wallets) {
-            if (wallet.isMain()) {
-                if (main == null) {
-                    main = wallet;
-                } else {
-                    wallet.setMain(false);
-                }
-            }
-        }
-        if (main == null) {
-            main = wallets.get(0);
-            main.setMain(true);
-        }
-        return main;
     }
 
 }

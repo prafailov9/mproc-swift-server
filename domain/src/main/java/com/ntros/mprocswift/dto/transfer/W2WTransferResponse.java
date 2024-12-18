@@ -8,5 +8,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true) // include superclass fields in Lombok's equals and hashCode impls.
 
-public class WalletToWalletTransferResponse extends TransferResponse {
+public class W2WTransferResponse extends TransferResponse {
 }

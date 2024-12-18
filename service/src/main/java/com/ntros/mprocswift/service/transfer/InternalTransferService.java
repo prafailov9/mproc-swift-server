@@ -2,6 +2,7 @@ package com.ntros.mprocswift.service.transfer;
 
 import com.ntros.mprocswift.dto.transfer.InternalTransferRequest;
 import com.ntros.mprocswift.dto.transfer.InternalTransferResponse;
+import com.ntros.mprocswift.dto.transfer.W2WTransferRequest;
 import com.ntros.mprocswift.exceptions.CurrencyNotFoundException;
 import com.ntros.mprocswift.exceptions.InsufficientFundsException;
 import com.ntros.mprocswift.exceptions.NoMainWalletException;
@@ -61,29 +62,39 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
     }
 
     @Override
-    @Modifying
-    @Transactional
     protected CompletableFuture<Void> createTransferTransaction(Account sender, Account receiver, InternalTransferRequest transferRequest) {
         return CompletableFuture.runAsync(() -> {
-            Currency currency = getCurrency(sender, transferRequest);
-            Transaction transaction = new Transaction();
-            transaction.setAmount(transferRequest.getAmount());
-            transaction.setType(TransactionType.INTERNAL_TRANSFER);
-            transaction.setStatus(TransactionStatus.COMPLETED);
-            transaction.setTransactionDate(OffsetDateTime.now());
-            transaction.setDescription(transferRequest.getDescription());
-            transaction.setFees(null);
-            transaction.setCurrency(currency);
-            transactionRepository.saveAndFlush(transaction);
-
-            MoneyTransfer moneyTransfer = new MoneyTransfer();
-            moneyTransfer.setTransactionId(transaction.getTransactionId());
-            moneyTransfer.setTransaction(transaction);
-            moneyTransfer.setReceiverAccount(sender);
-            moneyTransfer.setSenderAccount(receiver);
-
-            moneyTransferRepository.save(moneyTransfer);
+            Transaction transaction = buildTransaction(sender, transferRequest);
+            createAndSaveMoneyTransfer(transaction, sender, receiver);
         }, executor);
+    }
+
+    @Transactional
+    @Modifying
+    private void createAndSaveMoneyTransfer(final Transaction transaction, final Account sender, final Account receiver) {
+        transactionRepository.saveAndFlush(transaction);
+
+        MoneyTransfer moneyTransfer = new MoneyTransfer();
+        moneyTransfer.setTransactionId(transaction.getTransactionId());
+        moneyTransfer.setTransaction(transaction);
+        moneyTransfer.setReceiverAccount(sender);
+        moneyTransfer.setSenderAccount(receiver);
+
+        moneyTransferRepository.save(moneyTransfer);
+    }
+
+    private Transaction buildTransaction(Account sender, InternalTransferRequest transferRequest) {
+        Currency currency = getCurrency(sender, transferRequest);
+        Transaction transaction = new Transaction();
+        transaction.setAmount(transferRequest.getAmount());
+        transaction.setType(TransactionType.INTERNAL_TRANSFER);
+        transaction.setStatus(TransactionStatus.COMPLETED);
+        transaction.setTransactionDate(OffsetDateTime.now());
+        transaction.setDescription(transferRequest.getDescription());
+        transaction.setFees(null);
+        transaction.setCurrency(currency);
+
+        return transaction;
     }
 
     @Override
@@ -122,8 +133,7 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
     }
 
     private void withdrawFromSender(Wallet sender, BigDecimal amount, String currencyCode, String accountNumber) {
-        BigDecimal balanceAfterWithdraw = sender.getBalance().subtract(amount);
-        if (balanceAfterWithdraw.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(sender.getBalance()) < 0) {
             throw new InsufficientFundsException(
                     String.format("Insufficient funds. Current balance: %s, transfer amount: %s, for wallet [%s, %s]",
                             sender.getBalance(),
@@ -131,7 +141,7 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
                             currencyCode,
                             accountNumber));
         }
-        sender.setBalance(balanceAfterWithdraw);
+        sender.decreaseBalance(amount);
     }
 
     private Currency getCurrency(Account sender, InternalTransferRequest transferRequest) {
