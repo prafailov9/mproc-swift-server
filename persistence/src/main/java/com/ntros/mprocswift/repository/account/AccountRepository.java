@@ -17,6 +17,11 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
             "WHERE ad.account_number = :accountNumber", nativeQuery = true)
     Optional<Account> findByAccountNumber(@Param("accountNumber") String accountNumber);
 
+    @Query("SELECT a FROM Account a " +
+            "JOIN a.accountDetails ad " +
+            "WHERE ad.accountName = :accountName")
+    Optional<Account> findByAccountName(@Param("accountName") String accountName);
+
     @Query(value = "SELECT a.* FROM account a " +
             "JOIN wallet w ON a.account_id = w.account_id " +
             "GROUP BY a.account_id " +

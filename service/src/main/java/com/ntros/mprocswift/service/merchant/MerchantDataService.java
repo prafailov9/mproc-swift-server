@@ -1,13 +1,16 @@
 package com.ntros.mprocswift.service.merchant;
 
+import com.ntros.mprocswift.dto.cardpayment.CardPaymentRequest;
 import com.ntros.mprocswift.exceptions.AccountConstraintFailureException;
 import com.ntros.mprocswift.exceptions.MerchantConstraintFailureException;
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.Merchant;
 import com.ntros.mprocswift.repository.MerchantRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -25,6 +28,12 @@ public class MerchantDataService implements MerchantService {
     public MerchantDataService(MerchantRepository merchantRepository, Executor executor) {
         this.merchantRepository = merchantRepository;
         this.executor = executor;
+    }
+
+    @Override
+    @Transactional
+    public Merchant createMerchant(CardPaymentRequest cardPaymentRequest) {
+        return null;
     }
 
     @Override

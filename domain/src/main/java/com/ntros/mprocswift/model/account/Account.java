@@ -43,6 +43,10 @@ public class Account {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.ALL)
     private List<Wallet> wallets;
 
+    public String getAccNumber() {
+        return this.getAccountDetails().getAccountNumber();
+    }
+
     public Wallet getMainWallet() {
         if (wallets == null || wallets.isEmpty()) {
             return null;

@@ -9,12 +9,13 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 public class CardDTO {
 
+    private String type;
     private String cardHolder;
     private String cardProvider;
     private String cardNumberHash;
     private String cvvHash;
     private String pinHash;
 
-    private OffsetDateTime expirationDate;
+    private String expirationDate;
 
 }

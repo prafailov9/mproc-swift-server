@@ -156,6 +156,8 @@ CREATE TABLE IF NOT EXISTS card (
     expiration_date DATE,
     cvv CHAR(3),
     pin_hash VARCHAR(256),
+    -- TODO: add column for unique card id encrypted hash: details_hash()
+
     -- status ENUM('active', 'inactive', 'one-time') NOT NULL,
     creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 

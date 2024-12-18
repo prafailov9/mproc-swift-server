@@ -38,6 +38,6 @@ public class Wallet {
     }
 
     public boolean verifyOwnership(String accountNumber, String currencyCode) {
-        return this.account.getAccountDetails().getAccountNumber().equals(accountNumber) && this.currency.getCurrencyCode().equals(currencyCode);
+        return account.getAccNumber().equals(accountNumber) && this.currency.getCurrencyCode().equals(currencyCode);
     }
 }

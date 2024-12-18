@@ -1,5 +1,6 @@
 package com.ntros.mprocswift.service.card;
 
+import com.ntros.mprocswift.dto.CardDTO;
 import com.ntros.mprocswift.exceptions.CannotRefreshCardException;
 import com.ntros.mprocswift.exceptions.CardNotCreatedException;
 import com.ntros.mprocswift.exceptions.CardNotFoundException;
@@ -36,10 +37,10 @@ public class CardDataService implements CardService {
     }
 
     @Override
-    public CompletableFuture<Card> getCard(String provider, String cardNumber, String expirationDate, String cvv) {
+    public CompletableFuture<Card> getCard(CardDTO cardDTO) {
         return CompletableFuture
                 .supplyAsync(() -> cardRepository
-                        .findByNumberExpirationCvv(provider, cardNumber, expirationDate, cvv)
+                        .findByNumberExpirationCvv(cardDTO.getCardProvider(), cardDTO.getCardNumberHash(), cardDTO.getExpirationDate(), cardDTO.getCvvHash())
                         .orElseThrow(() -> new NotFoundException("Card not found.")));
     }
 
