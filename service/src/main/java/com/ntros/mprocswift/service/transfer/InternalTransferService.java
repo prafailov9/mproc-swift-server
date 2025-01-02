@@ -40,33 +40,29 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
     }
 
     @Override
-    protected CompletableFuture<Void> performTransfer(Account sender, Account receiver, InternalTransferRequest transferRequest) {
-        return CompletableFuture.runAsync(() -> {
-            String currencyCode = transferRequest.getCurrencyCode();
-            BigDecimal transferAmount;
+    protected void performTransfer(Account sender, Account receiver, InternalTransferRequest transferRequest) {
+        String currencyCode = transferRequest.getCurrencyCode();
+        BigDecimal transferAmount;
 
-            Wallet senderWallet = getWallet(sender.getWallets(), currencyCode, transferRequest.getSourceAccountNumber(), true);
-            Wallet receiverWallet = getWallet(receiver.getWallets(), currencyCode, transferRequest.getRecipientAccountNumber(), false);
-            withdrawFromSender(senderWallet, transferRequest.getAmount(), currencyCode, transferRequest.getSourceAccountNumber());
+        Wallet senderWallet = getWallet(sender.getWallets(), currencyCode, transferRequest.getSourceAccountNumber(), true);
+        Wallet receiverWallet = getWallet(receiver.getWallets(), currencyCode, transferRequest.getRecipientAccountNumber(), false);
+        withdrawFromSender(senderWallet, transferRequest.getAmount(), currencyCode, transferRequest.getSourceAccountNumber());
 
-            if (receiverWallet.getCurrency().getCurrencyCode().equals(currencyCode)) {
-                transferAmount = receiverWallet.getBalance().add(transferRequest.getAmount());
-            } else {
-                transferAmount = currencyExchangeRateService.convert(transferRequest.getAmount(),
-                        currencyCode,
-                        receiverWallet.getCurrency().getCurrencyCode());
-            }
-            receiverWallet.setBalance(receiverWallet.getBalance().add(transferAmount));
-            updateAccountsAndWallets(sender, receiver, senderWallet, receiverWallet);
-        }, executor);
+        if (receiverWallet.getCurrency().getCurrencyCode().equals(currencyCode)) {
+            transferAmount = receiverWallet.getBalance().add(transferRequest.getAmount());
+        } else {
+            transferAmount = currencyExchangeRateService.convert(transferRequest.getAmount(),
+                    currencyCode,
+                    receiverWallet.getCurrency().getCurrencyCode());
+        }
+        receiverWallet.setBalance(receiverWallet.getBalance().add(transferAmount));
+        updateAccountsAndWallets(sender, receiver, senderWallet, receiverWallet);
     }
 
     @Override
-    protected CompletableFuture<Void> createTransferTransaction(Account sender, Account receiver, InternalTransferRequest transferRequest) {
-        return CompletableFuture.runAsync(() -> {
-            Transaction transaction = buildTransaction(sender, transferRequest);
-            createAndSaveMoneyTransfer(transaction, sender, receiver);
-        }, executor);
+    protected void createTransferTransaction(Account sender, Account receiver, InternalTransferRequest transferRequest) {
+        Transaction transaction = buildTransaction(sender, transferRequest);
+        createAndSaveMoneyTransfer(transaction, sender, receiver);
     }
 
     @Transactional
@@ -98,13 +94,11 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
     }
 
     @Override
-    protected CompletableFuture<InternalTransferResponse> buildTransferResponse(InternalTransferRequest transferRequest) {
-        return CompletableFuture.supplyAsync(() -> {
-            InternalTransferResponse response = new InternalTransferResponse();
-            response.setTransferRequest(transferRequest);
-            response.setStatus("success");
-            return response;
-        });
+    protected InternalTransferResponse buildTransferResponse(InternalTransferRequest transferRequest) {
+        InternalTransferResponse response = new InternalTransferResponse();
+        response.setTransferRequest(transferRequest);
+        response.setStatus("success");
+        return response;
     }
 
     @Modifying

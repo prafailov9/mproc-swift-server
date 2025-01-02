@@ -19,9 +19,10 @@ public class Card {
     @Enumerated(EnumType.STRING)
     private CardType cardType;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "account_id")
     private Account account;
+
     private String cardProvider;
     private String cardNumber;
     private String expirationDate;

@@ -2,6 +2,7 @@ package com.ntros.mprocswift.model.account;
 
 import com.ntros.mprocswift.model.User;
 import com.ntros.mprocswift.model.Wallet;
+import com.ntros.mprocswift.model.card.Card;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -42,6 +43,9 @@ public class Account {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.ALL)
     private List<Wallet> wallets;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "account", cascade = CascadeType.ALL)
+    private List<Card> cards;
 
     public String getAccNumber() {
         return this.getAccountDetails().getAccountNumber();

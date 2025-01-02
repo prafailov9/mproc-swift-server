@@ -11,6 +11,7 @@ public interface CardService {
     Card getCard(final int cardId);
 
     CompletableFuture<Card> getCard(CardDTO cardDTO);
+    CompletableFuture<List<Card>> getAllCardsForAccountNumber(String accountNumber);
 
     List<Card> getAllCards();
 

@@ -7,7 +7,6 @@ import com.ntros.mprocswift.exceptions.CardPaymentFailedException;
 import com.ntros.mprocswift.exceptions.InsufficientFundsException;
 import com.ntros.mprocswift.model.Merchant;
 import com.ntros.mprocswift.model.Wallet;
-import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.card.Card;
 import com.ntros.mprocswift.model.currency.Currency;
 import com.ntros.mprocswift.model.transactions.CardPayment;
@@ -18,7 +17,6 @@ import com.ntros.mprocswift.repository.transaction.CardPaymentRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionRepository;
 import com.ntros.mprocswift.service.AbstractService;
 import com.ntros.mprocswift.service.card.CardService;
-import com.ntros.mprocswift.service.currency.CurrencyExchangeRateService;
 import com.ntros.mprocswift.service.merchant.MerchantService;
 import com.ntros.mprocswift.service.wallet.WalletService;
 import jakarta.transaction.Transactional;
@@ -41,21 +39,17 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 @Slf4j
 public class CardPaymentProcessingService extends AbstractService implements PaymentService {
 
-
     private final MerchantService merchantService;
     private final CardService cardService;
     private final WalletService walletService;
-
     private final TransactionRepository transactionRepository;
     private final CardPaymentRepository cardPaymentRepository;
-    private final CurrencyExchangeRateService currencyExchangeRateService;
     private final MerchantConverter merchantConverter;
 
     @Autowired
     public CardPaymentProcessingService(MerchantService merchantService,
                                         CardService cardService,
                                         WalletService walletService,
-                                        CurrencyExchangeRateService currencyExchangeRateService,
                                         TransactionRepository transactionRepository,
                                         CardPaymentRepository cardPaymentRepository,
                                         MerchantConverter merchantConverter) {
@@ -63,7 +57,6 @@ public class CardPaymentProcessingService extends AbstractService implements Pay
         this.merchantService = merchantService;
         this.cardService = cardService;
         this.walletService = walletService;
-        this.currencyExchangeRateService = currencyExchangeRateService;
         this.transactionRepository = transactionRepository;
         this.cardPaymentRepository = cardPaymentRepository;
         this.merchantConverter = merchantConverter;
@@ -89,8 +82,10 @@ public class CardPaymentProcessingService extends AbstractService implements Pay
     }
 
     private void makePayment(Wallet wallet, Card card, Merchant merchant, CardPaymentRequest cardPaymentRequest) {
-        validateBalance(wallet.getBalance(), valueOf(cardPaymentRequest.getPrice()), wallet.getAccount().getAccNumber());
-        wallet.decreaseBalance(valueOf(cardPaymentRequest.getPrice()));
+        BigDecimal price = valueOf(cardPaymentRequest.getPrice());
+        validateBalance(wallet.getAccount().getAccNumber(), wallet.getBalance(), price);
+        wallet.decreaseBalance(price);
+
         walletService.updateBalance(wallet.getWalletId(), wallet.getBalance());
         createPaymentTransaction(cardPaymentRequest, wallet.getCurrency(), card, merchant);
     }
@@ -138,7 +133,7 @@ public class CardPaymentProcessingService extends AbstractService implements Pay
         }, executor);
     }
 
-    private void validateBalance(BigDecimal balance, BigDecimal price, String accountNumber) {
+    private void validateBalance(String accountNumber, BigDecimal balance, BigDecimal price) {
         if (balance.compareTo(price) < 0) {
             throw new InsufficientFundsException(format("Not enough funds for this purchase. " +
                             "Account %s with balance: %s, product price: %s",

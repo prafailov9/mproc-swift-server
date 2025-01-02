@@ -37,28 +37,24 @@ public class W2WTransferService extends AbstractTransferService<W2WTransferReque
     }
 
     @Override
-    protected CompletableFuture<Void> performTransfer(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
-        return CompletableFuture.runAsync(() -> {
-            sender.decreaseBalance(transferRequest.getAmount());
+    protected void performTransfer(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
+        sender.decreaseBalance(transferRequest.getAmount());
 
-            BigDecimal convertedAmount = currencyExchangeRateService.convert(
-                    transferRequest.getAmount(),
-                    sender.getCurrency(),
-                    receiver.getCurrency());
+        BigDecimal convertedAmount = currencyExchangeRateService.convert(
+                transferRequest.getAmount(),
+                sender.getCurrency(),
+                receiver.getCurrency());
 
-            receiver.increaseBalance(convertedAmount);
-            updateWalletsAndAccounts(sender, receiver);
-        }, executor);
+        receiver.increaseBalance(convertedAmount);
+        updateWalletsAndAccounts(sender, receiver);
     }
 
     @Override
     @Modifying
     @Transactional
-    protected CompletableFuture<Void> createTransferTransaction(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
-        return CompletableFuture.runAsync(() -> {
-            Transaction transaction = buildTransaction(sender, receiver, transferRequest);
-            createAndSaveMoneyTransfer(transaction, sender, receiver);
-        }, executor);
+    protected void createTransferTransaction(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
+        Transaction transaction = buildTransaction(sender, receiver, transferRequest);
+        createAndSaveMoneyTransfer(transaction, sender, receiver);
     }
 
     @Transactional
@@ -105,13 +101,11 @@ public class W2WTransferService extends AbstractTransferService<W2WTransferReque
     }
 
     @Override
-    protected CompletableFuture<W2WTransferResponse> buildTransferResponse(W2WTransferRequest transferRequest) {
-        return CompletableFuture.supplyAsync(() -> {
-            W2WTransferResponse response = new W2WTransferResponse();
-            response.setTransferRequest(transferRequest);
-            response.setStatus("success");
-            return response;
-        }, executor);
+    protected W2WTransferResponse buildTransferResponse(W2WTransferRequest transferRequest) {
+        W2WTransferResponse response = new W2WTransferResponse();
+        response.setTransferRequest(transferRequest);
+        response.setStatus("success");
+        return response;
     }
 
 }
