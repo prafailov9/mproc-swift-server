@@ -28,6 +28,6 @@ public interface WalletService {
 
     CompletableFuture<Integer> deleteWallet(final UniqueWalletDTO uniqueWalletDTO);
 
-    CompletableFuture<Integer> updateBalance(final int walletId, final BigDecimal balance);
+    CompletableFuture<Void> updateBalance(final int walletId, final BigDecimal balance);
 
 }

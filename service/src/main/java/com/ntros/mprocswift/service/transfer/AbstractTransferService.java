@@ -8,9 +8,11 @@ import com.ntros.mprocswift.repository.transaction.TransactionRepository;
 import com.ntros.mprocswift.service.account.AccountService;
 import com.ntros.mprocswift.service.currency.CurrencyExchangeRateService;
 import com.ntros.mprocswift.service.wallet.WalletService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -24,7 +26,6 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
     @Autowired
     @Qualifier("taskExecutor")
     protected Executor executor;
-
     @Autowired
     protected AccountService accountService;
     @Autowired
@@ -40,26 +41,30 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
         CompletableFuture<S> senderFuture = getSender(transferRequest);
         CompletableFuture<S> receiverFuture = getReceiver(transferRequest);
 
-        return senderFuture
-                .thenCombineAsync(receiverFuture, (sender, receiver) ->
-                        performTransfer(sender, receiver, transferRequest)
-                                .thenComposeAsync(v -> createTransferTransaction(sender, receiver, transferRequest), executor)
-                                .thenComposeAsync(v -> buildTransferResponse(transferRequest)), executor)
-                .thenComposeAsync(response -> response, executor)
-                .exceptionally(ex -> {
-                    log.error("Failed to process money transfer: {}", ex.getMessage(), ex.getCause());
-                    throw new TransferProcessingFailedException(ex.getMessage(), ex.getCause());
-                });
+        return senderFuture.thenCombineAsync(receiverFuture, (sender, receiver) ->
+                doTransfer(sender, receiver, transferRequest), executor
+        ).exceptionally(ex -> {
+            log.error("Failed to process money transfer: {}", ex.getMessage(), ex.getCause());
+            throw new TransferProcessingFailedException(ex.getMessage(), ex.getCause());
+        });
     }
 
     protected abstract CompletableFuture<S> getSender(T transferRequest);
 
     protected abstract CompletableFuture<S> getReceiver(T transferRequest);
 
-    protected abstract CompletableFuture<Void> performTransfer(S sender, S receiver, T transferRequest);
+    protected abstract void performTransfer(S sender, S receiver, T transferRequest);
 
-    protected abstract CompletableFuture<Void> createTransferTransaction(S sender, S receiver, T transferRequest);
+    protected abstract void createTransferTransaction(S sender, S receiver, T transferRequest);
 
-    protected abstract CompletableFuture<R> buildTransferResponse(T transferRequest);
+    protected abstract R buildTransferResponse(T transferRequest);
+
+    @Transactional
+    @Modifying
+    private R doTransfer(S sender, S receiver, T transferRequest) {
+        performTransfer(sender, receiver, transferRequest);
+        createTransferTransaction(sender, receiver, transferRequest);
+        return buildTransferResponse(transferRequest);
+    }
 
 }

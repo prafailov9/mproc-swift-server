@@ -40,7 +40,10 @@ public class RestExceptionHandlerRegistry {
                 GenericExceptionHandler.of(InvalidDecimalAmountException.class, HttpStatus.INTERNAL_SERVER_ERROR, Throwable::getMessage),
                 GenericExceptionHandler.of(CardNotFoundException.class, HttpStatus.NOT_FOUND, Throwable::getMessage),
                 GenericExceptionHandler.of(CannotRefreshCardException.class, HttpStatus.INTERNAL_SERVER_ERROR, Throwable::getMessage),
-                GenericExceptionHandler.of(CardNotCreatedException.class, HttpStatus.INTERNAL_SERVER_ERROR, Throwable::getMessage));
+                GenericExceptionHandler.of(CardNotCreatedException.class, HttpStatus.INTERNAL_SERVER_ERROR, Throwable::getMessage),
+                GenericExceptionHandler.of(MerchantConstraintFailureException.class, HttpStatus.INTERNAL_SERVER_ERROR, Throwable::getMessage),
+                GenericExceptionHandler.of(NotFoundException.class, HttpStatus.NOT_FOUND, Throwable::getMessage)
+                );
 
     }
 

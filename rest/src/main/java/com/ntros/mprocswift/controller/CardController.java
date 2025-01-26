@@ -15,12 +15,12 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("api/cards")
 public class CardController extends AbstractApiController {
 
-    private final CardPaymentProcessingService cardPaymentProcessingService;
-
-    @Autowired
-    public CardController(final CardPaymentProcessingService cardPaymentProcessingService) {
-        this.cardPaymentProcessingService = cardPaymentProcessingService;
-    }
+//    private final CardPaymentProcessingService cardPaymentProcessingService;
+//
+//    @Autowired
+//    public CardController(final CardPaymentProcessingService cardPaymentProcessingService) {
+//        this.cardPaymentProcessingService = cardPaymentProcessingService;
+//    }
 
     /**
      * 1. get all cards
@@ -30,10 +30,10 @@ public class CardController extends AbstractApiController {
      * 5. call pay-with-card api
      */
 
-    @PostMapping("/card-payment")
-    public CompletableFuture<ResponseEntity<?>> processCardPayment(@Validated CardPaymentRequest cardPaymentRequest) {
-        return CompletableFuture
-                .supplyAsync(() -> cardPaymentProcessingService.processPayment(cardPaymentRequest))
-                .handleAsync(this::handleResponseAsync);
-    }
+//    @PostMapping("/card-payment")
+//    public CompletableFuture<ResponseEntity<?>> processCardPayment(@Validated CardPaymentRequest cardPaymentRequest) {
+//        return CompletableFuture
+//                .supplyAsync(() -> cardPaymentProcessingService.processPayment(cardPaymentRequest))
+//                .handleAsync(this::handleResponseAsync);
+//    }
 }

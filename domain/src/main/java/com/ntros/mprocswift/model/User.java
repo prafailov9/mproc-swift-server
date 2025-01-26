@@ -2,6 +2,7 @@ package com.ntros.mprocswift.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import java.time.OffsetDateTime;
@@ -9,6 +10,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
+@EqualsAndHashCode(of = {"userId", "username", "email"})
 public class User {
 
     @Id

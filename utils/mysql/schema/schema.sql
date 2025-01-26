@@ -72,7 +72,7 @@ CREATE UNIQUE INDEX idx_account_number ON account_details(account_number);
 
 CREATE TABLE IF NOT EXISTS account (
     account_id INT AUTO_INCREMENT PRIMARY KEY,
-    account_details_id INT NOT NULL,
+    account_details_id INT NOT NULL UNIQUE,
     user_id INT NOT NULL,
 
     total_balance DECIMAL(34, 16) NOT NULL,
@@ -156,11 +156,14 @@ CREATE TABLE IF NOT EXISTS card (
     expiration_date DATE,
     cvv CHAR(3),
     pin_hash VARCHAR(256),
+    -- TODO: add column for unique card id encrypted hash: card_hash()
+
     -- status ENUM('active', 'inactive', 'one-time') NOT NULL,
     creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (card_type_id) REFERENCES card_type(card_type_id),
-    FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE
+    FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE,
+    UNIQUE(card_provider, card_number, expiration_date, cvv)
 );
 
 
@@ -191,9 +194,6 @@ CREATE TABLE IF NOT EXISTS `transaction` (
     type_id INT NOT NULL,
     status_id INT NOT NULL,
     currency_id INT NOT NULL,
-
-    -- sender VARCHAR(256),
-    -- receiver VARCHAR(256),
 
     amount DECIMAL(20, 6) NOT NULL,
     fees DOUBLE,

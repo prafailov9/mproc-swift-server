@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @RequiredArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"walletId", "account", "currency"})
 public class Wallet {
 
     @Id
@@ -29,4 +29,15 @@ public class Wallet {
     private BigDecimal balance;
     private boolean isMain;
 
+    public void increaseBalance(final BigDecimal amount) {
+        balance = balance.add(amount);
+    }
+
+    public void decreaseBalance(final BigDecimal amount) {
+        balance = balance.subtract(amount);
+    }
+
+    public boolean verifyOwnership(String accountNumber, String currencyCode) {
+        return account.getAccNumber().equals(accountNumber) && this.currency.getCurrencyCode().equals(currencyCode);
+    }
 }

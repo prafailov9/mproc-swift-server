@@ -4,7 +4,6 @@ insert into card_type(card_type_id, type) values(2, 'virtual');
 insert into card_type(card_type_id, type) values(3, 'one-time virtual');
 
 -- cards
-
 insert into card (card_type_id, account_id, card_provider, card_number, expiration_date, cvv, pin_hash) values (2, 887, 'jcb', '3586041793859364', '2028-11-17', 628, '$2a$04$d537T9/5ZJM.qQSWphZaxeI512Ezvqq/CyIYbXc6KJ6eiktab/o1u');
 insert into card (card_type_id, account_id, card_provider, card_number, expiration_date, cvv, pin_hash) values (3, 935, 'diners-club-enroute', '201647704393771', '2027-04-10', 711, '$2a$04$QLJKMW2Rk.8DEU9upbHaq.t6Y9v3ZmPqsdmx9vz..HDSg3JoC.BJ6');
 insert into card (card_type_id, account_id, card_provider, card_number, expiration_date, cvv, pin_hash) values (2, 268, 'jcb', '3552665218470413', '2023-12-08', 330, '$2a$04$7gVkWezdyDf3pd4v/VmIQeOl/xglWV0be0eGy0L9aQRpjXMp407dS');

@@ -2,6 +2,7 @@ package com.ntros.mprocswift.model.currency;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @RequiredArgsConstructor
+@EqualsAndHashCode
 public class Currency {
 
     @Id

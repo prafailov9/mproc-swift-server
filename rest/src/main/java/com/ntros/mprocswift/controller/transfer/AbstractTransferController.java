@@ -27,7 +27,7 @@ public abstract class AbstractTransferController<T extends TransferRequest, R ex
 
     protected CompletableFuture<ResponseEntity<?>> processTransfer(T transferRequest) {
         return transferService.transfer(transferRequest)
-                .handleAsync((this::handleResponseAsync), executor);
+                .handleAsync(this::handleResponseAsync, executor);
     }
 }
 

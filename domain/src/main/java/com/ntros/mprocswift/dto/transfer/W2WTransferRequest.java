@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true) // include superclass fields in Lombok's equals and hashCode impls.
 @CurrenciesNotEqual
-public class WalletToWalletTransferRequest extends TransferRequest {
+public class W2WTransferRequest extends TransferRequest {
 
     @NotNull(message = "currency code cannot be null.")
     @NotBlank(message = "currency code cannot be empty.")

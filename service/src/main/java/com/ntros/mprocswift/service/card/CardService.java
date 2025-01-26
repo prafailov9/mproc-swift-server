@@ -1,5 +1,6 @@
 package com.ntros.mprocswift.service.card;
 
+import com.ntros.mprocswift.dto.CardDTO;
 import com.ntros.mprocswift.model.card.Card;
 
 import java.util.List;
@@ -8,6 +9,9 @@ import java.util.concurrent.CompletableFuture;
 public interface CardService {
 
     Card getCard(final int cardId);
+
+    CompletableFuture<Card> getCard(CardDTO cardDTO);
+    CompletableFuture<List<Card>> getAllCardsForAccountNumber(String accountNumber);
 
     List<Card> getAllCards();
 

@@ -1,8 +1,8 @@
 package com.ntros.mprocswift.controller.transfer;
 
-import com.ntros.mprocswift.dto.transfer.WalletToWalletTransferRequest;
-import com.ntros.mprocswift.dto.transfer.WalletToWalletTransferResponse;
-import com.ntros.mprocswift.service.transfer.WalletToWalletTransferService;
+import com.ntros.mprocswift.dto.transfer.W2WTransferRequest;
+import com.ntros.mprocswift.dto.transfer.W2WTransferResponse;
+import com.ntros.mprocswift.service.transfer.W2WTransferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,14 +14,14 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/transfer/to-wallet")
-public class WalletToWalletTransferController extends AbstractTransferController<WalletToWalletTransferRequest, WalletToWalletTransferResponse> {
+public class WalletToWalletTransferController extends AbstractTransferController<W2WTransferRequest, W2WTransferResponse> {
 
-    protected WalletToWalletTransferController(WalletToWalletTransferService transferService) {
+    protected WalletToWalletTransferController(W2WTransferService transferService) {
         super(transferService);
     }
 
    @PostMapping
-   public CompletableFuture<ResponseEntity<?>> transfer(@RequestBody @Validated WalletToWalletTransferRequest transferRequest) {
+   public CompletableFuture<ResponseEntity<?>> transfer(@RequestBody @Validated W2WTransferRequest transferRequest) {
        return processTransfer(transferRequest);
    }
 
