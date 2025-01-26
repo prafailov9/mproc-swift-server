@@ -43,9 +43,9 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
         return senderFuture
                 .thenCombineAsync(receiverFuture, (sender, receiver) ->
                         performTransfer(sender, receiver, transferRequest)
-                                .thenComposeAsync(v -> createTransferTransaction(sender, receiver, transferRequest))
+                                .thenComposeAsync(v -> createTransferTransaction(sender, receiver, transferRequest), executor)
                                 .thenComposeAsync(v -> buildTransferResponse(transferRequest)), executor)
-                .thenComposeAsync(response -> response)
+                .thenComposeAsync(response -> response, executor)
                 .exceptionally(ex -> {
                     log.error("Failed to process money transfer: {}", ex.getMessage(), ex.getCause());
                     throw new TransferProcessingFailedException(ex.getMessage(), ex.getCause());
