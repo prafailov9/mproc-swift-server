@@ -144,26 +144,28 @@ CREATE TABLE IF NOT EXISTS wallet (
 -- types: virtual, virtual one-time use, etc;
 CREATE TABLE IF NOT EXISTS card_type (
     card_type_id INT AUTO_INCREMENT PRIMARY KEY,
-    type VARCHAR(32) NOT NULL
+    type VARCHAR(32) NOT NULL,
+    UNIQUE(type)
 );
 
 CREATE TABLE IF NOT EXISTS card (
     card_id INT AUTO_INCREMENT PRIMARY KEY,
     card_type_id INT NOT NULL,
     account_id INT NOT NULL,
+    card_id_hash VARCHAR(256) NOT NULL, -- unique identifier hash fro card info
     card_provider VARCHAR(32) NOT NULL, -- ('visa', 'mastercard')
     card_number VARCHAR(19), -- maestro cards can have 19 digits
-    expiration_date DATE,
-    cvv CHAR(3),
-    pin_hash VARCHAR(256),
-    -- TODO: add column for unique card id encrypted hash: card_hash()
+    expiration_date DATE NOT NULL,
+    cvv CHAR(3) NOT NULL,
+    pin VARCHAR(256) NOT NULL,
+    status ENUM('ACTIVE', 'INACTIVE', 'FROZEN') NOT NULL,
 
-    -- status ENUM('active', 'inactive', 'one-time') NOT NULL,
     creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (card_type_id) REFERENCES card_type(card_type_id),
     FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE,
-    UNIQUE(card_provider, card_number, expiration_date, cvv)
+    UNIQUE(card_provider, card_number, expiration_date, cvv),
+    UNIQUE(card_id_hash, card_provider)
 );
 
 

@@ -6,8 +6,7 @@ import com.ntros.mprocswift.exceptions.CardNotCreatedException;
 import com.ntros.mprocswift.exceptions.CardNotFoundException;
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.card.Card;
-import com.ntros.mprocswift.model.card.CardType;
-import com.ntros.mprocswift.repository.CardRepository;
+import com.ntros.mprocswift.repository.card.CardRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +45,9 @@ public class CardDataService implements CardService {
     public CompletableFuture<Card> getCard(CardDTO cardDTO) {
         return supplyAsync(() -> cardRepository
                         .findByNumberExpirationCvv(cardDTO.getCardProvider(),
-                                cardDTO.getCardNumberHash(),
+                                cardDTO.getCardNumber(),
                                 cardDTO.getExpirationDate(),
-                                cardDTO.getCvvHash())
+                                cardDTO.getCvv())
                         .orElseThrow(() -> new NotFoundException("Card not found."))
                 , executor);
     }
@@ -56,14 +55,14 @@ public class CardDataService implements CardService {
     @Override
     public CompletableFuture<List<Card>> getAllCardsForAccountNumber(String accountNumber) {
         return supplyAsync(() -> cardRepository.findAllByAccountNumber(accountNumber)
-                .orElseThrow(() ->
-                        new NotFoundException(format("No cards found for account number: %s", accountNumber)))
+                        .orElseThrow(() ->
+                                new NotFoundException(format("No cards found for account number: %s", accountNumber)))
                 , executor);
     }
 
     @Override
-    public List<Card> getAllCards() {
-        return cardRepository.findAll();
+    public CompletableFuture<List<Card>> getAllCards() {
+        return supplyAsync(cardRepository::findAll);
     }
 
     @Override
@@ -85,7 +84,7 @@ public class CardDataService implements CardService {
 
     @Override
     public Card refresh(Card card) {
-        if (!card.getCardType().equals(CardType.ONE_TIME_VIRTUAL)) {
+        if (!card.getCardType().getType().equals("ONE_TIME_VIRTUAL")) {
             throw new CannotRefreshCardException("Card must be of type ONE_TIME_VIRTUAL.");
         }
 

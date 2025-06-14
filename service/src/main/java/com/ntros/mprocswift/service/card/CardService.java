@@ -13,7 +13,7 @@ public interface CardService {
     CompletableFuture<Card> getCard(CardDTO cardDTO);
     CompletableFuture<List<Card>> getAllCardsForAccountNumber(String accountNumber);
 
-    List<Card> getAllCards();
+    CompletableFuture<List<Card>> getAllCards();
 
     CompletableFuture<Card> createCard(final Card card);
 

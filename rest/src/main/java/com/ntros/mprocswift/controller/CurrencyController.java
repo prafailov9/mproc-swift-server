@@ -28,7 +28,7 @@ public class CurrencyController extends AbstractApiController {
     public CompletableFuture<ResponseEntity<?>> getCurrency(@PathVariable
                                                             String currencyCode) {
         return currencyService.getCurrencyByCodeAsync(currencyCode)
-                .thenApplyAsync(currencyConverter::toDTO)
+                .thenApplyAsync(currencyConverter::toDto)
                 .handleAsync(this::handleResponseAsync);
     }
 

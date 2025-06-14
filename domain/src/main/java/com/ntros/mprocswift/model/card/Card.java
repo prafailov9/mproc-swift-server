@@ -16,18 +16,24 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cardId;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "card_type_id")
     private CardType cardType;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private CardStatus status;
+
+    private String cardIdHash;
     private String cardProvider;
     private String cardNumber;
     private String expirationDate;
     private String cvv;
-    private String pinHash;
+    private String pin;
 
     private OffsetDateTime creationDate;
 

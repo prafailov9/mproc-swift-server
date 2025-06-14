@@ -32,7 +32,7 @@ public class AccountController extends AbstractApiController {
     public CompletableFuture<ResponseEntity<?>> getAccount(@PathVariable @Min(1) int accountId) {
         return accountService
                 .getAccount(accountId)
-                .thenApplyAsync(accountModelConverter::toDTO)
+                .thenApplyAsync(accountModelConverter::toDto)
                 .handleAsync(this::handleResponseAsync);
     }
 
@@ -43,7 +43,7 @@ public class AccountController extends AbstractApiController {
                                                                String accountNumber) {
         return accountService
                 .getAccountByAccountNumber(accountNumber)
-                .thenApplyAsync(accountModelConverter::toDTO)
+                .thenApplyAsync(accountModelConverter::toDto)
                 .handleAsync(this::handleResponseAsync);
     }
 
@@ -53,7 +53,7 @@ public class AccountController extends AbstractApiController {
                 .getAllAccounts()
                 .thenApplyAsync(accounts -> accounts
                         .stream()
-                        .map(accountModelConverter::toDTO)
+                        .map(accountModelConverter::toDto)
                         .collect(Collectors.toList()))
                 .handleAsync((this::handleResponseAsync));
     }
@@ -63,7 +63,7 @@ public class AccountController extends AbstractApiController {
         return accountService.getAllAccountsWalletCount(walletCount)
                 .thenApplyAsync(accounts -> accounts
                         .stream()
-                        .map(accountModelConverter::toDTO)
+                        .map(accountModelConverter::toDto)
                         .collect(Collectors.toList()))
                 .handleAsync((this::handleResponseAsync));
     }

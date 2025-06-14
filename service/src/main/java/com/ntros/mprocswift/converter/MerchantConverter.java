@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MerchantConverter implements Converter<MerchantDTO, Merchant> {
     @Override
-    public MerchantDTO toDTO(Merchant model) {
+    public MerchantDTO toDto(Merchant model) {
         MerchantDTO dto = new MerchantDTO();
         dto.setMerchantCategoryCode(model.getMerchantCategoryCode());
         dto.setMerchantName(model.getMerchantName());

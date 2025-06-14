@@ -32,7 +32,7 @@ public class WalletController extends AbstractApiController {
     @ResponseBody
     public CompletableFuture<ResponseEntity<?>> getWallet(@PathVariable int walletId) {
         return walletService.getWallet(walletId)
-                .thenApplyAsync(walletModelConverter::toDTO, executor)
+                .thenApplyAsync(walletModelConverter::toDto, executor)
                 .handleAsync((walletForm, ex) -> handleResponseAsync(walletForm, ex, HttpStatus.NOT_FOUND), executor);
     }
 
@@ -42,7 +42,7 @@ public class WalletController extends AbstractApiController {
         return walletService.getAllWallets()
                 .thenApplyAsync(wallets -> wallets
                         .stream()
-                        .map(walletModelConverter::toDTO)
+                        .map(walletModelConverter::toDto)
                         .collect(Collectors.toList()), executor)
                 .handleAsync(((walletForms, ex) -> handleResponseAsync(walletForms, ex, HttpStatus.NOT_FOUND)), executor);
     }
@@ -53,7 +53,7 @@ public class WalletController extends AbstractApiController {
         return walletService.getAllWalletsByAccount(accountId)
                 .thenApplyAsync(wallets -> wallets
                         .stream()
-                        .map(walletModelConverter::toDTO)
+                        .map(walletModelConverter::toDto)
                         .collect(Collectors.toList()), executor)
                 .handleAsync((walletForms, ex) ->
                         handleResponseAsync(walletForms, ex, HttpStatus.NOT_FOUND), executor);

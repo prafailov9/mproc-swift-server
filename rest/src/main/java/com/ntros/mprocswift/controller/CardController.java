@@ -1,26 +1,27 @@
 package com.ntros.mprocswift.controller;
 
-import com.ntros.mprocswift.dto.cardpayment.CardPaymentRequest;
-import com.ntros.mprocswift.service.payment.CardPaymentProcessingService;
+import com.ntros.mprocswift.converter.CardConverter;
+import com.ntros.mprocswift.service.card.CardDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/cards")
 public class CardController extends AbstractApiController {
 
-//    private final CardPaymentProcessingService cardPaymentProcessingService;
-//
-//    @Autowired
-//    public CardController(final CardPaymentProcessingService cardPaymentProcessingService) {
-//        this.cardPaymentProcessingService = cardPaymentProcessingService;
-//    }
+    private final CardDataService cardDataService;
+    private final CardConverter cardConverter;
+    @Autowired
+    public CardController(CardDataService cardDataService, CardConverter cardConverter) {
+        this.cardDataService = cardDataService;
+        this.cardConverter = cardConverter;
+    }
 
     /**
      * 1. get all cards
@@ -30,10 +31,16 @@ public class CardController extends AbstractApiController {
      * 5. call pay-with-card api
      */
 
-//    @PostMapping("/card-payment")
-//    public CompletableFuture<ResponseEntity<?>> processCardPayment(@Validated CardPaymentRequest cardPaymentRequest) {
-//        return CompletableFuture
-//                .supplyAsync(() -> cardPaymentProcessingService.processPayment(cardPaymentRequest))
-//                .handleAsync(this::handleResponseAsync);
-//    }
+
+    @GetMapping
+    public CompletableFuture<ResponseEntity<?>> getAllCards() {
+        return cardDataService
+                .getAllCards()
+                .thenApplyAsync(accounts -> accounts
+                        .stream()
+                        .map(cardConverter::toDto)
+                        .collect(Collectors.toList()))
+                .handleAsync((this::handleResponseAsync));
+    }
+
 }

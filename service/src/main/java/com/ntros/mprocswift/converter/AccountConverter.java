@@ -27,7 +27,7 @@ public class AccountConverter implements Converter<AccountDTO, Account> {
     }
 
     @Override
-    public AccountDTO toDTO(Account model) {
+    public AccountDTO toDto(Account model) {
         AccountDTO form = new AccountDTO();
         form.setAccountNumber(model.getAccountDetails().getAccountNumber());
         form.setAccountOwner(String.format("%s %s", model.getUser().getFirstName(), model.getUser().getLastName()));
@@ -39,8 +39,8 @@ public class AccountConverter implements Converter<AccountDTO, Account> {
         form.setBankAddress(model.getAccountDetails().getBankAddress());
         form.setCreatedDate(model.getCreatedDate());
 
-        List<WalletDTO> walletDTOS = model.getWallets().stream().map(walletModelConverter::toDTO).toList();
-        form.setWallets(walletDTOS);
+        List<WalletDTO> wallets = model.getWallets().stream().map(walletModelConverter::toDto).toList();
+        form.setWallets(wallets);
         return form;
     }
 
@@ -61,7 +61,7 @@ public class AccountConverter implements Converter<AccountDTO, Account> {
 
     public AccountWalletCountDTO toAccountWalletCountDTO(Account account) {
         AccountWalletCountDTO accountWalletCountDTO = new AccountWalletCountDTO();
-        accountWalletCountDTO.setAccountDTO(toDTO(account));
+        accountWalletCountDTO.setAccountDTO(toDto(account));
         accountWalletCountDTO.setWalletCount(account.getWallets().size());
         return accountWalletCountDTO;
     }

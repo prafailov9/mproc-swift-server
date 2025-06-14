@@ -1,7 +1,22 @@
 package com.ntros.mprocswift.model.card;
 
-public enum CardType {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
-    VIRTUAL, ONE_TIME_VIRTUAL
+@Entity
+@Data
+@RequiredArgsConstructor
+public class CardType {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer cardTypeId;
+
+    private String type;
+
 
 }

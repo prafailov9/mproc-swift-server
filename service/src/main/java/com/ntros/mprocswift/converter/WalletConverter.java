@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class WalletConverter implements Converter<WalletDTO, Wallet> {
 
     @Override
-    public WalletDTO toDTO(Wallet model) {
+    public WalletDTO toDto(Wallet model) {
         WalletDTO form = new WalletDTO();
         form.setCurrencyCode(model.getCurrency().getCurrencyCode());
         form.setAccountNumber(model.getAccount().getAccountDetails().getAccountNumber());

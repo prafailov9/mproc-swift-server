@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CurrencyConverter implements Converter<CurrencyDTO, Currency> {
     @Override
-    public CurrencyDTO toDTO(Currency model) {
+    public CurrencyDTO toDto(Currency model) {
         CurrencyDTO currencyDTO = new CurrencyDTO();
 
         currencyDTO.setCurrencyCode(model.getCurrencyCode());

@@ -35,7 +35,7 @@ public class TransactionController extends AbstractApiController {
         return moneyTransferService.getAllTransfersForAccount(accountNumber)
                 .thenApplyAsync(moneyTransfers -> moneyTransfers
                         .stream()
-                        .map(moneyTransferConverter::toDTO)
+                        .map(moneyTransferConverter::toDto)
                         .collect(Collectors.toList()))
                 .handleAsync(this::handleResponseAsync);
     }

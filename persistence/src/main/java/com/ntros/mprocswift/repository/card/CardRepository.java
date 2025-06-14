@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.repository;
+package com.ntros.mprocswift.repository.card;
 
 import com.ntros.mprocswift.model.card.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +23,7 @@ public interface CardRepository extends JpaRepository<Card, Integer> {
                                              @Param("cvv") String cvv);
 
 
-    @Query("SELECT c.* From Card c " +
+    @Query("SELECT c From Card c " +
             "JOIN c.account a " +
             "JOIN a.accountDetails ad " +
             "WHERE ad.accountNumber = :accountNumber ")

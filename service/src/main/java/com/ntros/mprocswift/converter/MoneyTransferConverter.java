@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MoneyTransferConverter implements Converter<MoneyTransferDTO, MoneyTransfer> {
     @Override
-    public MoneyTransferDTO toDTO(MoneyTransfer model) {
+    public MoneyTransferDTO toDto(MoneyTransfer model) {
         MoneyTransferDTO dto = new MoneyTransferDTO();
         dto.setAmount(model.getTransaction().getAmount());
         dto.setFees(model.getTransaction().getFees());
