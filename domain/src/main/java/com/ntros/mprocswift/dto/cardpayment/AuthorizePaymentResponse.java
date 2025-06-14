@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthorizePaymentResponse {
 
-    private String status;
+    private RequestResultStatus status;
     private String message;
 
     private String authCode;

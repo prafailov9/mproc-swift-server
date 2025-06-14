@@ -1,7 +1,9 @@
 package com.ntros.mprocswift.service.payment;
 
+import com.ntros.mprocswift.dto.cardpayment.AuthCodeType;
 import com.ntros.mprocswift.dto.cardpayment.AuthorizePaymentRequest;
 import com.ntros.mprocswift.dto.cardpayment.AuthorizePaymentResponse;
+import com.ntros.mprocswift.dto.cardpayment.RequestResultStatus;
 import com.ntros.mprocswift.model.Merchant;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.account.Account;
@@ -21,11 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-
-import static java.math.BigDecimal.valueOf;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 @Service
 @Transactional
@@ -57,19 +55,27 @@ public class CardPaymentProcessingService implements PaymentService {
 
     @Override
     public AuthorizePaymentResponse authorizePayment(AuthorizePaymentRequest request) {
-        // get db data
-        Card card = cardService.getCardByHash(request.getCardIdentifier());
-        validateCardStatus(card.getStatus());
-        Merchant merchant = merchantService.getOrCreateMerchant(request);
-        Currency currency = currencyDataService.getCurrencyByCode(request.getCurrency());
-        // validate request
-        Wallet wallet = getWalletForCard(card.getAccount(), request.getCurrency());
-        BigDecimal amount = getAmount(wallet, request); // FX conversion if needed
-        validateBalance(wallet, amount);
-        AuthPaymentContext ctx = new AuthPaymentContext(card, merchant, wallet, amount, currency);
-        // place hold
-        String authCode = transactionService.placeAuthorizationHold(ctx);
-        return buildCardPaymentResponse(ctx, authCode);
+        AuthorizePaymentResponse response;
+        try {
+            // get db data
+            Card card = cardService.getCardByHash(request.getCardIdentifier());
+            validateCardStatus(card.getStatus());
+            Merchant merchant = merchantService.getOrCreateMerchant(request);
+            Currency currency = currencyDataService.getCurrencyByCode(request.getCurrency());
+            // validate request
+            Wallet wallet = getWalletForCard(card.getAccount(), request.getCurrency());
+            BigDecimal amount = getAmount(wallet, request); // FX conversion if needed
+            validateBalance(wallet, amount);
+            AuthPaymentContext ctx = new AuthPaymentContext(card, merchant, wallet, amount, currency);
+            // place hold
+            String authCode = transactionService.placeAuthorizationHold(ctx);
+            response = buildSuccessAuthorizationResponse(ctx, authCode);
+
+        } catch (Exception ex) {
+            log.error("Authorization hold request failed. {}", request);
+            response = buildFailedAuthorizationResponse(request, ex.getMessage());
+        }
+        return response;
     }
 
     private Wallet getWalletForCard(Account account, String currencyCode) {
@@ -97,10 +103,10 @@ public class CardPaymentProcessingService implements PaymentService {
         }
     }
 
-    private AuthorizePaymentResponse buildCardPaymentResponse(AuthPaymentContext ctx, String authCode) {
+    private AuthorizePaymentResponse buildSuccessAuthorizationResponse(AuthPaymentContext ctx, String authCode) {
         AuthorizePaymentResponse response = new AuthorizePaymentResponse();
-        response.setStatus("success");
-        response.setMessage("successful payment to " + ctx.merchant().getMerchantName());
+        response.setStatus(RequestResultStatus.SUCCESS);
+        response.setMessage(String.format("Payment to %s Authorized", ctx.merchant().getMerchantName()));
         response.setMerchant(ctx.merchant().getMerchantName());
         response.setCurrency(ctx.wallet().getCurrency().getCurrencyCode());
         response.setAccountNumber(ctx.wallet().getAccount().getAccountDetails().getAccountNumber());
@@ -110,5 +116,19 @@ public class CardPaymentProcessingService implements PaymentService {
 
         return response;
     }
+
+    private AuthorizePaymentResponse buildFailedAuthorizationResponse(AuthorizePaymentRequest request, String errorMessage) {
+        AuthorizePaymentResponse response = new AuthorizePaymentResponse();
+        response.setStatus(RequestResultStatus.FAILED);
+        response.setMessage(String.format("Failed to authorize payment to %s. Error: [%s]", request.getMerchant(), errorMessage));
+        response.setMerchant(request.getMerchant());
+        response.setCurrency(request.getCurrency());
+        response.setPrice(request.getAmount());
+
+        response.setAuthCode(AuthCodeType.UNAUTHORIZED.name());
+
+        return response;
+    }
+
 
 }
