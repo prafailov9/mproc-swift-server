@@ -14,9 +14,9 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/transfer/to-wallet")
-public class WalletToWalletTransferController extends AbstractTransferController<W2WTransferRequest, W2WTransferResponse> {
+public class W2WTransferController extends AbstractTransferController<W2WTransferRequest, W2WTransferResponse> {
 
-    protected WalletToWalletTransferController(W2WTransferService transferService) {
+    protected W2WTransferController(W2WTransferService transferService) {
         super(transferService);
     }
 

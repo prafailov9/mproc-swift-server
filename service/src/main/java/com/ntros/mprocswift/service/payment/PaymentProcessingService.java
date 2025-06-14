@@ -14,7 +14,6 @@ import com.ntros.mprocswift.service.currency.CurrencyExchangeRateDataService;
 import com.ntros.mprocswift.service.merchant.MerchantService;
 import com.ntros.mprocswift.service.transaction.AuthPaymentContext;
 import com.ntros.mprocswift.service.transaction.TransactionService;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,7 +25,6 @@ import java.util.concurrent.Executor;
 import static com.ntros.mprocswift.utils.TextFormatter.format;
 
 @Service
-@Transactional
 @Slf4j
 public class PaymentProcessingService implements PaymentService {
 
@@ -116,6 +114,4 @@ public class PaymentProcessingService implements PaymentService {
 
         return response;
     }
-
-
 }

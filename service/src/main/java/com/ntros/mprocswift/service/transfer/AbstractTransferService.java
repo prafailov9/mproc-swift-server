@@ -47,12 +47,13 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
         CompletableFuture<S> senderFuture = getSender(transferRequest);
         CompletableFuture<S> receiverFuture = getReceiver(transferRequest);
 
-        return senderFuture.thenCombineAsync(receiverFuture, (sender, receiver) ->
-                doTransfer(sender, receiver, transferRequest), executor
-        ).exceptionally(ex -> {
-            log.error("Failed to process money transfer: {}", ex.getMessage(), ex.getCause());
-            throw new TransferProcessingFailedException(ex.getMessage(), ex.getCause());
-        });
+        return senderFuture
+                .thenCombineAsync(receiverFuture, (sender, receiver) -> new TransferContext<>(sender, receiver, transferRequest), executor)
+                .thenApplyAsync(this::execInTransaction, executor)
+                .exceptionally(ex -> {
+                    log.error("Failed to process money transfer: {}", ex.getMessage(), ex.getCause());
+                    throw new TransferProcessingFailedException(ex.getMessage(), ex.getCause());
+                });
     }
 
     protected abstract CompletableFuture<S> getSender(T transferRequest);
@@ -72,5 +73,17 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
         createTransferTransaction(sender, receiver, transferRequest);
         return buildTransferResponse(transferRequest);
     }
+
+    @Transactional
+    protected R execInTransaction(TransferContext<T, S> ctx) {
+        performTransfer(ctx.sender(), ctx.receiver(), ctx.request());
+        createTransferTransaction(ctx.sender(), ctx.receiver(), ctx.request());
+        return buildTransferResponse(ctx.request());
+    }
+
+
+    protected record TransferContext<T extends TransferRequest, S>(S sender, S receiver, T request) {
+    }
+
 
 }

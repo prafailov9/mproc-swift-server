@@ -8,9 +8,7 @@ import com.ntros.mprocswift.model.transactions.MoneyTransfer;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.TransactionStatus;
 import com.ntros.mprocswift.model.transactions.TransactionType;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,67 +21,77 @@ public class W2WTransferService extends AbstractTransferService<W2WTransferReque
 
     @Override
     protected CompletableFuture<Wallet> getSender(W2WTransferRequest transferRequest) {
-        return walletService.getWalletByCurrencyCodeAndAccountNumber(transferRequest.getCurrencyCode(), transferRequest.getSourceAccountNumber());
+        return walletService.getWalletByCurrencyCodeAndAccountNumber(
+                transferRequest.getCurrencyCode(),
+                transferRequest.getSourceAccountNumber()
+        );
     }
 
     @Override
     protected CompletableFuture<Wallet> getReceiver(W2WTransferRequest transferRequest) {
-        return walletService.getWalletByCurrencyCodeAndAccountNumber(transferRequest.getToCurrencyCode(), transferRequest.getSourceAccountNumber());
+        return walletService.getWalletByCurrencyCodeAndAccountNumber(
+                transferRequest.getToCurrencyCode(),
+                transferRequest.getSourceAccountNumber()
+        );
     }
 
     @Override
     protected void performTransfer(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
         sender.decreaseBalance(transferRequest.getAmount());
 
-        BigDecimal convertedAmount = currencyExchangeRateService.convert(transferRequest.getAmount(), sender.getCurrency(), receiver.getCurrency());
+        BigDecimal convertedAmount = currencyExchangeRateService.convert(
+                transferRequest.getAmount(),
+                sender.getCurrency(),
+                receiver.getCurrency()
+        );
 
         receiver.increaseBalance(convertedAmount);
         updateWalletsAndAccounts(sender, receiver);
     }
 
     @Override
-    @Modifying
-    @Transactional
     protected void createTransferTransaction(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
         Transaction transaction = buildTransaction(sender, receiver, transferRequest);
         createAndSaveMoneyTransfer(transaction, sender, receiver);
     }
 
-    @Transactional
-    @Modifying
-    private void createAndSaveMoneyTransfer(final Transaction transaction, final Wallet sender, final Wallet receiver) {
-        // base transaction must exist before saving a moneyTransfer
+    private Transaction buildTransaction(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
+        TransactionStatus status = transactionStatusRepository.findByStatusName("COMPLETED")
+                .orElseThrow(() -> new NotFoundException("TX Status not found: COMPLETED"));
+
+        TransactionType type = transactionTypeRepository.findByTypeName("WALLET_TO_WALLET_TRANSFER")
+                .orElseThrow(() -> new NotFoundException("TX Type not found: WALLET_TO_WALLET_TRANSFER"));
+
+        Transaction tx = new Transaction();
+        tx.setTransactionDate(OffsetDateTime.now());
+        tx.setCurrency(sender.getCurrency());
+        tx.setFees(null);
+        tx.setAmount(transferRequest.getAmount());
+        tx.setType(type);
+        tx.setDescription(String.format(
+                "Transferred %s from %s to %s.",
+                transferRequest.getAmount(),
+                sender.getCurrency().getCurrencyCode(),
+                receiver.getCurrency().getCurrencyCode()
+        ));
+        tx.setStatus(status);
+        return tx;
+    }
+
+    private void createAndSaveMoneyTransfer(Transaction transaction, Wallet sender, Wallet receiver) {
         transactionRepository.saveAndFlush(transaction);
 
         MoneyTransfer moneyTransfer = new MoneyTransfer();
         moneyTransfer.setTransactionId(transaction.getTransactionId());
         moneyTransfer.setTransaction(transaction);
-
-        // sender and receiver wallets should be of the same account
         moneyTransfer.setSenderAccount(sender.getAccount());
         moneyTransfer.setReceiverAccount(receiver.getAccount());
         moneyTransfer.setTargetCurrencyCode(receiver.getCurrency().getCurrencyCode());
+
         moneyTransferRepository.save(moneyTransfer);
     }
 
-    private Transaction buildTransaction(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
-        TransactionStatus status = transactionStatusRepository.findByStatusName("COMPLETED").orElseThrow(() -> new NotFoundException(String.format("TX Status not found: %s", "COMPLETED")));
-        TransactionType type = transactionTypeRepository.findByTypeName("WALLET_TO_WALLET_TRANSFER").orElseThrow(() -> new NotFoundException(String.format("TX Type not found: %s", "WALLET_TO_WALLET_TRANSFER")));
-        Transaction transaction = new Transaction();
-        transaction.setTransactionDate(OffsetDateTime.now());
-        transaction.setCurrency(sender.getCurrency());
-        transaction.setFees(null);
-        transaction.setAmount(transferRequest.getAmount());
-        transaction.setType(type);
-        transaction.setDescription(String.format("Transferred %s from %s to %s.", transferRequest.getAmount(), sender.getCurrency().getCurrencyCode(), receiver.getCurrency().getCurrencyCode()));
-        transaction.setStatus(status);
-
-        return transaction;
-    }
-
-    @Modifying
-    @Transactional
-    private void updateWalletsAndAccounts(final Wallet sender, final Wallet receiver) {
+    private void updateWalletsAndAccounts(Wallet sender, Wallet receiver) {
         walletService.updateBalance(sender.getWalletId(), sender.getBalance());
         walletService.updateBalance(receiver.getWalletId(), receiver.getBalance());
 
@@ -98,5 +106,5 @@ public class W2WTransferService extends AbstractTransferService<W2WTransferReque
         response.setStatus("success");
         return response;
     }
-
 }
+
