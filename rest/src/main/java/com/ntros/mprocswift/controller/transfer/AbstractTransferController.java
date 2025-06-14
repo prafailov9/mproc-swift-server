@@ -19,7 +19,7 @@ public abstract class AbstractTransferController<T extends TransferRequest, R ex
 
     @Autowired
     @Qualifier("taskExecutor")
-    protected  Executor executor;
+    protected Executor executor;
 
     protected AbstractTransferController(TransferService<T, R> transferService) {
         this.transferService = transferService;
