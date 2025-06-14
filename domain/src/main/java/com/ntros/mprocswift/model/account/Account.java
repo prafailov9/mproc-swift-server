@@ -53,9 +53,15 @@ public class Account {
     }
 
     public Optional<Wallet> getWalletByCurrencyCode(String code) {
-        return wallets.stream()
+        Optional<Wallet> walletOpt = wallets.stream()
                 .filter(wallet -> wallet.getCurrency().getCurrencyCode().equals(code))
                 .findFirst();
+
+        if (walletOpt.isEmpty()) {
+            return getMainWallet();
+        }
+
+        return walletOpt;
     }
 
     public Optional<Wallet> getMainWallet() {

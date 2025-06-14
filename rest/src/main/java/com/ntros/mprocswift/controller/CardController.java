@@ -4,7 +4,7 @@ import com.ntros.mprocswift.converter.CardConverter;
 import com.ntros.mprocswift.dto.cardpayment.AuthorizePaymentRequest;
 import com.ntros.mprocswift.dto.cardpayment.AuthorizePaymentResponse;
 import com.ntros.mprocswift.service.card.CardDataService;
-import com.ntros.mprocswift.service.payment.CardPaymentProcessingService;
+import com.ntros.mprocswift.service.payment.PaymentProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +18,13 @@ public class CardController extends AbstractApiController {
 
     private final CardDataService cardDataService;
     private final CardConverter cardConverter;
-    private final CardPaymentProcessingService cardPaymentProcessingService;
+    private final PaymentProcessingService paymentProcessingService;
 
     @Autowired
-    public CardController(CardDataService cardDataService, CardConverter cardConverter, CardPaymentProcessingService cardPaymentProcessingService) {
+    public CardController(CardDataService cardDataService, CardConverter cardConverter, PaymentProcessingService paymentProcessingService) {
         this.cardDataService = cardDataService;
         this.cardConverter = cardConverter;
-        this.cardPaymentProcessingService = cardPaymentProcessingService;
+        this.paymentProcessingService = paymentProcessingService;
     }
 
     /**
@@ -49,7 +49,7 @@ public class CardController extends AbstractApiController {
 
     @PostMapping("/authorize")
     public ResponseEntity<AuthorizePaymentResponse> authorizePayment(@RequestBody AuthorizePaymentRequest authorizePaymentRequest) {
-        return ResponseEntity.ok(cardPaymentProcessingService.authorizePayment(authorizePaymentRequest));
+        return ResponseEntity.ok(paymentProcessingService.authorizePayment(authorizePaymentRequest));
     }
 
 

@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.service.payment;
+package com.ntros.mprocswift.utils;
 
 public final class TextFormatter {
 

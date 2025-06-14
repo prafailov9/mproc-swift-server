@@ -1,7 +1,7 @@
 package com.ntros.mprocswift.controller;
 
 import com.ntros.mprocswift.dto.cardpayment.AuthorizePaymentRequest;
-import com.ntros.mprocswift.service.payment.CardPaymentProcessingService;
+import com.ntros.mprocswift.service.payment.PaymentProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,18 +16,18 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("api/payment")
 public class PaymentController extends AbstractApiController {
 
-    private final CardPaymentProcessingService cardPaymentProcessingService;
+    private final PaymentProcessingService paymentProcessingService;
 
     @Autowired
-    public PaymentController(final CardPaymentProcessingService cardPaymentProcessingService) {
-        this.cardPaymentProcessingService = cardPaymentProcessingService;
+    public PaymentController(final PaymentProcessingService paymentProcessingService) {
+        this.paymentProcessingService = paymentProcessingService;
     }
 
 
     @PostMapping("/card-payment")
     public CompletableFuture<ResponseEntity<?>> processPayment(@Validated AuthorizePaymentRequest authorizePaymentRequest) {
         return CompletableFuture
-                .supplyAsync(() -> cardPaymentProcessingService.authorizePayment(authorizePaymentRequest))
+                .supplyAsync(() -> paymentProcessingService.authorizePayment(authorizePaymentRequest))
                 .handleAsync(this::handleResponseAsync);
     }
 

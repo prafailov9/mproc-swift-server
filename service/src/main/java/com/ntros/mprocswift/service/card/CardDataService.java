@@ -6,6 +6,7 @@ import com.ntros.mprocswift.exceptions.CardNotCreatedException;
 import com.ntros.mprocswift.exceptions.CardNotFoundException;
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.card.Card;
+import com.ntros.mprocswift.model.card.CardStatus;
 import com.ntros.mprocswift.repository.card.CardRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -51,9 +52,13 @@ public class CardDataService implements CardService {
 
     @Override
     public Card getCardByHash(String cardIdHash) {
-        return
+        Card card =
                 cardRepository.findByCardIdHash(cardIdHash)
                         .orElseThrow(() -> new NotFoundException(String.format("Card not found for hash: %s", cardIdHash)));
+        if (!card.getStatus().equals(CardStatus.ACTIVE)) {
+            throw new IllegalArgumentException(String.format("Invalid card status: %s", card.getStatus().name()));
+        }
+        return card;
     }
 
     @Override
