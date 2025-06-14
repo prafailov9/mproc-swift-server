@@ -13,11 +13,13 @@ public class Merchant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer merchantId;
 
-    @Column(nullable = false)
+    public Merchant(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
     private String merchantName;
-    @Column(nullable = false)
     private String merchantCategoryCode;
-    @Column(nullable = false)
+    @Column(name = "mid")
     private String merchantIdentifierCode;
 
     private String contactDetails;

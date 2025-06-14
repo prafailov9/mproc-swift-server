@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @NoArgsConstructor
@@ -51,9 +52,15 @@ public class Account {
         return this.getAccountDetails().getAccountNumber();
     }
 
-    public Wallet getMainWallet() {
+    public Optional<Wallet> getWalletByCurrencyCode(String code) {
+        return wallets.stream()
+                .filter(wallet -> wallet.getCurrency().getCurrencyCode().equals(code))
+                .findFirst();
+    }
+
+    public Optional<Wallet> getMainWallet() {
         if (wallets == null || wallets.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
         Wallet main = wallets.stream()
@@ -63,7 +70,7 @@ public class Account {
 
         // set true just in case
         main.setMain(true);
-        return main;
+        return Optional.of(main);
     }
 
 }

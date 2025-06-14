@@ -1,17 +1,18 @@
-package com.ntros.mprocswift.model.transactions;
+package com.ntros.mprocswift.model.transactions.card;
 
 import com.ntros.mprocswift.model.Merchant;
 import com.ntros.mprocswift.model.card.Card;
+import com.ntros.mprocswift.model.transactions.Transaction;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.time.OffsetDateTime;
+
 @Entity
 @Data
 @RequiredArgsConstructor
-public class CardPayment  {
-
-
+public class CardAuthorization {
     // the Primary key is a foreign key to the transaction table.
     @Id
     private Integer transactionId;
@@ -29,5 +30,6 @@ public class CardPayment  {
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
 
-
+    private String authorizationCode;
+    private OffsetDateTime authorizedAt;
 }

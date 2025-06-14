@@ -123,7 +123,7 @@ public class AccountDataService implements AccountService {
                 res.append(format("Total balance for Account [ID: %s]=%s %s for 1 wallet\n",
                         account.getAccountId(), balance, wallets.get(0).getCurrency().getCurrencyCode()));
             } else {
-                Wallet main = account.getMainWallet();
+                Wallet main = account.getMainWallet().orElseThrow(() -> new IllegalArgumentException(String.format("No wallet found for account: %s", account.getAccNumber())));
                 main.setMain(true);
                 wallets = wallets.stream().filter(wallet -> !wallet.isMain()).collect(Collectors.toList());
                 BigDecimal amount = getTotal(wallets, account.getAccountId(), main);
@@ -150,7 +150,7 @@ public class AccountDataService implements AccountService {
                     "No wallets found for account: %s",
                     account.getAccountDetails().getAccountNumber()));
         }
-        Wallet mainWallet = account.getMainWallet();
+        Wallet mainWallet = account.getMainWallet().orElseThrow(() -> new IllegalArgumentException(String.format("No wallet found for account: %s", account.getAccNumber())));
         BigDecimal totalAccountBalance = getTotal(wallets, account.getAccountId(), mainWallet);
 
         account.setTotalBalance(totalAccountBalance);

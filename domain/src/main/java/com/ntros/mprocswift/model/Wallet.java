@@ -37,6 +37,10 @@ public class Wallet {
         balance = balance.subtract(amount);
     }
 
+    public boolean hasAvailableBalance(final BigDecimal amount) {
+        return balance.compareTo(amount) > 0;
+    }
+
     public boolean verifyOwnership(String accountNumber, String currencyCode) {
         return account.getAccNumber().equals(accountNumber) && this.currency.getCurrencyCode().equals(currencyCode);
     }

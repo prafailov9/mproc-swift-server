@@ -2,6 +2,7 @@ package com.ntros.mprocswift.service.transfer;
 
 import com.ntros.mprocswift.dto.transfer.W2WTransferRequest;
 import com.ntros.mprocswift.dto.transfer.W2WTransferResponse;
+import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.transactions.MoneyTransfer;
 import com.ntros.mprocswift.model.transactions.Transaction;
@@ -22,28 +23,19 @@ public class W2WTransferService extends AbstractTransferService<W2WTransferReque
 
     @Override
     protected CompletableFuture<Wallet> getSender(W2WTransferRequest transferRequest) {
-        return walletService
-                .getWalletByCurrencyCodeAndAccountNumber(
-                        transferRequest.getCurrencyCode(),
-                        transferRequest.getSourceAccountNumber());
+        return walletService.getWalletByCurrencyCodeAndAccountNumber(transferRequest.getCurrencyCode(), transferRequest.getSourceAccountNumber());
     }
 
     @Override
     protected CompletableFuture<Wallet> getReceiver(W2WTransferRequest transferRequest) {
-        return walletService
-                .getWalletByCurrencyCodeAndAccountNumber(
-                        transferRequest.getToCurrencyCode(),
-                        transferRequest.getSourceAccountNumber());
+        return walletService.getWalletByCurrencyCodeAndAccountNumber(transferRequest.getToCurrencyCode(), transferRequest.getSourceAccountNumber());
     }
 
     @Override
     protected void performTransfer(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
         sender.decreaseBalance(transferRequest.getAmount());
 
-        BigDecimal convertedAmount = currencyExchangeRateService.convert(
-                transferRequest.getAmount(),
-                sender.getCurrency(),
-                receiver.getCurrency());
+        BigDecimal convertedAmount = currencyExchangeRateService.convert(transferRequest.getAmount(), sender.getCurrency(), receiver.getCurrency());
 
         receiver.increaseBalance(convertedAmount);
         updateWalletsAndAccounts(sender, receiver);
@@ -75,17 +67,16 @@ public class W2WTransferService extends AbstractTransferService<W2WTransferReque
     }
 
     private Transaction buildTransaction(Wallet sender, Wallet receiver, W2WTransferRequest transferRequest) {
+        TransactionStatus status = transactionStatusRepository.findByStatusName("COMPLETED").orElseThrow(() -> new NotFoundException(String.format("TX Status not found: %s", "COMPLETED")));
+        TransactionType type = transactionTypeRepository.findByTypeName("WALLET_TO_WALLET_TRANSFER").orElseThrow(() -> new NotFoundException(String.format("TX Type not found: %s", "WALLET_TO_WALLET_TRANSFER")));
         Transaction transaction = new Transaction();
         transaction.setTransactionDate(OffsetDateTime.now());
         transaction.setCurrency(sender.getCurrency());
         transaction.setFees(null);
         transaction.setAmount(transferRequest.getAmount());
-        transaction.setType(TransactionType.WALLET_TO_WALLET_TRANSFER);
-        transaction.setDescription(String.format("Transferred %s from %s to %s.",
-                transferRequest.getAmount(),
-                sender.getCurrency().getCurrencyCode(),
-                receiver.getCurrency().getCurrencyCode()));
-        transaction.setStatus(TransactionStatus.COMPLETED);
+        transaction.setType(type);
+        transaction.setDescription(String.format("Transferred %s from %s to %s.", transferRequest.getAmount(), sender.getCurrency().getCurrencyCode(), receiver.getCurrency().getCurrencyCode()));
+        transaction.setStatus(status);
 
         return transaction;
     }

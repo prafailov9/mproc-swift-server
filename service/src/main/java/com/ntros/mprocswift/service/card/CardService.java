@@ -10,12 +10,13 @@ public interface CardService {
 
     Card getCard(final int cardId);
 
-    CompletableFuture<Card> getCard(CardDTO cardDTO);
-    CompletableFuture<List<Card>> getAllCardsForAccountNumber(String accountNumber);
+    Card getCard(CardDTO cardDTO);
+    Card getCardByHash(String cardIdHash);
+    List<Card> getAllCardsForAccountNumber(String accountNumber);
 
-    CompletableFuture<List<Card>> getAllCards();
+    List<Card> getAllCards();
 
-    CompletableFuture<Card> createCard(final Card card);
+    Card createCard(final Card card);
 
     void deleteCard(Card card);
 

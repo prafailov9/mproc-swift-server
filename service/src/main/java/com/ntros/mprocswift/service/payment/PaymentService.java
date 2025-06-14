@@ -1,7 +1,7 @@
 package com.ntros.mprocswift.service.payment;
 
-import com.ntros.mprocswift.dto.cardpayment.CardPaymentRequest;
-import com.ntros.mprocswift.dto.cardpayment.CardPaymentResponse;
+import com.ntros.mprocswift.dto.cardpayment.AuthorizePaymentRequest;
+import com.ntros.mprocswift.dto.cardpayment.AuthorizePaymentResponse;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -10,6 +10,6 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface PaymentService {
 
-    CompletableFuture<CardPaymentResponse> processPayment(final CardPaymentRequest cardPaymentRequest);
+    AuthorizePaymentResponse authorizePayment(final AuthorizePaymentRequest authorizePaymentRequest);
 
 }

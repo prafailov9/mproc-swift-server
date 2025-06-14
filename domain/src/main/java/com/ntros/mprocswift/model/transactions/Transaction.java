@@ -17,12 +17,12 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer transactionId;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "type_id")
+    @ManyToOne
+    @JoinColumn(name = "transaction_type_id")
     private TransactionType type;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "status_id")
+    @ManyToOne
+    @JoinColumn(name = "transaction_status_id")
     private TransactionStatus status;
 
     @ManyToOne

@@ -1,7 +1,6 @@
 package com.ntros.mprocswift.service.merchant;
 
-import com.ntros.mprocswift.dto.cardpayment.CardPaymentRequest;
-import com.ntros.mprocswift.exceptions.AccountConstraintFailureException;
+import com.ntros.mprocswift.dto.cardpayment.AuthorizePaymentRequest;
 import com.ntros.mprocswift.exceptions.MerchantConstraintFailureException;
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.Merchant;
@@ -10,9 +9,9 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -32,8 +31,8 @@ public class MerchantDataService implements MerchantService {
 
     @Override
     @Transactional
-    public Merchant createMerchant(CardPaymentRequest cardPaymentRequest) {
-        return null;
+    public Merchant createMerchant(AuthorizePaymentRequest authorizePaymentRequest) {
+        return merchantRepository.save(new Merchant(authorizePaymentRequest.getMerchant()));
     }
 
     @Override
@@ -49,10 +48,16 @@ public class MerchantDataService implements MerchantService {
     }
 
     @Override
-    public CompletableFuture<Merchant> getMerchantByName(String merchantName) {
-        return CompletableFuture
-                .supplyAsync(() -> merchantRepository
-                        .findByMerchantName(merchantName)
-                        .orElse(null));
+    public Merchant getMerchantByName(String merchantName) {
+        return merchantRepository
+                .findByMerchantName(merchantName)
+                .orElseThrow(() -> new NotFoundException(String.format("Merchant %s not found", merchantName)));
+    }
+
+    @Override
+    public Merchant getOrCreateMerchant(AuthorizePaymentRequest authorizePaymentRequest) {
+        Optional<Merchant> merchantOptional = merchantRepository
+                .findByMerchantName(authorizePaymentRequest.getMerchant());
+        return merchantOptional.orElseGet(() -> createMerchant(authorizePaymentRequest));
     }
 }

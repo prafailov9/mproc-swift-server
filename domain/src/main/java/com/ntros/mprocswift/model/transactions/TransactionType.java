@@ -1,6 +1,21 @@
 package com.ntros.mprocswift.model.transactions;
 
-public enum TransactionType {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
-    DEPOSIT, WITHDRAWAL, WALLET_TO_WALLET_TRANSFER, INTERNAL_TRANSFER, EXTERNAL_TRANSFER, CARD_PAYMENT
+@Entity
+@Data
+@RequiredArgsConstructor
+public class TransactionType {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer transactionTypeId;
+
+    private String typeName;
+
 }

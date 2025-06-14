@@ -2,11 +2,7 @@ package com.ntros.mprocswift.service.transfer;
 
 import com.ntros.mprocswift.dto.transfer.InternalTransferRequest;
 import com.ntros.mprocswift.dto.transfer.InternalTransferResponse;
-import com.ntros.mprocswift.dto.transfer.W2WTransferRequest;
-import com.ntros.mprocswift.exceptions.CurrencyNotFoundException;
-import com.ntros.mprocswift.exceptions.InsufficientFundsException;
-import com.ntros.mprocswift.exceptions.NoMainWalletException;
-import com.ntros.mprocswift.exceptions.WalletNotFoundForANException;
+import com.ntros.mprocswift.exceptions.*;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.currency.Currency;
@@ -80,11 +76,14 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
     }
 
     private Transaction buildTransaction(Account sender, InternalTransferRequest transferRequest) {
+
+        TransactionStatus status = transactionStatusRepository.findByStatusName("COMPLETED").orElseThrow(() -> new NotFoundException(String.format("TX Status not found: %s", "COMPLETED")));
+        TransactionType type = transactionTypeRepository.findByTypeName("INTERNAL_TRANSFER").orElseThrow(() -> new NotFoundException(String.format("TX Type not found: %s", "INTERNAL_TRANSFER")));
         Currency currency = getCurrency(sender, transferRequest);
         Transaction transaction = new Transaction();
         transaction.setAmount(transferRequest.getAmount());
-        transaction.setType(TransactionType.INTERNAL_TRANSFER);
-        transaction.setStatus(TransactionStatus.COMPLETED);
+        transaction.setType(type);
+        transaction.setStatus(status);
         transaction.setTransactionDate(OffsetDateTime.now());
         transaction.setDescription(transferRequest.getDescription());
         transaction.setFees(null);

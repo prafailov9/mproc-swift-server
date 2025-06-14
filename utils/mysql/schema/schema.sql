@@ -171,40 +171,43 @@ CREATE TABLE IF NOT EXISTS card (
 
 CREATE TABLE IF NOT EXISTS merchant (
     merchant_id INT AUTO_INCREMENT PRIMARY KEY,
-    merchant_name VARCHAR(100),
+    merchant_name VARCHAR(100) NOT NULL,
     merchant_category_code VARCHAR(10), -- https://en.wikipedia.org/wiki/Merchant_category_code
     mid VARCHAR(50), -- Unique Merchant Identifier: https://www.forbes.com/advisor/business/software/merchant-id/
     contact_details VARCHAR(100)
 );
 
 CREATE UNIQUE INDEX idx_merchant_name ON merchant(merchant_name);
-CREATE UNIQUE INDEX idx_merchant_mid ON merchant(mid);
-CREATE INDEX idx_merchant_mcc ON merchant(merchant_category_code);
+-- CREATE INDEX idx_merchant_mcc ON merchant(merchant_category_code);
+-- CREATE UNIQUE INDEX idx_merchant_mid ON merchant(mid);
 
 CREATE TABLE IF NOT EXISTS transaction_type (
-    type_id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_type_id INT AUTO_INCREMENT PRIMARY KEY,
     type_name VARCHAR(64) NOT NULL -- DEPOSIT, WITHDRAWAL, WALLET_TO_WALLET_TRANSFER, INTERNAL_TRANSFER, EXTERNAL_TRANSFER, CARD_PAYMENT
 );
 
 CREATE TABLE IF NOT EXISTS transaction_status (
-    status_id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_status_id INT AUTO_INCREMENT PRIMARY KEY,
     status_name VARCHAR(32) NOT NULL -- ('pending', 'completed', 'cancelled')
 );
 
 CREATE TABLE IF NOT EXISTS `transaction` (
     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
-    type_id INT NOT NULL,
-    status_id INT NOT NULL,
+    transaction_type_id INT NOT NULL,
+    transaction_status_id INT NOT NULL,
     currency_id INT NOT NULL,
+
+    related_transaction_id INT DEFAULT NULL,
 
     amount DECIMAL(20, 6) NOT NULL,
     fees DOUBLE,
     transaction_date DATETIME NOT NULL,
     description VARCHAR(256),
 
-    FOREIGN KEY (type_id) REFERENCES transaction_type(type_id),
-    FOREIGN KEY (status_id) REFERENCES transaction_status(status_id),
-    FOREIGN KEY (currency_id) REFERENCES currency(currency_id)
+    FOREIGN KEY (transaction_type_id) REFERENCES transaction_type(transaction_type_id),
+    FOREIGN KEY (transaction_status_id) REFERENCES transaction_status(transaction_status_id),
+    FOREIGN KEY (currency_id) REFERENCES currency(currency_id),
+    FOREIGN KEY (related_transaction_id) REFERENCES `transaction`(transaction_id)
 );
 
 
@@ -219,15 +222,48 @@ CREATE TABLE IF NOT EXISTS money_transfer (
     FOREIGN KEY (receiver_account_id) REFERENCES account(account_id)
 );
 
-
-CREATE TABLE IF NOT EXISTS card_payment (
+CREATE TABLE IF NOT EXISTS card_authorization (
     transaction_id INT PRIMARY KEY,
     card_id INT NOT NULL,
     merchant_id INT NOT NULL,
-    authorization_code VARCHAR(255) NOT NULL,
-    location VARCHAR(255),
+    authorization_code VARCHAR(255) NOT NULL, -- proof of auth, will send to card network when auth_hold is successful.
+    authorized_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id),
     FOREIGN KEY (card_id) REFERENCES card(card_id),
     FOREIGN KEY (merchant_id) REFERENCES merchant(merchant_id)
 );
+
+CREATE UNIQUE INDEX idx_auth_code ON card_authorization(authorization_code);
+
+-- pending hold of funds, representing that the transaction is valid and flagged for settlement process.
+CREATE TABLE IF NOT EXISTS authorized_hold (
+    authorized_hold_id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id INT NOT NULL,         -- references the 'authorization' transaction
+    wallet_id INT NOT NULL,
+    hold_amount DECIMAL(20, 6) NOT NULL,
+    hold_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    expires_at DATETIME NOT NULL,
+    is_released BOOLEAN DEFAULT FALSE,
+    released_at DATETIME,
+
+    FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id) ON DELETE CASCADE,
+    FOREIGN KEY (wallet_id) REFERENCES wallet(wallet_id)
+);
+
+-- will settle all pending hold transactions when the card network sends a request
+CREATE TABLE hold_settlement (
+    hold_settlement_id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id INT NOT NULL,                  -- this is the settlement transaction
+    authorization_transaction_id INT NOT NULL,    -- references the authorization tx
+    card_id INT NOT NULL,
+    merchant_id INT NOT NULL,
+    settled_amount DECIMAL(20, 6) NOT NULL,
+    settled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id) ON DELETE CASCADE,
+    FOREIGN KEY (authorization_transaction_id) REFERENCES `transaction`(transaction_id) ON DELETE CASCADE,
+    FOREIGN KEY (card_id) REFERENCES card(card_id),
+    FOREIGN KEY (merchant_id) REFERENCES merchant(merchant_id)
+);
+

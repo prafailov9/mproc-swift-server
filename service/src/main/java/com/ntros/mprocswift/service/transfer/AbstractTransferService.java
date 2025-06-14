@@ -5,6 +5,8 @@ import com.ntros.mprocswift.dto.transfer.TransferResponse;
 import com.ntros.mprocswift.exceptions.TransferProcessingFailedException;
 import com.ntros.mprocswift.repository.transaction.MoneyTransferRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionRepository;
+import com.ntros.mprocswift.repository.transaction.TransactionStatusRepository;
+import com.ntros.mprocswift.repository.transaction.TransactionTypeRepository;
 import com.ntros.mprocswift.service.account.AccountService;
 import com.ntros.mprocswift.service.currency.CurrencyExchangeRateService;
 import com.ntros.mprocswift.service.wallet.WalletService;
@@ -30,6 +32,10 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
     protected AccountService accountService;
     @Autowired
     protected TransactionRepository transactionRepository;
+    @Autowired
+    protected TransactionTypeRepository transactionTypeRepository;
+    @Autowired
+    protected TransactionStatusRepository transactionStatusRepository;
     @Autowired
     protected MoneyTransferRepository moneyTransferRepository;
     @Autowired

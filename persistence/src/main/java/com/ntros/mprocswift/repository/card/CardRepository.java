@@ -12,6 +12,8 @@ import java.util.Optional;
 @Repository
 public interface CardRepository extends JpaRepository<Card, Integer> {
 
+    Optional<Card> findByCardIdHash(@Param("cardIdHash") String cardIdHash);
+
     @Query(value = "SELECT * FROM card c " +
             "WHERE c.card_provider= :cardProvider " +
             "AND c.card_number= :cardNumber " +

@@ -15,11 +15,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 import static java.lang.String.format;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 @Slf4j
 @Service
@@ -42,39 +40,42 @@ public class CardDataService implements CardService {
     }
 
     @Override
-    public CompletableFuture<Card> getCard(CardDTO cardDTO) {
-        return supplyAsync(() -> cardRepository
-                        .findByNumberExpirationCvv(cardDTO.getCardProvider(),
-                                cardDTO.getCardNumber(),
-                                cardDTO.getExpirationDate(),
-                                cardDTO.getCvv())
-                        .orElseThrow(() -> new NotFoundException("Card not found."))
-                , executor);
+    public Card getCard(CardDTO cardDTO) {
+        return cardRepository
+                .findByNumberExpirationCvv(cardDTO.getCardProvider(),
+                        cardDTO.getCardNumber(),
+                        cardDTO.getExpirationDate(),
+                        cardDTO.getCvv())
+                .orElseThrow(() -> new NotFoundException("Card not found."));
     }
 
     @Override
-    public CompletableFuture<List<Card>> getAllCardsForAccountNumber(String accountNumber) {
-        return supplyAsync(() -> cardRepository.findAllByAccountNumber(accountNumber)
-                        .orElseThrow(() ->
-                                new NotFoundException(format("No cards found for account number: %s", accountNumber)))
-                , executor);
+    public Card getCardByHash(String cardIdHash) {
+        return
+                cardRepository.findByCardIdHash(cardIdHash)
+                        .orElseThrow(() -> new NotFoundException(String.format("Card not found for hash: %s", cardIdHash)));
     }
 
     @Override
-    public CompletableFuture<List<Card>> getAllCards() {
-        return supplyAsync(cardRepository::findAll);
+    public List<Card> getAllCardsForAccountNumber(String accountNumber) {
+        return cardRepository.findAllByAccountNumber(accountNumber)
+                .orElseThrow(() ->
+                        new NotFoundException(format("No cards found for account number: %s", accountNumber)));
     }
 
     @Override
-    public CompletableFuture<Card> createCard(Card card) {
-        return supplyAsync(() -> {
-            try {
-                return cardRepository.save(card);
-            } catch (DataIntegrityViolationException ex) {
-                log.error("Could not create card {}. {}", card, ex.getMessage(), ex.getCause());
-                throw new CardNotCreatedException(format("Could not create card: %s", ex.getMessage()));
-            }
-        }, executor);
+    public List<Card> getAllCards() {
+        return cardRepository.findAll();
+    }
+
+    @Override
+    public Card createCard(Card card) {
+        try {
+            return cardRepository.save(card);
+        } catch (DataIntegrityViolationException ex) {
+            log.error("Could not create card {}. {}", card, ex.getMessage(), ex.getCause());
+            throw new CardNotCreatedException(format("Could not create card: %s", ex.getMessage()));
+        }
     }
 
     @Override
