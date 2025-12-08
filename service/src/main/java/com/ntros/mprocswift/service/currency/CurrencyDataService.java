@@ -62,7 +62,6 @@ public class CurrencyDataService implements CurrencyService {
 
     @Override
     @Transactional
-    @Modifying
     public CompletableFuture<Void> deleteCurrency(int currencyId) {
         return CompletableFuture.runAsync(() ->  {
             try {

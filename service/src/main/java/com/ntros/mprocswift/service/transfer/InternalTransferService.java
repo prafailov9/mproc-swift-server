@@ -62,7 +62,6 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
     }
 
     @Transactional
-    @Modifying
     private void createAndSaveMoneyTransfer(final Transaction transaction, final Account sender, final Account receiver) {
         transactionRepository.saveAndFlush(transaction);
 
@@ -100,7 +99,6 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
         return response;
     }
 
-    @Modifying
     @Transactional
     private void updateAccountsAndWallets(Account sender, Account receiver, Wallet senderWallet, Wallet receiverWallet) {
         walletService.updateBalance(senderWallet.getWalletId(), senderWallet.getBalance());

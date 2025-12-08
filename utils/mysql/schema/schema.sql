@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS currency_exchange_rate (
     source_currency_id INT NOT NULL,
     target_currency_id INT NOT NULL,
 
-    exchange_rate DECIMAL(24, 10) NOT NULL, -- 40 total digits, 17 after decimal point
+    exchange_rate DECIMAL(24, 10) NOT NULL, -- 24 total digits, 10 after decimal point
     updated_date DATETIME ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (source_currency_id) REFERENCES currency(currency_id) ON DELETE CASCADE,
@@ -239,7 +239,7 @@ CREATE UNIQUE INDEX idx_auth_code ON card_authorization(authorization_code);
 -- pending hold of funds, representing that the transaction is valid and flagged for settlement process.
 CREATE TABLE IF NOT EXISTS authorized_hold (
     authorized_hold_id INT AUTO_INCREMENT PRIMARY KEY,
-    transaction_id INT NOT NULL,         -- references the 'authorization' transaction
+    card_authorization_id INT NOT NULL,         -- references the authorization tx
     wallet_id INT NOT NULL,
     hold_amount DECIMAL(20, 6) NOT NULL,
     hold_date DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -247,7 +247,7 @@ CREATE TABLE IF NOT EXISTS authorized_hold (
     is_released BOOLEAN DEFAULT FALSE,
     released_at DATETIME,
 
-    FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id) ON DELETE CASCADE,
+    FOREIGN KEY (card_authorization_id) REFERENCES card_authorization(transaction_id) ON DELETE CASCADE,
     FOREIGN KEY (wallet_id) REFERENCES wallet(wallet_id)
 );
 
@@ -255,14 +255,14 @@ CREATE TABLE IF NOT EXISTS authorized_hold (
 CREATE TABLE hold_settlement (
     hold_settlement_id INT AUTO_INCREMENT PRIMARY KEY,
     transaction_id INT NOT NULL,                  -- this is the settlement transaction
-    authorization_transaction_id INT NOT NULL,    -- references the authorization tx
+    card_authorization_id INT NOT NULL,    -- references the authorization tx
     card_id INT NOT NULL,
     merchant_id INT NOT NULL,
     settled_amount DECIMAL(20, 6) NOT NULL,
     settled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id) ON DELETE CASCADE,
-    FOREIGN KEY (authorization_transaction_id) REFERENCES `transaction`(transaction_id) ON DELETE CASCADE,
+    FOREIGN KEY (card_authorization_id) REFERENCES card_authorization(transaction_id) ON DELETE CASCADE,
     FOREIGN KEY (card_id) REFERENCES card(card_id),
     FOREIGN KEY (merchant_id) REFERENCES merchant(merchant_id)
 );

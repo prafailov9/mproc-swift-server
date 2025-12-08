@@ -8,6 +8,7 @@ insert into transaction_type(type_name) values('AUTHORIZED_HOLD');
 
 -- statuses
 insert into transaction_status(status_name) values('AUTHORIZED');
+insert into transaction_status(status_name) values('SETTLED');
 insert into transaction_status(status_name) values('completed');
 insert into transaction_status(status_name) values('canceled');
 insert into transaction_status(status_name) values('expired');

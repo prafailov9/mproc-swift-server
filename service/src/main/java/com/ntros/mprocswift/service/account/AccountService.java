@@ -7,6 +7,8 @@ import java.util.concurrent.CompletableFuture;
 
 public interface AccountService {
 
+    List<Account> getAllAccountsByCurrencyCode(String currencyCode);
+
     CompletableFuture<Account> getAccount(final int accountId);
     CompletableFuture<Account> getAccountByAccountNumber(final String accountNumber);
 

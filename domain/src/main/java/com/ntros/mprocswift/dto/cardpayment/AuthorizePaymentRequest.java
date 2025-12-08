@@ -1,5 +1,6 @@
 package com.ntros.mprocswift.dto.cardpayment;
 
+import com.ntros.mprocswift.dto.CardDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -10,6 +11,8 @@ public class AuthorizePaymentRequest {
 
     @NotBlank(message = "Must have currency.")
     private String cardIdentifier;
+
+    private CardDTO cardDTO;
 
     @Size(min = 5, message = "Amount cannot be less than 5.")
     private Double amount;

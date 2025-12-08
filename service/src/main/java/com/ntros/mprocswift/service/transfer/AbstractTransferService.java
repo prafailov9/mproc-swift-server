@@ -67,7 +67,6 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
     protected abstract R buildTransferResponse(T transferRequest);
 
     @Transactional
-    @Modifying
     private R doTransfer(S sender, S receiver, T transferRequest) {
         performTransfer(sender, receiver, transferRequest);
         createTransferTransaction(sender, receiver, transferRequest);

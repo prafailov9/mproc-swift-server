@@ -47,6 +47,15 @@ public class AccountController extends AbstractApiController {
                 .handleAsync(this::handleResponseAsync);
     }
 
+    @GetMapping("/by-currency/{currencyCode}")
+    public ResponseEntity<?> getAccountsByCurrency(@PathVariable("currencyCode")
+                                                   @Pattern(regexp = "^[A-Za-z]{3}$",
+                                                           message = "CURRENCY_CODE must be a string.")
+                                                   String currencyCode) {
+        return ResponseEntity.ok(accountService
+                .getAllAccountsByCurrencyCode(currencyCode).stream().map(accountModelConverter::toDto).collect(Collectors.toList()));
+    }
+
     @GetMapping
     public CompletableFuture<ResponseEntity<?>> getAllAccounts() {
         return accountService
@@ -80,7 +89,7 @@ public class AccountController extends AbstractApiController {
     }
 
     @PatchMapping("update/all")
-    public ResponseEntity<?> updateTotalBalanceForAllAccounts(){
+    public ResponseEntity<?> updateTotalBalanceForAllAccounts() {
         String res = accountService.calculateTotalBalanceForAllAccounts();
         return ResponseEntity.ok().body(res);
     }

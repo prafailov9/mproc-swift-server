@@ -1,5 +1,5 @@
 # Use the official OpenJDK image for a lean runtime.
-FROM openjdk:21-jdk
+FROM eclipse-temurin:21
 
 # Set environment variables for debugging
 ENV JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"

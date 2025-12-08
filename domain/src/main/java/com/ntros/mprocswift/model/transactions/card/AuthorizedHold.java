@@ -17,11 +17,11 @@ public class AuthorizedHold {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer authorizedHoldId;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "transaction_id")
+    @ManyToOne
+    @JoinColumn(name = "card_authorization_id")
     private CardAuthorization cardAuthorization;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "wallet_id")
     private Wallet wallet;
 

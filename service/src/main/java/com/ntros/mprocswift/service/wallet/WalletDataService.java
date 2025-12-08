@@ -52,6 +52,12 @@ public class WalletDataService implements WalletService {
     }
 
     @Override
+    public Wallet getLockedWallet(int walletId) {
+        return walletRepository.findByIdForUpdate(walletId)
+                .orElseThrow(() -> new WalletNotFoundException("Wallet not found for id: " + walletId));
+    }
+
+    @Override
     public CompletableFuture<Wallet> getWallet(int walletId) {
         return CompletableFuture
                 .supplyAsync(() -> walletRepository.findById(walletId)

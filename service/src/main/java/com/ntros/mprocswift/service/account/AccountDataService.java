@@ -54,6 +54,11 @@ public class AccountDataService implements AccountService {
     }
 
     @Override
+    public List<Account> getAllAccountsByCurrencyCode(String currencyCode) {
+        return accountRepository.findAllByWalletCurrencyCode(currencyCode);
+    }
+
+    @Override
     public CompletableFuture<Account> getAccount(int accountId) {
         return supplyAsync(() -> accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException("Account not found for id: " + accountId)));
@@ -103,7 +108,6 @@ public class AccountDataService implements AccountService {
     }
 
     @Override
-    @Modifying
     @Transactional
     public String calculateTotalBalanceForAllAccounts() {
         List<Account> accounts = accountRepository.findAll()
@@ -140,7 +144,6 @@ public class AccountDataService implements AccountService {
     }
 
     @Override
-    @Modifying
     @Transactional
     public Account updateTotalBalance(Account account) {
         List<Wallet> wallets = walletRepository.findAllByAccount(account.getAccountId());

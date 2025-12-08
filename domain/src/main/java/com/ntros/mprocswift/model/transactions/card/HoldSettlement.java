@@ -17,16 +17,15 @@ public class HoldSettlement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer settlementId;
+    @Column(name = "hold_settlement_id")
+    private Integer holdSettlementId;
 
-    // This is the transaction that settles the hold (new transaction record)
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "transaction_id", nullable = false)
     private Transaction transaction;
 
-    // The original authorization (referenced via its transaction_id)
     @ManyToOne
-    @JoinColumn(name = "authorization_transaction_id", nullable = false)
+    @JoinColumn(name = "card_authorization_id", nullable = false)
     private CardAuthorization cardAuthorization;
 
     @ManyToOne
@@ -40,4 +39,5 @@ public class HoldSettlement {
     private BigDecimal settledAmount;
     private OffsetDateTime settledAt;
 }
+
 

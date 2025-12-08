@@ -1,7 +1,9 @@
 package com.ntros.mprocswift.repository;
 
 import com.ntros.mprocswift.model.Wallet;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,11 +17,13 @@ import java.util.Optional;
 @Repository
 public interface WalletRepository extends JpaRepository<Wallet, Integer> {
 
-//    @Query(value = "SELECT w from Wallet w WHERE w.account= :account")
-//    List<Wallet> findAllByAccount(@Param(value = "account") Account account);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT w FROM Wallet w WHERE w.walletId = :walletId")
+    Optional<Wallet> findByIdForUpdate(@Param("walletId") Integer walletId);
 
     @Query(value = "SELECT * FROM wallet w WHERE w.currency_id=:currencyId", nativeQuery = true)
     List<Wallet> findAllByCurrencyId(@Param("currencyId") int currencyId);
+
     @Query(value = "SELECT * FROM wallet WHERE account_id = :account_id", nativeQuery = true)
     List<Wallet> findAllByAccount(@Param(value = "account_id") int accountId);
 

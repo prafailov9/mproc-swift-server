@@ -19,11 +19,11 @@ public class Wallet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer walletId;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "currency_id")
     private Currency currency;
     private BigDecimal balance;
@@ -38,7 +38,7 @@ public class Wallet {
     }
 
     public boolean hasAvailableBalance(final BigDecimal amount) {
-        return balance.compareTo(amount) > 0;
+        return balance.compareTo(amount) >= 0;
     }
 
     public boolean verifyOwnership(String accountNumber, String currencyCode) {

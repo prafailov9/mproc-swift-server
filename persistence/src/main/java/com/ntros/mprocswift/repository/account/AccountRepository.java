@@ -28,4 +28,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
             "HAVING COUNT(w.wallet_id) = :count", nativeQuery = true)
     List<Account> findAllByWalletCount(@Param("count") int count);
 
+    @Query("SELECT DISTINCT a FROM Account a " +
+            "JOIN a.wallets w " +
+            "WHERE w.currency.currencyCode = :currencyCode")
+    List<Account> findAllByWalletCurrencyCode(@Param("currencyCode") String currencyCode);
 }

@@ -3,6 +3,7 @@ package com.ntros.mprocswift.service.transaction;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.card.AuthorizedHold;
 import com.ntros.mprocswift.model.transactions.card.CardAuthorization;
+import com.ntros.mprocswift.model.transactions.card.HoldSettlement;
 
 import java.time.OffsetDateTime;
 import java.util.Random;
@@ -48,6 +49,18 @@ public final class TransactionFactory {
         hold.setIsReleased(false);
 
         return hold;
+    }
+
+    public static HoldSettlement buildHoldSettlement(CardAuthorization auth, AuthPaymentContext ctx) {
+        HoldSettlement settlement = new HoldSettlement();
+        settlement.setTransaction(auth.getTransaction());
+        settlement.setCardAuthorization(auth);
+        settlement.setSettledAt(OffsetDateTime.now());
+        settlement.setMerchant(ctx.merchant());
+        settlement.setCard(ctx.card());
+        settlement.setSettledAmount(ctx.authorizedAmount());
+
+        return settlement;
     }
 
 }
