@@ -195,7 +195,7 @@ CREATE TABLE IF NOT EXISTS ledger_account (
                 WHEN external_account_id IS NOT NULL THEN CONCAT('E:', external_account_id)
                 ELSE 'SYS'
             END
-        ) STORED;
+        ) STORED,
 
     FOREIGN KEY (ledger_account_type_id) REFERENCES ledger_account_type(ledger_account_type_id),
     FOREIGN KEY (currency_id) REFERENCES currency(currency_id),
