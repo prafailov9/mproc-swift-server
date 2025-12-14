@@ -138,8 +138,90 @@ CREATE TABLE IF NOT EXISTS wallet (
     FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE,
     FOREIGN KEY (currency_id) REFERENCES currency(currency_id) ON DELETE CASCADE,
 
-    UNIQUE (account_id, currency_id)  -- an account can't have multiple wallets for the same currency
+    UNIQUE (account_id, currency_id) -- 1:1 an account can't have multiple wallets for the same currency
 );
+
+CREATE TABLE IF NOT EXISTS merchant (
+    merchant_id INT AUTO_INCREMENT PRIMARY KEY,
+    merchant_name VARCHAR(100) NOT NULL,
+    merchant_category_code VARCHAR(10), -- https://en.wikipedia.org/wiki/Merchant_category_code
+    mid VARCHAR(50), -- Unique Merchant Identifier: https://www.forbes.com/advisor/business/software/merchant-id/
+    contact_details VARCHAR(100)
+);
+
+CREATE UNIQUE INDEX idx_merchant_name ON merchant(merchant_name);
+-- CREATE INDEX idx_merchant_mcc ON merchant(merchant_category_code);
+-- CREATE UNIQUE INDEX idx_merchant_mid ON merchant(mid);
+
+
+-- source of truth for money, ledger accounts and entries
+CREATE TABLE IF NOT EXISTS ledger_account_type (
+    ledger_account_type_id INT AUTO_INCREMENT PRIMARY KEY,
+    type_code VARCHAR(64) NOT NULL UNIQUE,   -- 'WALLET_AVAILABLE', etc.
+    type_description VARCHAR(256)
+);
+
+CREATE UNIQUE INDEX idx_ledger_account_type ON ledger_account_type(type_code);
+
+
+-- created at wallet/merchant level. 2 for each wallet(available funds, held funds), 1 for merchant as money is owed to the merchant.
+CREATE TABLE IF NOT EXISTS ledger_account (
+    ledger_account_id INT AUTO_INCREMENT PRIMARY KEY,
+    ledger_account_type_id INT NOT NULL,
+
+    ledger_account_name VARCHAR(128) NOT NULL, -- ("User 123 EUR Wallet", "Card Clearing EUR")
+
+    currency_id INT NOT NULL,
+
+    wallet_id INT NULL,
+    merchant_id INT NULL,
+    external_account_id INT NULL,
+
+    is_active BOOLEAN DEFAULT TRUE,
+
+  /*
+     * owner_key normalizes ownership into a single value to enforce uniqueness across
+     * wallet, merchant, external, and system
+     * ledger accounts.
+     * This is required because MySQL UNIQUE indexes allow multiple NULLs,
+     * which would allow duplicate system accounts (e.g. multiple
+     * FX_BRIDGE EUR accounts).
+     */
+    owner_key VARCHAR(64)
+        GENERATED ALWAYS AS (
+            CASE
+                WHEN wallet_id IS NOT NULL THEN CONCAT('W:', wallet_id)
+                WHEN merchant_id IS NOT NULL THEN CONCAT('M:', merchant_id)
+                WHEN external_account_id IS NOT NULL THEN CONCAT('E:', external_account_id)
+                ELSE 'SYS'
+            END
+        ) STORED;
+
+    FOREIGN KEY (ledger_account_type_id) REFERENCES ledger_account_type(ledger_account_type_id),
+    FOREIGN KEY (currency_id) REFERENCES currency(currency_id),
+    FOREIGN KEY (wallet_id) REFERENCES wallet(wallet_id),
+    FOREIGN KEY (merchant_id) REFERENCES merchant(merchant_id),
+    FOREIGN KEY (external_account_id) REFERENCES external_account(external_account_id),
+
+    -- Ensure exactly one owner (wallet OR merchant OR external OR system)
+    CONSTRAINT chk_ledger_account_owner
+        CHECK (
+            (wallet_id IS NOT NULL AND merchant_id IS NULL AND external_account_id IS NULL)
+            OR (merchant_id IS NOT NULL AND wallet_id IS NULL AND external_account_id IS NULL)
+            OR (external_account_id IS NOT NULL AND wallet_id IS NULL AND merchant_id IS NULL)
+            OR (wallet_id IS NULL AND merchant_id IS NULL AND external_account_id IS NULL)
+        )
+);
+
+CREATE INDEX idx_ledger_acc_name ON ledger_account(ledger_account_name);
+-- 1:1 ledger per wallet per type( only one available EUR wallet, only one HELD USD wallet, etc. )
+CREATE UNIQUE INDEX uq_wallet_available ON ledger_account(wallet_id, ledger_account_type_id, currency_id);
+CREATE UNIQUE INDEX uq_wallet_held ON ledger_account(wallet_id, ledger_account_type_id, currency_id);
+
+-- 1:1 ledger per merchant balance
+CREATE UNIQUE INDEX uq_merchant_settlement ON ledger_account(merchant_id, ledger_account_type_id, currency_id);
+-- enforces one ledger account per (owner + account type + currency)
+CREATE UNIQUE INDEX uq_ledger_owner_key_type_currency ON ledger_account(owner_key, ledger_account_type_id, currency_id);
 
 -- types: virtual, virtual one-time use, etc;
 CREATE TABLE IF NOT EXISTS card_type (
@@ -167,19 +249,6 @@ CREATE TABLE IF NOT EXISTS card (
     UNIQUE(card_provider, card_number, expiration_date, cvv),
     UNIQUE(card_id_hash, card_provider)
 );
-
-
-CREATE TABLE IF NOT EXISTS merchant (
-    merchant_id INT AUTO_INCREMENT PRIMARY KEY,
-    merchant_name VARCHAR(100) NOT NULL,
-    merchant_category_code VARCHAR(10), -- https://en.wikipedia.org/wiki/Merchant_category_code
-    mid VARCHAR(50), -- Unique Merchant Identifier: https://www.forbes.com/advisor/business/software/merchant-id/
-    contact_details VARCHAR(100)
-);
-
-CREATE UNIQUE INDEX idx_merchant_name ON merchant(merchant_name);
--- CREATE INDEX idx_merchant_mcc ON merchant(merchant_category_code);
--- CREATE UNIQUE INDEX idx_merchant_mid ON merchant(mid);
 
 CREATE TABLE IF NOT EXISTS transaction_type (
     transaction_type_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -267,3 +336,22 @@ CREATE TABLE hold_settlement (
     FOREIGN KEY (merchant_id) REFERENCES merchant(merchant_id)
 );
 
+-- holds the entries of money movements for a user/merchant/external account, etc.
+-- For a given transaction_id and currency, the sum of amount across all rows must be 0.
+CREATE TABLE IF NOT EXISTS ledger_entry (
+    ledger_entry_id INT AUTO_INCREMENT PRIMARY KEY,
+
+    transaction_id INT NOT NULL,
+    ledger_account_id INT NOT NULL,
+
+    amount DECIMAL(34, 16) NOT NULL, -- signed: positive or negative
+    entry_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    description VARCHAR(256),
+
+    FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id),
+    FOREIGN KEY (ledger_account_id) REFERENCES ledger_account(ledger_account_id),
+
+    INDEX idx_ledger_tx (transaction_id),
+    INDEX idx_ledger_account (ledger_account_id),
+    INDEX idx_ledger_account_date (ledger_account_id, entry_date)
+);

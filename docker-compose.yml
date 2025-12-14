@@ -38,6 +38,8 @@ services:
       - ./utils/mysql/data/11_merchant.sql:/docker-entrypoint-initdb.d/11_merchant.sql
       - ./utils/mysql/data/12_transaction.sql:/docker-entrypoint-initdb.d/12_transaction.sql
       - ./utils/mysql/data/08_currency_exchange_rate.sql:/docker-entrypoint-initdb.d/08_currency_exchange_rate.sql
+      - ./utils/mysql/data/13_ledger_account_type.sql:/docker-entrypoint-initdb.d/13_ledger_account_type.sql
+      - ./utils/mysql/data/14_ledger_account.sql:/docker-entrypoint-initdb.d/14_ledger_account.sql
 
 volumes:
   db-data:

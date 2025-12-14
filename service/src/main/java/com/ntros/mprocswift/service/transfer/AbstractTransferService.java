@@ -9,12 +9,13 @@ import com.ntros.mprocswift.repository.transaction.TransactionStatusRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionTypeRepository;
 import com.ntros.mprocswift.service.account.AccountService;
 import com.ntros.mprocswift.service.currency.CurrencyExchangeRateService;
+import com.ntros.mprocswift.service.ledger.LedgerAccountService;
+import com.ntros.mprocswift.service.ledger.LedgerPostingService;
 import com.ntros.mprocswift.service.wallet.WalletService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -42,6 +43,10 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
     protected WalletService walletService;
     @Autowired
     protected CurrencyExchangeRateService currencyExchangeRateService;
+    @Autowired
+    protected LedgerAccountService ledgerAccountService;
+    @Autowired
+    protected LedgerPostingService ledgerPostingService;
 
     public CompletableFuture<R> transfer(T transferRequest) {
         CompletableFuture<S> senderFuture = getSender(transferRequest);

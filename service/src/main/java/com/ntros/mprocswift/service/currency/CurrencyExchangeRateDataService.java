@@ -55,6 +55,10 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
      */
     @Override
     public BigDecimal convert(final BigDecimal amount, Currency source, Currency target) {
+        if (source.getCurrencyCode().equals(target.getCurrencyCode())) {
+            log.info("Currencies are the same: {}", source.getCurrencyCode());
+            return amount;
+        }
         return currencyExchangeRateRepository.findExchangeRateValueBySourceAndTarget(source, target)
                 .map(rate -> {
                     log.info("Found direct exchange rate: {}", rate);
