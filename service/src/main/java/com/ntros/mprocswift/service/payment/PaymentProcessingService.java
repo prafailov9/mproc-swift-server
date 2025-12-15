@@ -1,5 +1,7 @@
 package com.ntros.mprocswift.service.payment;
 
+import static com.ntros.mprocswift.utils.TextFormatter.format;
+
 import com.ntros.mprocswift.dto.cardpayment.*;
 import com.ntros.mprocswift.exceptions.InsufficientFundsException;
 import com.ntros.mprocswift.exceptions.NotFoundException;
@@ -20,15 +22,12 @@ import com.ntros.mprocswift.service.merchant.MerchantService;
 import com.ntros.mprocswift.service.transaction.AuthPaymentContext;
 import com.ntros.mprocswift.service.transaction.TransactionService;
 import com.ntros.mprocswift.service.wallet.WalletService;
+import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-
-import static com.ntros.mprocswift.utils.TextFormatter.format;
 
 @Service
 @Slf4j
@@ -118,7 +117,7 @@ public class PaymentProcessingService implements PaymentService {
     AuthorizedHold hold = transactionService.getAuthorizedHold(holdSettlementRequest.getAuthCode());
     if (existingSettlement != null) {
       log.info(
-          "Hold already settled for this AuthCode: {}; HoldSettlement: {}",
+          "Transaction already settled for this AuthCode: {}; HoldSettlement: {}",
           holdSettlementRequest.getAuthCode(),
           existingSettlement);
       return getHoldSettlementResponse(hold);
@@ -166,7 +165,6 @@ public class PaymentProcessingService implements PaymentService {
   @NotNull
   private static HoldSettlementResponse getHoldSettlementResponse(AuthorizedHold hold) {
     CardAuthorization cardAuth = hold.getCardAuthorization();
-    Transaction baseTx = cardAuth.getTransaction();
 
     HoldSettlementResponse response = new HoldSettlementResponse();
     response.setSuccess(true);
@@ -220,12 +218,11 @@ public class PaymentProcessingService implements PaymentService {
   }
 
   private AuthorizePaymentResponse buildFailedAuthorizationResponse(
-      AuthorizePaymentRequest request, String errorMessage) {
+      AuthorizePaymentRequest request, String error) {
     AuthorizePaymentResponse response = new AuthorizePaymentResponse();
     response.setStatus(RequestResultStatus.FAILED);
     response.setMessage(
-        format(
-            "Failed to authorize payment to %s. Error: [%s]", request.getMerchant(), errorMessage));
+        format("Failed to authorize payment to %s. Error: [%s]", request.getMerchant(), error));
     response.setMerchant(request.getMerchant());
     response.setCurrency(request.getCurrency());
     response.setPrice(request.getAmount());

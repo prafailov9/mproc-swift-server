@@ -1,5 +1,7 @@
 package com.ntros.mprocswift.service.transaction;
 
+import static com.ntros.mprocswift.service.transaction.TransactionFactory.*;
+
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.ledger.LedgerAccount;
@@ -19,15 +21,13 @@ import com.ntros.mprocswift.service.ledger.LedgerAccountService;
 import com.ntros.mprocswift.service.ledger.LedgerEntryService;
 import com.ntros.mprocswift.service.ledger.Posting;
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.List;
-
-import static com.ntros.mprocswift.service.transaction.TransactionFactory.*;
 
 @Service
 @Slf4j
@@ -88,7 +88,7 @@ public class AuthorizationTransactionService implements TransactionService {
 
     baseTx.setStatus(status);
     baseTx.setType(type);
-    transactionRepository.save(baseTx);
+    transactionRepository.saveAndFlush(baseTx);
 
     CardAuthorization authorization = buildCardAuthorization(baseTx, authPaymentContext);
     cardAuthorizationRepository.save(authorization);
@@ -140,21 +140,16 @@ public class AuthorizationTransactionService implements TransactionService {
     transactionRepository.saveAndFlush(authTx);
 
     // create settlement transaction (NEW ROW)
-    Transaction settlementTx =
-        TransactionFactory.buildSettlementTransaction(cardAuth, authPaymentContext);
+    Transaction settlementTx = buildSettlementTransaction(cardAuth, authPaymentContext);
 
-    TransactionType settlementType =
+    settlementTx.setType(
         transactionTypeRepository
             .findByTypeName("CARD_SETTLEMENT")
-            .orElseThrow(() -> new NotFoundException("TX Type not found: CARD_SETTLEMENT"));
-
-    TransactionStatus completed =
+            .orElseThrow(() -> new NotFoundException("TX Type not found: CARD_SETTLEMENT")));
+    settlementTx.setStatus(
         transactionStatusRepository
             .findByStatusName("COMPLETED")
-            .orElseThrow(() -> new NotFoundException("TX Status not found: COMPLETED"));
-
-    settlementTx.setType(settlementType);
-    settlementTx.setStatus(completed);
+            .orElseThrow(() -> new NotFoundException("TX Status not found: COMPLETED")));
 
     transactionRepository.saveAndFlush(settlementTx);
 
@@ -226,7 +221,8 @@ public class AuthorizationTransactionService implements TransactionService {
     }
     BigDecimal sum = BigDecimal.ZERO;
     for (var hold : holds) {
-      sum = sum.add(hold.getHoldAmount());
+      BigDecimal normalized = hold.getHoldAmount().setScale(2, RoundingMode.HALF_UP);
+      sum = sum.add(normalized);
     }
     return sum;
   }

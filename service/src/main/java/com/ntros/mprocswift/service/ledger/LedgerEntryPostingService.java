@@ -4,17 +4,14 @@ import com.ntros.mprocswift.model.ledger.LedgerAccount;
 import com.ntros.mprocswift.model.ledger.LedgerEntry;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.repository.ledger.LedgerEntryRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.*;
-
-import static com.ntros.mprocswift.service.currency.CurrencyUtils.getScale;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -39,20 +36,7 @@ public class LedgerEntryPostingService implements LedgerEntryService {
 
     // entries are grouped by currency for the entire posting
     // for each currency, group all of its entries and sum the amount
-    Map<Integer, BigDecimal> totalsByCurrency = new HashMap<>();
-    for (LedgerEntry entry : entries) {
-      Integer currencyId = entry.getLedgerAccount().getCurrency().getCurrencyId();
-
-      BigDecimal currentSum = BigDecimal.ZERO;
-      if (totalsByCurrency.containsKey(currencyId)) {
-        currentSum = totalsByCurrency.get(currencyId);
-      }
-
-      totalsByCurrency.put(
-          currencyId,
-          currentSum.add(
-              entry.getAmount().setScale(getScale(entry.getAmount()), RoundingMode.HALF_UP)));
-    }
+    Map<Integer, BigDecimal> totalsByCurrency = getTotalsByCurrency(entries);
 
     // validate double-entries (sum == 0 for each currency)
     for (Map.Entry<Integer, BigDecimal> e : totalsByCurrency.entrySet()) {
@@ -73,25 +57,38 @@ public class LedgerEntryPostingService implements LedgerEntryService {
     ledgerEntryRepository.saveAll(entries);
   }
 
+  private Map<Integer, BigDecimal> getTotalsByCurrency(List<LedgerEntry> entries) {
+    Map<Integer, BigDecimal> totalsByCurrency = new HashMap<>();
+    for (LedgerEntry entry : entries) {
+      Integer currencyId = entry.getLedgerAccount().getCurrency().getCurrencyId();
+
+      BigDecimal currentSum = BigDecimal.ZERO;
+      if (totalsByCurrency.containsKey(currencyId)) {
+        currentSum = totalsByCurrency.get(currencyId);
+      }
+
+      totalsByCurrency.put(currencyId, currentSum.add(entry.getAmount()));
+    }
+    return totalsByCurrency;
+  }
+
   private List<LedgerEntry> populateEntries(Transaction transaction, List<Posting> postings) {
     List<LedgerEntry> entries = new ArrayList<>();
-    String entryGroupKey = UUID.randomUUID().toString();
 
     for (Posting posting : postings) {
       validatePosting(posting);
       // Debit: +amount, true
+      BigDecimal debit = posting.amount();
+      // Credit: -amount, false
+      BigDecimal credit = posting.amount().negate();
+
       LedgerEntry debitEntry =
           buildLedgerEntry(
-              transaction, posting, posting.debitAccount(), posting.amount(), entryGroupKey);
+              transaction, posting, posting.debitAccount(), debit, posting.entryGroupKey());
 
-      // Credit: -amount, false
       LedgerEntry creditEntry =
           buildLedgerEntry(
-              transaction,
-              posting,
-              posting.creditAccount(),
-              posting.amount().negate(),
-              entryGroupKey);
+              transaction, posting, posting.creditAccount(), credit, posting.entryGroupKey());
       entries.add(debitEntry);
       entries.add(creditEntry);
     }
@@ -106,7 +103,7 @@ public class LedgerEntryPostingService implements LedgerEntryService {
       BigDecimal amount,
       String entryGroupKey) {
 
-    BigDecimal normalized = amount.setScale(6, RoundingMode.HALF_UP);
+    BigDecimal normalized = amount.setScale(2, RoundingMode.HALF_UP);
     LedgerEntry entry = new LedgerEntry();
     entry.setEntryGroupKey(entryGroupKey);
     entry.setTransaction(transaction);
