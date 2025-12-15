@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS currency (
     currency_id INT AUTO_INCREMENT PRIMARY KEY,
     currency_code VARCHAR(6) NOT NULL,
     currency_name VARCHAR(50) NOT NULL,
-
+    minor_units TINYINT NOT NULL DEFAULT 2, -- digit count after the decimal
     is_active BOOLEAN DEFAULT TRUE
 );
 
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS wallet (
     wallet_id INT AUTO_INCREMENT PRIMARY KEY,
     account_id INT NOT NULL,
     currency_id INT NOT NULL,
-    balance DECIMAL(20, 6) NOT NULL,
+    balance DECIMAL(20, 6) NOT NULL, -- TODO: change all DECIMAL to BIGINT and fix sql inserts
     is_main BOOLEAN DEFAULT FALSE,
 
     FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE,
