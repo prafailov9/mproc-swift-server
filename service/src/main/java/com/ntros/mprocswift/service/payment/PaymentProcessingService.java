@@ -110,7 +110,7 @@ public class PaymentProcessingService implements PaymentService {
   /** Settling the reserved amount. Payment must be authorized. */
   @Transactional
   @Override
-  public HoldSettlementResponse settleHold(HoldSettlementRequest holdSettlementRequest) {
+  public HoldSettlementResponse settlePayment(HoldSettlementRequest holdSettlementRequest) {
     // idempotency check
     HoldSettlement existingSettlement =
         transactionService.getHoldSettlement(holdSettlementRequest.getAuthCode());

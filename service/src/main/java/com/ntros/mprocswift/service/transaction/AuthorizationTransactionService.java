@@ -164,6 +164,12 @@ public class AuthorizationTransactionService implements TransactionService {
     authorizedHoldRepository.save(authorizedHold);
 
     // ledger posting must point to the settlementTx
+
+    // TODO: add fee charging logic
+    // Merchant settlement + (X - F)
+    // Fee income + F
+    // Wallet held - X
+
     LedgerAccount held = ledgerAccountService.getHeldForWallet(authPaymentContext.wallet());
     LedgerAccount merchantSettlement =
         ledgerAccountService.getOrCreateMerchantSettlementAccount(
