@@ -5,11 +5,12 @@ import com.ntros.mprocswift.model.ledger.LedgerAccount;
 
 import java.math.BigDecimal;
 
-public record PostingEntry(
+public record Posting(
         LedgerAccount debitAccount,
         LedgerAccount creditAccount,
         BigDecimal amount,
         Currency currency,
-        String description
+        String description,
+        String entryGroupKey
 ) {
 }

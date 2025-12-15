@@ -36,7 +36,7 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
     }
 
     @Override
-    protected void performTransfer(Account sender, Account receiver, InternalTransferRequest transferRequest) {
+    protected BigDecimal performTransfer(Account sender, Account receiver, InternalTransferRequest transferRequest) {
         String currencyCode = transferRequest.getCurrencyCode();
         BigDecimal transferAmount;
 
@@ -53,10 +53,11 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
         }
         receiverWallet.setBalance(receiverWallet.getBalance().add(transferAmount));
         updateAccountsAndWallets(sender, receiver, senderWallet, receiverWallet);
+        return transferAmount;
     }
 
     @Override
-    protected void createTransferTransaction(Account sender, Account receiver, InternalTransferRequest transferRequest) {
+    protected void createTransferTransaction(Account sender, Account receiver, InternalTransferRequest transferRequest, TxAmounts txAmounts) {
         Transaction transaction = buildTransaction(sender, transferRequest);
         createAndSaveMoneyTransfer(transaction, sender, receiver);
     }

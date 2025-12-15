@@ -6,5 +6,6 @@ public enum LedgerAccountTypeCode {
   MERCHANT_SETTLEMENT,
   EXTERNAL_CLEARING,
   FEE_INCOME,
-  FX_BRIDGE
+  FX_BRIDGE,
+  FX_GAIN_LOSS
 }

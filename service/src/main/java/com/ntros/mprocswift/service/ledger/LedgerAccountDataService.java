@@ -33,47 +33,24 @@ public class LedgerAccountDataService implements LedgerAccountService {
     this.ledgerAccountTypeRepository = ledgerAccountTypeRepository;
   }
 
-  public LedgerAccount walletAvailable(Wallet wallet) {
-    return getOrCreateWalletAccount(wallet, WALLET_AVAILABLE.name());
-  }
-
-  public LedgerAccount walletHeld(Wallet wallet) {
-    return getOrCreateWalletAccount(wallet, WALLET_HELD.name());
-  }
-
-  public LedgerAccount fxBridge(Currency currency) {
-    return getOrCreateSystemAccount(FX_BRIDGE.name(), currency);
-  }
-
   @Override
   public LedgerAccount getAvailableForWallet(Wallet wallet) {
-    return getAllForWallet(wallet).stream()
-        .filter(
-            ledgerAccount ->
-                ledgerAccount.getLedgerAccountType().getTypeCode().equals(WALLET_AVAILABLE.name()))
-        .findFirst()
-        .orElseThrow(
-            () ->
-                new NotFoundException(
-                    String.format("No Available Ledger Account found for wallet [%s]", wallet)));
+    return getOrCreateWalletAccount(wallet, WALLET_AVAILABLE.name());
   }
 
   @Override
   public LedgerAccount getHeldForWallet(Wallet wallet) {
-    return getAllForWallet(wallet).stream()
-        .filter(
-            ledgerAccount ->
-                ledgerAccount.getLedgerAccountType().getTypeCode().equals(WALLET_HELD.name()))
-        .findFirst()
-        .orElseThrow(
-            () ->
-                new NotFoundException(
-                    String.format("No Held Ledger Account found for wallet [%s]", wallet)));
+    return getOrCreateWalletAccount(wallet, WALLET_HELD.name());
   }
 
   @Override
   public LedgerAccount getFxBridgeForCurrency(Currency currency) {
-    return null;
+    return getOrCreateSystemAccount(FX_BRIDGE.name(), currency);
+  }
+
+  @Override
+  public LedgerAccount getFeeIncomeForCurrency(Currency currency) {
+    return getOrCreateSystemAccount(FEE_INCOME.name(), currency);
   }
 
   @Override

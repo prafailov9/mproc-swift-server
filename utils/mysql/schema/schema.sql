@@ -341,6 +341,9 @@ CREATE TABLE hold_settlement (
 CREATE TABLE IF NOT EXISTS ledger_entry (
     ledger_entry_id INT AUTO_INCREMENT PRIMARY KEY,
 
+    -- ensure uniqueness on entry groups by base transaction
+    entry_group_key VARCHAR(128) NOT NULL,
+
     transaction_id INT NOT NULL,
     ledger_account_id INT NOT NULL,
 
@@ -355,3 +358,5 @@ CREATE TABLE IF NOT EXISTS ledger_entry (
     INDEX idx_ledger_account (ledger_account_id),
     INDEX idx_ledger_account_date (ledger_account_id, entry_date)
 );
+
+CREATE UNIQUE INDEX u_idx_entry_group_key ON ledger_entry(entry_group_key, transaction_id);

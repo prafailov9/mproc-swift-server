@@ -6,33 +6,40 @@ import com.ntros.mprocswift.model.account.Account;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional
-public class ExternalTransferService extends AbstractTransferService<ExternalTransferRequest, ExternalTransferResponse, Account> {
+public class ExternalTransferService
+    extends AbstractTransferService<ExternalTransferRequest, ExternalTransferResponse, Account> {
 
-    @Override
-    protected CompletableFuture<Account> getSender(ExternalTransferRequest transferRequest) {
-        return null;
-    }
+  @Override
+  protected CompletableFuture<Account> getSender(ExternalTransferRequest transferRequest) {
+    return null;
+  }
 
-    @Override
-    protected CompletableFuture<Account> getReceiver(ExternalTransferRequest transferRequest) {
-        return null;
-    }
+  @Override
+  protected CompletableFuture<Account> getReceiver(ExternalTransferRequest transferRequest) {
+    return null;
+  }
 
-    @Override
-    protected void performTransfer(Account sender, Account receiver, ExternalTransferRequest transferRequest) {
-    }
+  @Override
+  protected BigDecimal performTransfer(
+      Account sender, Account receiver, ExternalTransferRequest transferRequest) {
+    return BigDecimal.ONE;
+  }
 
-    @Override
-    protected void createTransferTransaction(Account sender, Account receiver, ExternalTransferRequest transferRequest) {
-    }
+  @Override
+  protected void createTransferTransaction(
+      Account sender,
+      Account receiver,
+      ExternalTransferRequest transferRequest,
+      TxAmounts txAmounts) {}
 
-    @Override
-    protected ExternalTransferResponse buildTransferResponse(ExternalTransferRequest transferRequest) {
-        return null;
-    }
-
+  @Override
+  protected ExternalTransferResponse buildTransferResponse(
+      ExternalTransferRequest transferRequest) {
+    return null;
+  }
 }

@@ -5,4 +5,5 @@ INSERT INTO ledger_account_type (type_code, type_description) VALUES
 ('MERCHANT_SETTLEMENT','Money accumulated for merchant payouts'),
 ('EXTERNAL_CLEARING',  'Money moving between system and external bank'),
 ('FEE_INCOME',         'Accumulated fee income'),
-('FX_BRIDGE',          'System account to handle FX rates conversions');
+('FX_BRIDGE',          'System account to handle FX rates conversions'),
+('FX_GAIN_LOSS',       'System account to track spread, gain, loss');

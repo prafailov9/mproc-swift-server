@@ -15,21 +15,23 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @RequiredArgsConstructor
 public class LedgerEntry {
 
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Integer ledgerEntryId;
+  @Id
+  @GeneratedValue(strategy = IDENTITY)
+  private Integer ledgerEntryId;
 
-    @ManyToOne
-    @JoinColumn(name = "transaction_id")
-    private Transaction transaction;
+  @Column(name = "entry_group_key", nullable = false)
+  private String entryGroupKey;
 
-    @ManyToOne
-    @JoinColumn(name = "ledger_account_id")
-    private LedgerAccount ledgerAccount;
+  @ManyToOne
+  @JoinColumn(name = "transaction_id")
+  private Transaction transaction;
 
-    private BigDecimal amount;
+  @ManyToOne
+  @JoinColumn(name = "ledger_account_id")
+  private LedgerAccount ledgerAccount;
 
-    private OffsetDateTime entryDate;
-    private String description;
+  private BigDecimal amount;
 
+  private OffsetDateTime entryDate;
+  private String description;
 }
