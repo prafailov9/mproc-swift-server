@@ -223,6 +223,14 @@ CREATE UNIQUE INDEX uq_merchant_settlement ON ledger_account(merchant_id, ledger
 -- enforces one ledger account per (owner + account type + currency)
 CREATE UNIQUE INDEX uq_ledger_owner_key_type_currency ON ledger_account(owner_key, ledger_account_type_id, currency_id);
 
+-- cache table for wallet balances
+CREATE TABLE ledger_account_balance (
+  ledger_account_id INT PRIMARY KEY,
+  balance DECIMAL(34, 16) NOT NULL DEFAULT 0,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (ledger_account_id) REFERENCES ledger_account(ledger_account_id)
+);
+
 -- types: virtual, virtual one-time use, etc;
 CREATE TABLE IF NOT EXISTS card_type (
     card_type_id INT AUTO_INCREMENT PRIMARY KEY,

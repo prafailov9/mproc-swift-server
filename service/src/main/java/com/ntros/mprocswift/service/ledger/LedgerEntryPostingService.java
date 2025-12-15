@@ -127,12 +127,6 @@ public class LedgerEntryPostingService implements LedgerEntryService {
       throw new IllegalStateException("Debit/Credit accounts must be same currency per Posting.");
     }
 
-    // optional: ensure posting.currency matches account currency
-    if (posting.currency() != null
-        && !posting.currency().getCurrencyId().equals(d.getCurrency().getCurrencyId())) {
-      throw new IllegalStateException("Posting currency mismatch vs ledger account currency.");
-    }
-
     if (posting.amount() == null || posting.amount().compareTo(BigDecimal.ZERO) <= 0) {
       throw new IllegalArgumentException("Posting amount must be > 0.");
     }

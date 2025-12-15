@@ -5,14 +5,14 @@ insert into transaction_type(type_name) values('internal-wallet-to-wallet-transf
 insert into transaction_type(type_name) values('internal-account-transfer');
 insert into transaction_type(type_name) values('external-account-transfer');
 insert into transaction_type(type_name) values('AUTHORIZED_HOLD');
-
+insert into transaction_type(type_name) values('CARD_SETTLEMENT');
 -- statuses
 insert into transaction_status(status_name) values('AUTHORIZED');
 insert into transaction_status(status_name) values('SETTLED');
-insert into transaction_status(status_name) values('completed');
-insert into transaction_status(status_name) values('canceled');
-insert into transaction_status(status_name) values('expired');
-insert into transaction_status(status_name) values('reversed');
+insert into transaction_status(status_name) values('COMPLETED');
+insert into transaction_status(status_name) values('CANCELED');
+insert into transaction_status(status_name) values('EXPIRED');
+insert into transaction_status(status_name) values('REVERSED');
 
 -- txs
 insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 12, 381852.04, 23.92, '2022-08-18 04:54:09', '');

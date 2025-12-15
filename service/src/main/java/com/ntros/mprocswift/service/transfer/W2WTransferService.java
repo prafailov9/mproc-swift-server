@@ -138,7 +138,6 @@ public class W2WTransferService
                 fxBridgeSender,
                 senderAvailableAccount,
                 txAmounts.sentValue,
-                senderCurrency,
                 String.format(
                     "W2W:Sender to System_%s_Account transfer", senderCurrency.getCurrencyCode()),
                 entryGroupKey),
@@ -146,7 +145,6 @@ public class W2WTransferService
                 receiverAvailableAccount,
                 fxBridgeReceiver,
                 txAmounts.receivedValue,
-                receiverCurrency,
                 String.format(
                     "W2W:System_%s_Account to Receiver transfer",
                     receiverCurrency.getCurrencyCode()),
