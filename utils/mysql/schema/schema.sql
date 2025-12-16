@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS account (
     account_details_id INT NOT NULL UNIQUE,
     user_id INT NOT NULL,
 
-    total_balance DECIMAL(34, 16) NOT NULL,
+    total_balance BIGINT NOT NULL,
 
     created_date TIMESTAMP,
     updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -104,8 +104,8 @@ CREATE TABLE IF NOT EXISTS currency (
     currency_id INT AUTO_INCREMENT PRIMARY KEY,
     currency_code VARCHAR(6) NOT NULL,
     currency_name VARCHAR(50) NOT NULL,
-    minor_units TINYINT NOT NULL DEFAULT 2, -- digit count after the decimal
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOLEAN DEFAULT TRUE,
+    minor_units TINYINT NOT NULL DEFAULT 2 -- digit count after the decimal
 );
 
 CREATE UNIQUE INDEX idx_currency_code ON currency(currency_code);
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS wallet (
     wallet_id INT AUTO_INCREMENT PRIMARY KEY,
     account_id INT NOT NULL,
     currency_id INT NOT NULL,
-    balance DECIMAL(20, 6) NOT NULL, -- TODO: change all DECIMAL to BIGINT and fix sql inserts
+    balance BIGINT NOT NULL,
     is_main BOOLEAN DEFAULT FALSE,
 
     FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE,
@@ -224,12 +224,17 @@ CREATE UNIQUE INDEX uq_merchant_settlement ON ledger_account(merchant_id, ledger
 CREATE UNIQUE INDEX uq_ledger_owner_key_type_currency ON ledger_account(owner_key, ledger_account_type_id, currency_id);
 
 -- cache table for wallet balances
-CREATE TABLE ledger_account_balance (
-  ledger_account_id INT PRIMARY KEY,
-  balance DECIMAL(34, 16) NOT NULL DEFAULT 0,
+CREATE TABLE IF NOT EXISTS ledger_account_balance (
+  ledger_account_id INT PRIMARY KEY,        -- PK = FK (true 1:1)
+  balance_minor BIGINT NOT NULL DEFAULT 0,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (ledger_account_id) REFERENCES ledger_account(ledger_account_id)
+
+  FOREIGN KEY (ledger_account_id) REFERENCES ledger_account(ledger_account_id),
+
+  INDEX idx_balance_updated (updated_at)
 );
+
+
 
 -- types: virtual, virtual one-time use, etc;
 CREATE TABLE IF NOT EXISTS card_type (
@@ -276,8 +281,8 @@ CREATE TABLE IF NOT EXISTS `transaction` (
 
     related_transaction_id INT DEFAULT NULL,
 
-    amount DECIMAL(20, 6) NOT NULL,
-    fees DOUBLE,
+    amount BIGINT NOT NULL,
+    fees BIGINT,
     transaction_date DATETIME NOT NULL,
     description VARCHAR(256),
 
@@ -318,7 +323,7 @@ CREATE TABLE IF NOT EXISTS authorized_hold (
     authorized_hold_id INT AUTO_INCREMENT PRIMARY KEY,
     card_authorization_id INT NOT NULL,         -- references the authorization tx
     wallet_id INT NOT NULL,
-    hold_amount DECIMAL(20, 6) NOT NULL,
+    hold_amount BIGINT NOT NULL,
     hold_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     expires_at DATETIME NOT NULL,
     is_released BOOLEAN DEFAULT FALSE,
@@ -335,7 +340,7 @@ CREATE TABLE hold_settlement (
     card_authorization_id INT NOT NULL,    -- references the authorization tx
     card_id INT NOT NULL,
     merchant_id INT NOT NULL,
-    settled_amount DECIMAL(20, 6) NOT NULL,
+    settled_amount BIGINT NOT NULL,
     settled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id) ON DELETE CASCADE,
@@ -349,13 +354,12 @@ CREATE TABLE hold_settlement (
 CREATE TABLE IF NOT EXISTS ledger_entry (
     ledger_entry_id INT AUTO_INCREMENT PRIMARY KEY,
 
-    -- ensure uniqueness on entry groups by base transaction
-    entry_group_key VARCHAR(128) NOT NULL,
+    entry_group_key VARCHAR(128) NOT NULL, -- ensure uniqueness on entry groups by base transaction
 
     transaction_id INT NOT NULL,
     ledger_account_id INT NOT NULL,
 
-    amount DECIMAL(34, 16) NOT NULL, -- signed: positive or negative
+    amount BIGINT NOT NULL,
     entry_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     description VARCHAR(256),
 

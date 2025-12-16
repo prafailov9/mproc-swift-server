@@ -1,5 +1,7 @@
 package com.ntros.mprocswift.service.ledger;
 
+import static com.ntros.mprocswift.model.ledger.LedgerAccountTypeCode.*;
+
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.Merchant;
 import com.ntros.mprocswift.model.Wallet;
@@ -8,15 +10,12 @@ import com.ntros.mprocswift.model.ledger.LedgerAccount;
 import com.ntros.mprocswift.model.ledger.LedgerAccountType;
 import com.ntros.mprocswift.repository.ledger.LedgerAccountRepository;
 import com.ntros.mprocswift.repository.ledger.LedgerAccountTypeRepository;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static com.ntros.mprocswift.model.ledger.LedgerAccountTypeCode.*;
 
 @Slf4j
 @Service

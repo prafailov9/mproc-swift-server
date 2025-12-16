@@ -10,25 +10,30 @@ import java.util.concurrent.CompletableFuture;
 
 public interface WalletService {
 
-    Wallet getLockedWallet(final int walletId);
+  Wallet getLockedWallet(final int walletId);
 
-    CompletableFuture<Wallet> getWallet(final int walletId);
-    CompletableFuture<Wallet> getWalletByCurrencyCodeAndAccountNumber(final String currencyCode, final String accountNumber);
+  CompletableFuture<Wallet> getWallet(final int walletId);
 
-    CompletableFuture<Wallet> getWalletByCurrencyNameAndAccountId(final String currencyName, final int accountId);
-    CompletableFuture<Wallet> getWalletByCurrencyCodeAndAccountId(final String currencyCode, final int accountId);
+  CompletableFuture<Wallet> getWalletByCurrencyCodeAndAccountNumber(
+      final String currencyCode, final String accountNumber);
 
-    /**
-     * Blocking method, used in transfer service
-     */
-    // Wallet doGetWalletByCurrencyNameAndAccountId(final String currencyName, final int accountId);
-    CompletableFuture<List<Wallet>> getAllWallets();
-    CompletableFuture<List<Wallet>> getAllWalletsByAccount(final int accountId);
-    CompletableFuture<Wallet> createWallet(final WalletDTO walletDTO);
-    CompletableFuture<Wallet> createWallet(final Wallet wallet);
+  CompletableFuture<Wallet> getWalletByCurrencyNameAndAccountId(
+      final String currencyName, final int accountId);
 
-    CompletableFuture<Integer> deleteWallet(final UniqueWalletDTO uniqueWalletDTO);
+  CompletableFuture<Wallet> getWalletByCurrencyCodeAndAccountId(
+      final String currencyCode, final int accountId);
 
-    CompletableFuture<Void> updateBalance(final int walletId, final BigDecimal balance);
+  /** Blocking method, used in transfer service */
+  // Wallet doGetWalletByCurrencyNameAndAccountId(final String currencyName, final int accountId);
+  CompletableFuture<List<Wallet>> getAllWallets();
 
+  CompletableFuture<List<Wallet>> getAllWalletsByAccount(final int accountId);
+
+  CompletableFuture<Wallet> createWallet(final WalletDTO walletDTO);
+
+  CompletableFuture<Wallet> createWallet(final Wallet wallet);
+
+  CompletableFuture<Integer> deleteWallet(final UniqueWalletDTO uniqueWalletDTO);
+
+  CompletableFuture<Void> updateBalance(final int walletId, final long balance);
 }

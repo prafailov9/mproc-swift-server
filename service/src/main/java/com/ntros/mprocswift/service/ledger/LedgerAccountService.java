@@ -14,6 +14,7 @@ public interface LedgerAccountService {
   LedgerAccount getHeldForWallet(Wallet wallet);
 
   LedgerAccount getFxBridgeForCurrency(Currency currency);
+
   LedgerAccount getFeeIncomeForCurrency(Currency currency);
 
   List<LedgerAccount> getAllForWallet(Wallet wallet);

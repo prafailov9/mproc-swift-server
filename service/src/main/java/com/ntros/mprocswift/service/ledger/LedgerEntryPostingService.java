@@ -1,11 +1,11 @@
 package com.ntros.mprocswift.service.ledger;
 
+import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.ledger.LedgerAccount;
+import com.ntros.mprocswift.model.ledger.LedgerAccountBalance;
 import com.ntros.mprocswift.model.ledger.LedgerEntry;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.repository.ledger.LedgerEntryRepository;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +18,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class LedgerEntryPostingService implements LedgerEntryService {
 
   private final LedgerEntryRepository ledgerEntryRepository;
+  private final LedgerAccountBalanceService ledgerAccountBalanceService;
 
   @Autowired
-  public LedgerEntryPostingService(LedgerEntryRepository ledgerEntryRepository) {
+  public LedgerEntryPostingService(
+      LedgerEntryRepository ledgerEntryRepository,
+      LedgerAccountBalanceService ledgerAccountBalanceService) {
     this.ledgerEntryRepository = ledgerEntryRepository;
+    this.ledgerAccountBalanceService = ledgerAccountBalanceService;
   }
 
   @Override
@@ -34,40 +38,67 @@ public class LedgerEntryPostingService implements LedgerEntryService {
 
     List<LedgerEntry> entries = populateEntries(transaction, postings);
 
-    // entries are grouped by currency for the entire posting
-    // for each currency, group all of its entries and sum the amount
-    Map<Integer, BigDecimal> totalsByCurrency = getTotalsByCurrency(entries);
-
+    // entries are grouped by currency for the entire posting for each currency, group all of its
+    // entries and sum the amount
+    Map<Integer, Long> totalsByCurrency = getTotalsByCurrency(entries);
     // validate double-entries (sum == 0 for each currency)
-    for (Map.Entry<Integer, BigDecimal> e : totalsByCurrency.entrySet()) {
-      BigDecimal sum = e.getValue();
+    validateBalancedLedgersByCurrency(transaction, totalsByCurrency);
+
+    ledgerEntryRepository.saveAll(entries);
+
+    // apply to balances (group by ledger_account_id)
+    Map<Integer, Long> deltaByAccountId = new HashMap<>();
+    for (LedgerEntry e : entries) {
+      int id = e.getLedgerAccount().getLedgerAccountId();
+      deltaByAccountId.merge(id, e.getAmount(), Long::sum);
+    }
+
+    // lock/apply in deterministic order to avoid deadlocks
+    List<Integer> ids = new ArrayList<>(deltaByAccountId.keySet());
+    Collections.sort(ids);
+
+    for (Integer ledgerAccountId : ids) {
+      LedgerAccountBalance lockedBalance =
+          ledgerAccountBalanceService.getLedgerAccountBalance(ledgerAccountId);
+      if (lockedBalance == null) {
+        throw new NotFoundException("Missing balance row for ledgerAccountId=" + ledgerAccountId);
+      }
+      log.info("locking balance: {}", lockedBalance);
+
+      long delta = deltaByAccountId.get(ledgerAccountId);
+      ledgerAccountBalanceService.updateBalance(ledgerAccountId, delta);
+    }
+  }
+
+  private void validateBalancedLedgersByCurrency(
+      Transaction txn, Map<Integer, Long> totalsByCurrency) {
+    for (Map.Entry<Integer, Long> e : totalsByCurrency.entrySet()) {
+      long sum = e.getValue();
 
       // Use compareTo(0) to ignore scale differences.
-      if (sum.compareTo(BigDecimal.ZERO) != 0) {
+      if (sum != 0) {
         throw new IllegalStateException(
             "Unbalanced ledger postings for transaction "
-                + transaction.getTransactionId()
+                + txn.getTransactionId()
                 + " in currencyId="
                 + e.getKey()
                 + ". Total amount="
                 + sum);
       }
     }
-
-    ledgerEntryRepository.saveAll(entries);
   }
 
-  private Map<Integer, BigDecimal> getTotalsByCurrency(List<LedgerEntry> entries) {
-    Map<Integer, BigDecimal> totalsByCurrency = new HashMap<>();
+  private Map<Integer, Long> getTotalsByCurrency(List<LedgerEntry> entries) {
+    Map<Integer, Long> totalsByCurrency = new HashMap<>();
     for (LedgerEntry entry : entries) {
       Integer currencyId = entry.getLedgerAccount().getCurrency().getCurrencyId();
 
-      BigDecimal currentSum = BigDecimal.ZERO;
+      long currentSum = 0;
       if (totalsByCurrency.containsKey(currencyId)) {
         currentSum = totalsByCurrency.get(currencyId);
       }
 
-      totalsByCurrency.put(currencyId, currentSum.add(entry.getAmount()));
+      totalsByCurrency.put(currencyId, currentSum + entry.getAmount());
     }
     return totalsByCurrency;
   }
@@ -78,9 +109,9 @@ public class LedgerEntryPostingService implements LedgerEntryService {
     for (Posting posting : postings) {
       validatePosting(posting);
       // Debit: +amount, true
-      BigDecimal debit = posting.amount();
+      long debit = posting.amount();
       // Credit: -amount, false
-      BigDecimal credit = posting.amount().negate();
+      long credit = posting.amount() * (-1);
 
       LedgerEntry debitEntry =
           buildLedgerEntry(
@@ -100,15 +131,15 @@ public class LedgerEntryPostingService implements LedgerEntryService {
       Transaction transaction,
       Posting posting,
       LedgerAccount ledgerAccount,
-      BigDecimal amount,
+      long amountMinorUnits,
       String entryGroupKey) {
 
-    BigDecimal normalized = amount.setScale(2, RoundingMode.HALF_UP);
+    //    long normalized = Money.toMinor(amount, ledgerAccount.getCurrency().getMinorUnits());
     LedgerEntry entry = new LedgerEntry();
     entry.setEntryGroupKey(entryGroupKey);
     entry.setTransaction(transaction);
     entry.setLedgerAccount(ledgerAccount);
-    entry.setAmount(normalized);
+    entry.setAmount(amountMinorUnits);
     entry.setDescription(
         posting.description() != null ? posting.description() : "[Template_Description]");
     entry.setEntryDate(OffsetDateTime.now());
@@ -124,7 +155,7 @@ public class LedgerEntryPostingService implements LedgerEntryService {
       throw new IllegalStateException("Debit/Credit accounts must be same currency per Posting.");
     }
 
-    if (posting.amount() == null || posting.amount().compareTo(BigDecimal.ZERO) <= 0) {
+    if (posting.amount() <= 0) {
       throw new IllegalArgumentException("Posting amount must be > 0.");
     }
   }

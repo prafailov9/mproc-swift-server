@@ -1,10 +1,10 @@
 package com.ntros.mprocswift.service.transaction;
 
+import com.ntros.mprocswift.model.currency.MoneyConverter;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.card.AuthorizedHold;
 import com.ntros.mprocswift.model.transactions.card.CardAuthorization;
 import com.ntros.mprocswift.model.transactions.card.HoldSettlement;
-
 import java.time.OffsetDateTime;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -67,7 +67,8 @@ public final class TransactionFactory {
     return tx;
   }
 
-  public static HoldSettlement buildHoldSettlement(Transaction settlementTx, CardAuthorization auth, AuthPaymentContext ctx) {
+  public static HoldSettlement buildHoldSettlement(
+      Transaction settlementTx, CardAuthorization auth, AuthPaymentContext ctx) {
     HoldSettlement settlement = new HoldSettlement();
     settlement.setTransaction(settlementTx); // ✅ new tx
     settlement.setCardAuthorization(auth);
@@ -77,5 +78,4 @@ public final class TransactionFactory {
     settlement.setSettledAmount(ctx.authorizedAmount());
     return settlement;
   }
-
 }

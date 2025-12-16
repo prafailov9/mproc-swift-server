@@ -21,8 +21,8 @@ public abstract class TransferRequest {
     @Size(min = 8, max = 12, message = "Invalid source AN: must be 8 - 12 digits.")
     private String sourceAccountNumber;
 
-    @NotNull(message = "Transfer amount cannot be null.")
-    private BigDecimal amount;
+  @NotNull(message = "Transfer amount cannot be null.")
+  private BigDecimal amount;
 
     @NotNull(message = "currency code cannot be null.")
     @NotBlank(message = "currency code cannot be empty.")

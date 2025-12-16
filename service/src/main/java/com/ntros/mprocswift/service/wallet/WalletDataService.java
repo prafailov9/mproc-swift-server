@@ -150,7 +150,7 @@ public class WalletDataService implements WalletService {
   }
 
   @Override
-  public CompletableFuture<Void> updateBalance(int walletId, BigDecimal balance) {
+  public CompletableFuture<Void> updateBalance(int walletId, long balance) {
     return CompletableFuture.runAsync(
         () -> {
           try {

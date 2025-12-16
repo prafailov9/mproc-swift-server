@@ -3,6 +3,7 @@ package com.ntros.mprocswift.service.transfer;
 import com.ntros.mprocswift.dto.transfer.TransferRequest;
 import com.ntros.mprocswift.dto.transfer.TransferResponse;
 import com.ntros.mprocswift.exceptions.TransferProcessingFailedException;
+import com.ntros.mprocswift.model.currency.MoneyMovement;
 import com.ntros.mprocswift.repository.transaction.MoneyTransferRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionStatusRepository;
@@ -13,14 +14,12 @@ import com.ntros.mprocswift.service.ledger.LedgerAccountService;
 import com.ntros.mprocswift.service.ledger.LedgerEntryService;
 import com.ntros.mprocswift.service.wallet.WalletService;
 import jakarta.transaction.Transactional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 @Service
 @Slf4j
@@ -62,13 +61,9 @@ public abstract class AbstractTransferService<
 
   @Transactional
   protected R execInTransaction(TransferContext<T, S> ctx) {
-    BigDecimal convertedAmount = performTransfer(ctx.sender(), ctx.receiver(), ctx.request());
+    MoneyMovement moneyMovement = performTransfer(ctx.sender(), ctx.receiver(), ctx.request());
 
-    createTransferTransaction(
-        ctx.sender(),
-        ctx.receiver(),
-        ctx.request(),
-        new TxAmounts(ctx.request().getAmount(), convertedAmount));
+    createTransferTransaction(ctx.sender(), ctx.receiver(), ctx.request(), moneyMovement);
     return buildTransferResponse(ctx.request());
   }
 
@@ -76,22 +71,12 @@ public abstract class AbstractTransferService<
 
   protected abstract CompletableFuture<S> getReceiver(T transferRequest);
 
-  protected abstract BigDecimal performTransfer(S sender, S receiver, T transferRequest);
+  protected abstract MoneyMovement performTransfer(S sender, S receiver, T transferRequest);
 
   protected abstract void createTransferTransaction(
-      S sender, S receiver, T transferRequest, TxAmounts txAmounts);
+      S sender, S receiver, T transferRequest, MoneyMovement moneyMovement);
 
   protected abstract R buildTransferResponse(T transferRequest);
 
   protected record TransferContext<T extends TransferRequest, S>(S sender, S receiver, T request) {}
-
-  protected static final class TxAmounts {
-    BigDecimal sentValue;
-    BigDecimal receivedValue;
-
-    TxAmounts(BigDecimal sentValue, BigDecimal receivedValue) {
-      this.sentValue = sentValue;
-      this.receivedValue = receivedValue;
-    }
-  }
 }

@@ -30,7 +30,7 @@ public class LedgerEntry {
   @JoinColumn(name = "ledger_account_id")
   private LedgerAccount ledgerAccount;
 
-  private BigDecimal amount;
+  private long amount;
 
   private OffsetDateTime entryDate;
   private String description;

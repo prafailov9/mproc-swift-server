@@ -7,9 +7,9 @@ import com.ntros.mprocswift.model.currency.Currency;
 
 import java.math.BigDecimal;
 
-public record AuthPaymentContext(Card card,
-                                 Merchant merchant,
-                                 Wallet wallet,
-                                 BigDecimal authorizedAmount,
-                                 Currency requestedCurrency) {
-}
+public record AuthPaymentContext(
+    Card card,
+    Merchant merchant,
+    Wallet wallet,
+    long authorizedAmount,
+    Currency requestedCurrency) {}

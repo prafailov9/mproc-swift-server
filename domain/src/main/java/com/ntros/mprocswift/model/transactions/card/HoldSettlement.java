@@ -15,29 +15,27 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 public class HoldSettlement {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hold_settlement_id")
-    private Integer holdSettlementId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "hold_settlement_id")
+  private Integer holdSettlementId;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "transaction_id", nullable = false)
-    private Transaction transaction;
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "transaction_id", nullable = false)
+  private Transaction transaction;
 
-    @ManyToOne
-    @JoinColumn(name = "card_authorization_id", nullable = false)
-    private CardAuthorization cardAuthorization;
+  @ManyToOne
+  @JoinColumn(name = "card_authorization_id", nullable = false)
+  private CardAuthorization cardAuthorization;
 
-    @ManyToOne
-    @JoinColumn(name = "card_id", nullable = false)
-    private Card card;
+  @ManyToOne
+  @JoinColumn(name = "card_id", nullable = false)
+  private Card card;
 
-    @ManyToOne
-    @JoinColumn(name = "merchant_id", nullable = false)
-    private Merchant merchant;
+  @ManyToOne
+  @JoinColumn(name = "merchant_id", nullable = false)
+  private Merchant merchant;
 
-    private BigDecimal settledAmount;
-    private OffsetDateTime settledAt;
+  private long settledAmount;
+  private OffsetDateTime settledAt;
 }
-
-

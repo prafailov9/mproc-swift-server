@@ -21,8 +21,6 @@ import com.ntros.mprocswift.service.ledger.LedgerAccountService;
 import com.ntros.mprocswift.service.ledger.LedgerEntryService;
 import com.ntros.mprocswift.service.ledger.Posting;
 import jakarta.transaction.Transactional;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -104,7 +102,7 @@ public class AuthorizationTransactionService implements TransactionService {
 
     String entryGroupKey = "CAH:" + baseTx.getTransactionId();
 
-    BigDecimal reserved = authPaymentContext.authorizedAmount(); // should be wallet currency amount
+    long reserved = authPaymentContext.authorizedAmount(); // should be wallet currency amount
 
     // take money from available, add to held
     ledgerEntryService.createLedgerEntries(
@@ -218,17 +216,16 @@ public class AuthorizationTransactionService implements TransactionService {
   }
 
   @Override
-  public BigDecimal getHoldAmountSumForWallet(Wallet wallet) {
+  public long getHoldAmountSumForWallet(Wallet wallet) {
     List<AuthorizedHold> holds =
         authorizedHoldRepository.findAllByWalletAndIsReleasedFalseAndExpiresAtAfter(
             wallet, OffsetDateTime.now());
     if (holds.isEmpty()) {
-      return BigDecimal.ZERO;
+      return 0;
     }
-    BigDecimal sum = BigDecimal.ZERO;
+    long sum = 0;
     for (var hold : holds) {
-      BigDecimal normalized = hold.getHoldAmount().setScale(2, RoundingMode.HALF_UP);
-      sum = sum.add(normalized);
+      sum += hold.getHoldAmount();
     }
     return sum;
   }

@@ -10,6 +10,8 @@ import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.card.Card;
 import com.ntros.mprocswift.model.currency.Currency;
+import com.ntros.mprocswift.model.currency.MoneyConverter;
+import com.ntros.mprocswift.model.currency.MoneyMovement;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.card.AuthorizedHold;
 import com.ntros.mprocswift.model.transactions.card.CardAuthorization;
@@ -22,7 +24,6 @@ import com.ntros.mprocswift.service.merchant.MerchantService;
 import com.ntros.mprocswift.service.transaction.AuthPaymentContext;
 import com.ntros.mprocswift.service.transaction.TransactionService;
 import com.ntros.mprocswift.service.wallet.WalletService;
-import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,11 +76,11 @@ public class PaymentProcessingService implements PaymentService {
           walletService.getLockedWallet(getAvailableWallet(card, paymentRequest).getWalletId());
 
       // run FX conversion if needed
-      BigDecimal convertedAmount = getAmount(lockedWallet, paymentRequest);
+      long convertedAmount = getAmount(lockedWallet, paymentRequest);
 
       // Sum active holds for this wallet inside the same TX
-      BigDecimal existingHolds = transactionService.getHoldAmountSumForWallet(lockedWallet);
-      BigDecimal totalReserved = existingHolds.add(convertedAmount);
+      long existingHolds = transactionService.getHoldAmountSumForWallet(lockedWallet);
+      long totalReserved = existingHolds + convertedAmount;
 
       if (!lockedWallet.hasAvailableBalance(totalReserved)) {
         throw new InsufficientFundsException(
@@ -130,8 +131,9 @@ public class PaymentProcessingService implements PaymentService {
           String.format("Settlement not authorized. Tx: %s", baseTx));
     }
 
+    // TODO: remove account/wallet balance usage, create and use new ledger balance table
     // deduct the amount from account
-    BigDecimal amountToSettle = hold.getHoldAmount();
+    long amountToSettle = hold.getHoldAmount();
     Wallet wallet = hold.getWallet();
     Account account = wallet.getAccount();
 
@@ -169,7 +171,7 @@ public class PaymentProcessingService implements PaymentService {
     HoldSettlementResponse response = new HoldSettlementResponse();
     response.setSuccess(true);
     response.setDescription("Successfully settled holds");
-    response.setSettledAmount(hold.getHoldAmount().toString());
+    response.setSettledAmount("" + hold.getHoldAmount());
     response.setCurrencyCode(hold.getWallet().getCurrency().getCurrencyCode());
     response.setMerchant(cardAuth.getMerchant().getMerchantName());
     return response;
@@ -193,13 +195,32 @@ public class PaymentProcessingService implements PaymentService {
         .orElse(account.getMainWallet().orElse(account.getWallets().get(0)));
   }
 
-  private BigDecimal getAmount(Wallet wallet, AuthorizePaymentRequest authorizePaymentRequest) {
+  private MoneyMovement getAmountV2(
+      Wallet wallet, AuthorizePaymentRequest authorizePaymentRequest) {
     return wallet.getCurrency().getCurrencyCode().equals(authorizePaymentRequest.getCurrency())
-        ? BigDecimal.valueOf(authorizePaymentRequest.getAmount())
+        ? new MoneyMovement(
+            MoneyConverter.toMinor(
+                authorizePaymentRequest.getAmount(), wallet.getCurrency().getMinorUnits()),
+            wallet.getCurrency(),
+            0,
+            null)
         : currencyExchangeRateDataService.convert(
-            BigDecimal.valueOf(authorizePaymentRequest.getAmount()),
+            authorizePaymentRequest.getAmount(),
             wallet.getCurrency().getCurrencyCode(),
             authorizePaymentRequest.getCurrency());
+  }
+
+  private long getAmount(Wallet wallet, AuthorizePaymentRequest authorizePaymentRequest) {
+    return wallet.getCurrency().getCurrencyCode().equals(authorizePaymentRequest.getCurrency())
+        ? MoneyConverter.toMinor(
+            authorizePaymentRequest.getAmount(), wallet.getCurrency().getMinorUnits())
+        : currencyExchangeRateDataService
+            .convert(
+                authorizePaymentRequest.getAmount(),
+                wallet.getCurrency().getCurrencyCode(),
+                authorizePaymentRequest.getCurrency())
+            .receivedMoney()
+            .minorAmount();
   }
 
   private AuthorizePaymentResponse buildSuccessAuthorizationResponse(
@@ -210,7 +231,7 @@ public class PaymentProcessingService implements PaymentService {
     response.setMerchant(ctx.merchant().getMerchantName());
     response.setCurrency(ctx.wallet().getCurrency().getCurrencyCode());
     response.setAccountNumber(ctx.wallet().getAccount().getAccountDetails().getAccountNumber());
-    response.setPrice(ctx.authorizedAmount().doubleValue());
+    response.setAmount("" + ctx.authorizedAmount());
 
     response.setAuthCode(authCode);
 
@@ -225,7 +246,7 @@ public class PaymentProcessingService implements PaymentService {
         format("Failed to authorize payment to %s. Error: [%s]", request.getMerchant(), error));
     response.setMerchant(request.getMerchant());
     response.setCurrency(request.getCurrency());
-    response.setPrice(request.getAmount());
+    response.setAmount("" + request.getAmount());
 
     response.setAuthCode(AuthCodeType.UNAUTHORIZED.name());
 

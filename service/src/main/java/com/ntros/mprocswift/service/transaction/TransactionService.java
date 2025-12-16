@@ -15,7 +15,7 @@ public interface TransactionService {
 
     AuthorizedHold getAuthorizedHold(String authCode);
 
-    BigDecimal getHoldAmountSumForWallet(Wallet wallet);
+    long getHoldAmountSumForWallet(Wallet wallet);
 
     HoldSettlement getHoldSettlement(String authCode);
 

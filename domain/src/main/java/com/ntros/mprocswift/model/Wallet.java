@@ -15,33 +15,35 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(of = {"walletId", "account", "currency"})
 public class Wallet {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer walletId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer walletId;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
+  @ManyToOne
+  @JoinColumn(name = "account_id")
+  private Account account;
 
-    @ManyToOne
-    @JoinColumn(name = "currency_id")
-    private Currency currency;
-    private BigDecimal balance;
-    private boolean isMain;
+  @ManyToOne
+  @JoinColumn(name = "currency_id")
+  private Currency currency;
 
-    public void increaseBalance(final BigDecimal amount) {
-        balance = balance.add(amount);
-    }
+  private long balance;
+  private boolean isMain;
 
-    public void decreaseBalance(final BigDecimal amount) {
-        balance = balance.subtract(amount);
-    }
+  public void increaseBalance(final long amount) {
+    balance += amount;
+  }
 
-    public boolean hasAvailableBalance(final BigDecimal amount) {
-        return balance.compareTo(amount) >= 0;
-    }
+  public void decreaseBalance(final long amount) {
+    balance -= amount;
+  }
 
-    public boolean verifyOwnership(String accountNumber, String currencyCode) {
-        return account.getAccNumber().equals(accountNumber) && this.currency.getCurrencyCode().equals(currencyCode);
-    }
+  public boolean hasAvailableBalance(final long amount) {
+    return balance > amount;
+  }
+
+  public boolean verifyOwnership(String accountNumber, String currencyCode) {
+    return account.getAccNumber().equals(accountNumber)
+        && this.currency.getCurrencyCode().equals(currencyCode);
+  }
 }

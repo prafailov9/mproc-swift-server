@@ -6,4 +6,6 @@ INSERT INTO ledger_account_type (type_code, type_description) VALUES
 ('EXTERNAL_CLEARING',  'Money moving between system and external bank'),
 ('FEE_INCOME',         'Accumulated fee income'),
 ('FX_BRIDGE',          'System account to handle FX rates conversions'),
-('FX_GAIN_LOSS',       'System account to track spread, gain, loss');
+('FX_GAIN_LOSS',       'System account to track spread, gain, loss'),
+('FX_CLEARING',       'System account to track spread, gain, loss'),
+('FX_ROUNDING',       'System account to track rounding');
