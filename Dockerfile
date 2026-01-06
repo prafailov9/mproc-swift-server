@@ -16,6 +16,7 @@ WORKDIR /app
 EXPOSE 8080 5005
 
 # run JAR file
+
 # Using '-Dspring.config.additional-location' to include multiple config files in the spring app
 # https://stackoverflow.com/questions/25855795/spring-boot-and-multiple-external-configuration-files/25862357#25862357
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -Dspring.config.additional-location=classpath:/application.yml,/app/persistence.yml -jar /app/mproc-swift.jar"]
