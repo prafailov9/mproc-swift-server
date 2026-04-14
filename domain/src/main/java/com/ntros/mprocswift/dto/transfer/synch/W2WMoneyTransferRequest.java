@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.dto.transfer;
+package com.ntros.mprocswift.dto.transfer.synch;
 
 import com.ntros.mprocswift.validation.CurrenciesNotEqual;
 import jakarta.validation.constraints.NotBlank;
@@ -12,8 +12,7 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode(
     callSuper = true) // include superclass fields in Lombok's equals and hashCode impls.
 @CurrenciesNotEqual
-public class W2WTransferRequest extends TransferRequest {
-
+public class W2WMoneyTransferRequest extends MoneyTransferRequest {
   @NotNull(message = "currency code cannot be null.")
   @NotBlank(message = "currency code cannot be empty.")
   private String toCurrencyCode; // recipient wallet based on its currency

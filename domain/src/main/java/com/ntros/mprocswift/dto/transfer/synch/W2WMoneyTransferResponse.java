@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.dto.transfer;
+package com.ntros.mprocswift.dto.transfer.synch;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,4 +8,4 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EqualsAndHashCode(
     callSuper = true) // include superclass fields in Lombok's equals and hashCode impls.
-public class W2WTransferResponse extends TransferResponse {}
+public class W2WMoneyTransferResponse extends MoneyTransferResponse {}

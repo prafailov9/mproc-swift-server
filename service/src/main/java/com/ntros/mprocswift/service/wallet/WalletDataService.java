@@ -58,6 +58,25 @@ public class WalletDataService implements WalletService {
         .orElseThrow(() -> new WalletNotFoundException("Wallet not found for id: " + walletId));
   }
 
+  public Wallet getLockedWalletByCurrencyCodeAndAccountNumber(
+      String currencyCode, String accountNumber) {
+    return walletRepository
+        .findByCurrencyCodeAccountNumberForUpdate(currencyCode, accountNumber)
+        .orElseThrow(
+            () ->
+                new WalletNotFoundException(
+                    String.format("Wallet not found for [%s, %s]", currencyCode, accountNumber)));
+  }
+
+  @Override
+  public List<Wallet> getAllWalletsLocked(String accountNumber) {
+    List<Wallet> wallets = walletRepository.findAllByAccountNumberForUpdate(accountNumber);
+    if (wallets.isEmpty()) {
+      throw new WalletNotFoundException("No wallets found for account " + accountNumber);
+    }
+    return wallets;
+  }
+
   @Override
   public CompletableFuture<Wallet> getWallet(int walletId) {
     return CompletableFuture.supplyAsync(

@@ -12,6 +12,10 @@ public interface WalletService {
 
   Wallet getLockedWallet(final int walletId);
 
+  Wallet getLockedWalletByCurrencyCodeAndAccountNumber(String currencyCode, String accountNumber);
+
+  List<Wallet> getAllWalletsLocked(String accountNumber);
+
   CompletableFuture<Wallet> getWallet(final int walletId);
 
   CompletableFuture<Wallet> getWalletByCurrencyCodeAndAccountNumber(

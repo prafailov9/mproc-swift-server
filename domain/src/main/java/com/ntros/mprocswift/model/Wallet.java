@@ -39,7 +39,7 @@ public class Wallet {
   }
 
   public boolean hasAvailableBalance(final long amount) {
-    return balance > amount;
+    return balance >= amount;
   }
 
   public boolean verifyOwnership(String accountNumber, String currencyCode) {

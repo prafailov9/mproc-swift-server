@@ -6,7 +6,6 @@ import com.ntros.mprocswift.exceptions.InsufficientFundsException;
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.currency.Currency;
-import com.ntros.mprocswift.model.currency.Money;
 import com.ntros.mprocswift.model.currency.MoneyConverter;
 import com.ntros.mprocswift.model.currency.MoneyMovement;
 import com.ntros.mprocswift.model.ledger.LedgerAccount;
@@ -40,6 +39,7 @@ public class W2WTransferService
         transferRequest.getToCurrencyCode(), transferRequest.getSourceAccountNumber());
   }
 
+  // TODO: refactor to lock both wallets and update the ledgerAccountBalance for each one
   @Override
   protected MoneyMovement performTransfer(Wallet sender, Wallet receiver, W2WTransferRequest req) {
     if (!sender.getAccount().getAccountId().equals(receiver.getAccount().getAccountId())) {
@@ -62,7 +62,7 @@ public class W2WTransferService
     sender.decreaseBalance(sentMinor);
     receiver.increaseBalance(receivedMinor);
 
-    updateWalletsAndAccounts(sender, receiver);
+    //    updateWalletsAndAccounts(sender, receiver);
 
     return new MoneyMovement(
         sentMinor, sender.getCurrency(), receivedMinor, receiver.getCurrency());

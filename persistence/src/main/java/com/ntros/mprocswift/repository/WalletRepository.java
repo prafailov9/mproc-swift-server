@@ -21,6 +21,33 @@ public interface WalletRepository extends JpaRepository<Wallet, Integer> {
   @Query("SELECT w FROM Wallet w WHERE w.walletId = :walletId")
   Optional<Wallet> findByIdForUpdate(@Param("walletId") Integer walletId);
 
+  @Query(
+      value =
+          """
+    SELECT w.* FROM wallet w
+    JOIN currency c ON w.currency_id=c.currency_id
+    JOIN account a ON w.account_id=a.account_id
+    JOIN account_details ad ON a.account_details_id=ad.account_details_id
+    WHERE c.currency_code = :currencyCode
+      AND ad.account_number = :accountNumber
+    FOR UPDATE
+  """,
+      nativeQuery = true)
+  Optional<Wallet> findByCurrencyCodeAccountNumberForUpdate(
+      @Param("currencyCode") String currencyCode, @Param("accountNumber") String accountNumber);
+
+  @Query(
+      value =
+          """
+    SELECT w.* FROM wallet w
+    JOIN account a ON w.account_id=a.account_id
+    JOIN account_details ad ON a.account_details_id=ad.account_details_id
+    WHERE ad.account_number = :accountNumber
+    FOR UPDATE
+  """,
+      nativeQuery = true)
+  List<Wallet> findAllByAccountNumberForUpdate(@Param("accountNumber") String accountNumber);
+
   @Query(value = "SELECT * FROM wallet w WHERE w.currency_id=:currencyId", nativeQuery = true)
   List<Wallet> findAllByCurrencyId(@Param("currencyId") int currencyId);
 
