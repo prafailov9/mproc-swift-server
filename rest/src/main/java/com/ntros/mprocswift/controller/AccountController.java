@@ -37,15 +37,19 @@ public class AccountController extends AbstractApiController {
         .handleAsync(this::handleResponseAsync);
   }
 
-  @GetMapping("/an/{accountNumber}")
-  public CompletableFuture<ResponseEntity<?>> getAccountByAN(
-      @PathVariable("accountNumber")
-          @Pattern(regexp = "\\d+", message = "ACCOUNT_NUMBER must be a number.")
-          String accountNumber) {
+  public CompletableFuture<ResponseEntity<?>> getAccountByANAsync(
+      @PathVariable("async/accountNumber") String accountNumber) {
     return accountService
-        .getAccountByAccountNumber(accountNumber)
+        .getAccountByAccountNumberAsync(accountNumber)
         .thenApplyAsync(accountModelConverter::toDto)
         .handleAsync(this::handleResponseAsync);
+  }
+
+  @GetMapping("/an/{accountNumber}")
+  public ResponseEntity<?> getAccountByAN(@PathVariable("accountNumber") String accountNumber) {
+    var acc = accountService.getAccountByAccountNumber(accountNumber);
+    log.info("Loaded account: {}", acc);
+    return ResponseEntity.ok(accountModelConverter.toDto(acc));
   }
 
   @GetMapping("/by-currency/{currencyCode}")

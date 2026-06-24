@@ -12,6 +12,7 @@ import com.ntros.mprocswift.repository.account.AccountRepository;
 import com.ntros.mprocswift.service.currency.CurrencyExchangeRateDataService;
 import com.ntros.mprocswift.service.currency.CurrencyUtils;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class AccountDataService implements AccountService {
   }
 
   @Override
-  public CompletableFuture<Account> getAccountByAccountNumber(String accountNumber) {
+  public CompletableFuture<Account> getAccountByAccountNumberAsync(String accountNumber) {
     return supplyAsync(
         () ->
             accountRepository
@@ -79,6 +80,14 @@ public class AccountDataService implements AccountService {
                     () ->
                         new AccountNotFoundException(
                             "Account not found for AN: " + accountNumber)));
+  }
+
+  @Override
+  public Account getAccountByAccountNumber(String accountNumber) {
+    return accountRepository
+        .findByAccountNumber(accountNumber)
+        .orElseThrow(
+            () -> new AccountNotFoundException("Account not found for AN: " + accountNumber));
   }
 
   @Override

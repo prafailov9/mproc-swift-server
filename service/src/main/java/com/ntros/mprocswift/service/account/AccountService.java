@@ -10,8 +10,8 @@ public interface AccountService {
     List<Account> getAllAccountsByCurrencyCode(String currencyCode);
 
     CompletableFuture<Account> getAccount(final int accountId);
-    CompletableFuture<Account> getAccountByAccountNumber(final String accountNumber);
-
+    CompletableFuture<Account> getAccountByAccountNumberAsync(final String accountNumber);
+    Account getAccountByAccountNumber(final String accountNumber);
     CompletableFuture<List<Account>> getAllAccounts();
     CompletableFuture<List<Account>> getAllAccountsWalletCount(final int walletCount);
 

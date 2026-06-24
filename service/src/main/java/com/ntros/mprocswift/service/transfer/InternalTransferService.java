@@ -6,7 +6,6 @@ import com.ntros.mprocswift.exceptions.*;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.currency.Currency;
-import com.ntros.mprocswift.model.currency.Money;
 import com.ntros.mprocswift.model.currency.MoneyConverter;
 import com.ntros.mprocswift.model.currency.MoneyMovement;
 import com.ntros.mprocswift.model.transactions.MoneyTransfer;
@@ -17,7 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -32,12 +30,12 @@ public class InternalTransferService
 
   @Override
   protected CompletableFuture<Account> getSender(InternalTransferRequest transferRequest) {
-    return accountService.getAccountByAccountNumber(transferRequest.getSourceAccountNumber());
+    return accountService.getAccountByAccountNumberAsync(transferRequest.getSourceAccountNumber());
   }
 
   @Override
   protected CompletableFuture<Account> getReceiver(InternalTransferRequest transferRequest) {
-    return accountService.getAccountByAccountNumber(transferRequest.getRecipientAccountNumber());
+    return accountService.getAccountByAccountNumberAsync(transferRequest.getRecipientAccountNumber());
   }
 
   @Override

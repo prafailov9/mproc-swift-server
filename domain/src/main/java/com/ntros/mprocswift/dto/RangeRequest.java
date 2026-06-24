@@ -3,12 +3,10 @@ package com.ntros.mprocswift.dto;
 import com.ntros.mprocswift.validation.OriginLessThanBound;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-@NonNull
 @OriginLessThanBound
 public class RangeRequest {
 
