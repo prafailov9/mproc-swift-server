@@ -13,21 +13,24 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 @RestController
-public abstract class AbstractTransferController<T extends TransferRequest, R extends TransferResponse> extends AbstractApiController {
+public abstract class AbstractTransferController<
+        T extends TransferRequest, R extends TransferResponse>
+    extends AbstractApiController {
 
-    protected final TransferService<T, R> transferService;
+  protected final TransferService<T, R> transferService;
 
-    @Autowired
-    @Qualifier("taskExecutor")
-    protected Executor executor;
+  @Autowired
+  @Qualifier("taskExecutor")
+  protected Executor executor;
 
-    protected AbstractTransferController(TransferService<T, R> transferService) {
-        this.transferService = transferService;
-    }
+  protected AbstractTransferController(TransferService<T, R> transferService) {
+    this.transferService = transferService;
+  }
 
-    protected CompletableFuture<ResponseEntity<?>> processTransfer(T transferRequest) {
-        return transferService.transfer(transferRequest)
-                .handleAsync(this::handleResponseAsync, executor);
-    }
+  protected CompletableFuture<ResponseEntity<?>> processTransferAsync(T transferRequest) {
+    return transferService
+        .transferAsync(transferRequest)
+        .handleAsync(this::handleResponseAsync, executor);
+  }
+
 }
-

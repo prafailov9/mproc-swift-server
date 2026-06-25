@@ -11,7 +11,7 @@ import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.card.Card;
 import com.ntros.mprocswift.model.currency.Currency;
 import com.ntros.mprocswift.model.currency.MoneyConverter;
-import com.ntros.mprocswift.model.currency.MoneyMovement;
+import com.ntros.mprocswift.model.currency.RatedMoneyMovement;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.card.AuthorizedHold;
 import com.ntros.mprocswift.model.transactions.card.CardAuthorization;
@@ -195,32 +195,24 @@ public class PaymentProcessingService implements PaymentService {
         .orElse(account.getMainWallet().orElse(account.getWallets().get(0)));
   }
 
-  private MoneyMovement getAmountV2(
+  private RatedMoneyMovement getAmountV2(
       Wallet wallet, AuthorizePaymentRequest authorizePaymentRequest) {
-    return wallet.getCurrency().getCurrencyCode().equals(authorizePaymentRequest.getCurrency())
-        ? new MoneyMovement(
-            MoneyConverter.toMinor(
-                authorizePaymentRequest.getAmount(), wallet.getCurrency().getMinorUnits()),
-            wallet.getCurrency(),
-            0,
-            null)
-        : currencyExchangeRateDataService.convert(
-            authorizePaymentRequest.getAmount(),
-            wallet.getCurrency().getCurrencyCode(),
-            authorizePaymentRequest.getCurrency());
+
+    return currencyExchangeRateDataService.convert(
+        MoneyConverter.toMinor(
+            authorizePaymentRequest.getAmount(), wallet.getCurrency().getExponent()),
+        wallet.getCurrency().getCurrencyCode(),
+        authorizePaymentRequest.getCurrency());
   }
 
   private long getAmount(Wallet wallet, AuthorizePaymentRequest authorizePaymentRequest) {
-    return wallet.getCurrency().getCurrencyCode().equals(authorizePaymentRequest.getCurrency())
-        ? MoneyConverter.toMinor(
-            authorizePaymentRequest.getAmount(), wallet.getCurrency().getMinorUnits())
-        : currencyExchangeRateDataService
-            .convert(
-                authorizePaymentRequest.getAmount(),
-                wallet.getCurrency().getCurrencyCode(),
-                authorizePaymentRequest.getCurrency())
-            .receivedMoney()
-            .minorAmount();
+    var ratedMoneyMovement =
+        currencyExchangeRateDataService.convert(
+            MoneyConverter.toMinor(
+                authorizePaymentRequest.getAmount(), wallet.getCurrency().getExponent()),
+            wallet.getCurrency().getCurrencyCode(),
+            authorizePaymentRequest.getCurrency());
+    return ratedMoneyMovement.moneyMovement().receivedMoney().minorAmount();
   }
 
   private AuthorizePaymentResponse buildSuccessAuthorizationResponse(

@@ -15,8 +15,8 @@ public class Currency {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer currencyId;
 
-  @Column(nullable = false)
-  private int minorUnits;
+  @Column(name = "minor_units", nullable = false)
+  private int exponent;
 
   @Column(nullable = false)
   private String currencyCode;

@@ -1,1017 +1,3035 @@
 --  types
-insert into transaction_type(type_name) values('deposit');
-insert into transaction_type(type_name) values('withdrawal');
-insert into transaction_type(type_name) values('internal-wallet-to-wallet-transfer');
-insert into transaction_type(type_name) values('internal-account-transfer');
-insert into transaction_type(type_name) values('external-account-transfer');
-insert into transaction_type(type_name) values('AUTHORIZED_HOLD');
-insert into transaction_type(type_name) values('CARD_SETTLEMENT');
+-- MoneyTransfer
+insert into transaction_type(type_name)
+values ('DEPOSIT'); -- Deposit money FROM an external-owned source TO internal-owned account
+insert into transaction_type(type_name)
+values ('WITHDRAWAL'); -- Withdraw money FROM internal-owned account TO external-owned source
+insert into transaction_type(type_name)
+values ('W2W'); -- Move money between account-owned wallets
+insert into transaction_type(type_name)
+values ('INTERNAL'); -- Move money between internal-owned accounts
+insert into transaction_type(type_name)
+values ('EXTERNAL');
+-- Move money between internal + external accounts
+
+-- CardPayment
+insert into transaction_type(type_name)
+values ('AUTHORIZED_HOLD'); -- CardPayment-owned, money reservation
+insert into transaction_type(type_name)
+values ('CARD_SETTLEMENT');
+-- CardPayment-owned, executing the reservation
 -- statuses
-insert into transaction_status(status_name) values('AUTHORIZED');
-insert into transaction_status(status_name) values('SETTLED');
-insert into transaction_status(status_name) values('COMPLETED');
-insert into transaction_status(status_name) values('CANCELED');
-insert into transaction_status(status_name) values('EXPIRED');
-insert into transaction_status(status_name) values('REVERSED');
+insert into transaction_status(status_name)
+values ('AUTHORIZED');
+insert into transaction_status(status_name)
+values ('SETTLED');
+insert into transaction_status(status_name)
+values ('COMPLETED');
+insert into transaction_status(status_name)
+values ('CANCELED');
+insert into transaction_status(status_name)
+values ('EXPIRED');
+insert into transaction_status(status_name)
+values ('REVERSED');
 
 -- txs
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 12, 38185204, 2392, '2022-08-18 04:54:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 43, 85089821, 9612, '2023-09-01 03:20:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 38, 53527584, 8024, '2022-09-22 23:09:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 27, 24119777, 1288, '2022-03-11 08:20:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 2, 973960.6, 8827, '2023-07-08 02:46:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 83, 259494.7, 85.0, '2023-04-30 13:53:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 22, 54491447, 914, '2022-05-06 21:24:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 7, 77488458, 2195, '2020-05-10 18:39:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 43, 5271386, 5951, '2022-02-27 08:48:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 21, 94075273, 886, '2023-10-05 11:29:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 2, 52255693, 4608, '2023-05-02 03:13:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 48, 23065565, 6789, '2023-11-29 15:42:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 9, 46842994, 4593, '2022-07-29 14:06:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 47, 46336059, 5252, '2021-04-13 23:10:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 4, 55694238, 6071, '2021-10-03 11:10:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 6, 34531396, 8268, '2020-05-02 08:11:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 2, 74209297, 6439, '2023-12-26 21:17:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 80, 30669737, 8285, '2020-10-11 23:55:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 89, 8723033, 2297, '2023-06-13 15:45:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 65, 14560541, 9424, '2022-03-29 11:57:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 64, 84148628, 4041, '2022-08-30 22:30:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 44, 17889927, 2715, '2022-03-22 05:29:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 36, 1149603, 13.9, '2022-11-30 15:42:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 86, 91845099, 7819, '2022-11-12 21:42:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 9, 91086397, 5186, '2020-02-25 10:39:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 73, 45793323, 8992, '2020-10-05 17:31:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 93, 23161903, 5923, '2023-01-01 03:00:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 36, 22472694, 3098, '2022-01-28 02:28:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 12, 14634147, 6368, '2022-04-22 04:45:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 11, 194177.0, 1559, '2021-09-23 09:52:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 73, 54137158, 9218, '2021-06-26 01:26:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 55, 36453052, 9371, '2022-11-13 15:56:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 73, 51522018, 9353, '2021-04-30 19:23:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 33, 57013313, 8437, '2023-09-03 20:10:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 60, 65851002, 3498, '2023-02-06 19:54:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 89, 64785592, 32.1, '2022-11-10 07:59:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 76, 96205762, 4873, '2023-07-25 02:34:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 19, 57151697, 3674, '2023-02-22 17:32:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 73, 15746447, 16.1, '2023-08-16 09:52:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 1, 7919845, 6284, '2022-11-28 00:00:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 37, 12941072, 7338, '2022-12-04 21:40:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 85, 63514815, 9136, '2023-09-11 05:12:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 12, 80872769, 1389, '2020-02-06 12:59:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 87, 8245474, 1762, '2023-06-13 18:16:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 76, 35987346, 5528, '2021-03-23 04:46:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 10, 21233748, 76.7, '2022-09-29 20:32:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 79, 58446796, 2084, '2023-03-14 05:53:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 22, 1742299, 303, '2021-11-06 20:49:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 84, 26118356, 7258, '2020-08-20 21:18:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 42, 67014211, 4846, '2023-10-30 22:14:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 47, 7515593, 4128, '2020-09-12 19:49:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 3, 27045515, 8852, '2021-09-28 11:34:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 30, 911121.6, 7969, '2021-10-13 12:28:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 32, 82408383, 9527, '2022-06-23 22:34:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 16, 43112909, 8045, '2023-08-08 20:07:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 65, 48476903, 8279, '2023-01-19 02:25:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 68, 6807418, 3201, '2022-06-15 16:52:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 60, 37113147, 765, '2020-09-03 12:00:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 74, 97141795, 3321, '2020-07-30 00:32:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 21, 34100261, 885, '2021-04-02 15:22:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 53, 989191.4, 9852, '2020-06-04 21:22:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 56, 34351237, 8554, '2021-04-14 06:45:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 27, 86308621, 4956, '2023-05-07 07:18:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 38, 28279523, 5057, '2021-12-05 20:44:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 74, 81690017, 9139, '2021-02-08 08:35:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 91, 3451992, 24.6, '2021-06-16 05:08:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 45, 14706279, 5813, '2022-04-21 03:56:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 75, 87947093, 6305, '2022-04-23 09:38:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 26, 386429.5, 2993, '2023-08-03 19:39:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 21, 119458.1, 5288, '2022-07-31 10:54:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 33, 91172235, 8124, '2020-04-27 11:09:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 98, 28438498, 7685, '2022-05-25 02:51:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 89, 41298857, 3752, '2023-02-17 08:43:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 82, 12440541, 1382, '2021-07-29 04:51:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 83, 29925004, 5817, '2020-08-06 10:47:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 44, 94103308, 7136, '2022-11-01 14:32:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 55, 42938203, 7319, '2022-02-19 18:52:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 68, 22653461, 9171, '2023-05-26 14:29:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 86, 37619308, 4738, '2023-03-17 23:02:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 88, 15371037, 4544, '2020-11-25 23:53:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 77, 94043272, 9068, '2023-03-31 04:00:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 9, 13081165, 9129, '2022-07-27 01:40:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 19, 42203617, 5672, '2022-01-08 03:52:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 73, 53767733, 385, '2020-06-28 12:39:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 54, 23187727, 5078, '2022-10-06 11:48:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 61, 852497.5, 3.4, '2023-07-17 09:34:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 53, 34525873, 806, '2021-10-12 21:43:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 64, 78659355, 9093, '2020-06-21 05:16:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 50, 84334705, 9.2, '2020-07-28 17:51:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 14, 93906096, 1409, '2021-04-01 04:31:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 94, 52053465, 2335, '2021-08-13 14:16:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 44, 7494535, 8869, '2021-05-26 03:35:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 59, 8084262, 14.5, '2022-04-21 22:03:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 51, 60526033, 8189, '2022-04-01 02:33:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 66, 99788435, 4001, '2023-01-22 21:35:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 20, 86575164, 6539, '2020-09-18 12:56:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 88, 49433951, 7921, '2022-02-11 07:43:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 30, 8019245, 3052, '2023-05-06 01:35:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 53, 29711099, 77.2, '2022-07-07 21:08:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 19, 62117103, 1937, '2021-09-28 00:58:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 4, 84902982, 3898, '2022-04-07 22:53:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 2, 78601594, 4175, '2021-12-29 16:00:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 82, 45441673, 1813, '2023-08-24 13:08:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 28, 26295342, 1927, '2023-11-22 06:26:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 98, 79063852, 2123, '2021-01-09 09:54:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 14, 14030037, 2836, '2023-10-04 21:45:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 94, 8547038, 8609, '2022-12-14 19:28:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 88, 30124283, 8161, '2023-04-24 10:01:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 77, 31245585, 7142, '2020-12-15 09:12:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 50, 15832447, 2.0, '2021-04-09 17:18:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 25, 90149285, 688, '2022-03-31 22:34:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 17, 60678648, 8381, '2022-05-23 14:20:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 55, 49444706, 929, '2021-10-01 04:28:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 80, 82712163, 7276, '2023-12-07 22:36:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 64, 83487729, 1121, '2020-09-01 12:34:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 64, 13094827, 751, '2020-08-21 15:35:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 51, 47585855, 7525, '2022-12-29 10:21:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 47, 9540255, 204, '2021-07-21 13:39:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 93, 34483823, 9429, '2020-05-17 11:59:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 94, 759153.8, 617, '2022-06-12 19:06:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 71, 40013815, 8379, '2020-02-24 10:52:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 75, 40211098, 9215, '2022-01-30 17:25:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 45, 20130063, 9961, '2021-02-01 08:45:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 34, 234292.6, 3721, '2021-01-07 05:38:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 10, 43757197, 6529, '2024-01-16 04:59:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 19, 1275988, 5769, '2023-11-06 02:30:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 60, 6602639, 959, '2021-09-05 03:13:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 62, 60682264, 3301, '2021-10-17 08:14:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 12, 99285337, 1207, '2020-11-25 23:51:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 72, 29856773, 1532, '2022-07-29 05:26:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 28, 99851733, 9131, '2022-06-03 01:23:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 92, 254177.6, 7055, '2023-08-04 17:55:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 57, 69020012, 4145, '2020-02-19 20:12:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 51, 60856321, 298, '2023-10-04 19:14:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 96, 48826626, 5011, '2020-08-03 01:54:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 53, 92413665, 4818, '2023-09-23 03:07:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 76, 79369039, 2002, '2022-03-07 18:19:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 54, 74903609, 9008, '2020-12-12 13:02:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 90, 90040885, 168, '2022-05-12 14:15:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 2, 962202.1, 5635, '2023-08-24 07:33:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 74, 91124656, 8098, '2021-10-22 02:57:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 62, 75307177, 8652, '2023-12-24 07:00:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 66, 33609751, 2615, '2021-12-07 23:31:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 16, 96076735, 5566, '2020-09-24 12:04:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 80, 27516108, 27.1, '2022-08-22 13:02:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 75, 85144388, 2931, '2021-12-11 09:15:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 2, 98505143, 3135, '2020-01-30 10:29:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 55, 73837323, 9286, '2022-06-25 20:09:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 51, 81966226, 7723, '2023-12-10 14:14:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 33, 68458021, 8412, '2021-02-21 11:08:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 53, 11320549, 8262, '2021-03-02 18:38:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 33, 32506303, 29.9, '2023-02-17 02:52:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 56, 25947435, 6734, '2020-03-22 12:19:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 43, 18610175, 858, '2021-11-14 03:44:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 42, 49162917, 8879, '2021-08-27 23:33:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 88, 46662435, 2085, '2020-11-23 03:17:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 10, 18417849, 1492, '2022-10-29 01:34:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 61, 77428959, 6854, '2023-07-09 12:29:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 16, 53213062, 2788, '2022-07-20 03:43:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 31, 95575992, 9106, '2022-10-30 00:48:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 89, 90448205, 11.2, '2023-07-01 06:48:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 74, 840282.4, 2757, '2023-01-17 16:45:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 71, 34514824, 20.8, '2023-12-02 13:03:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 64, 32657352, 8879, '2021-02-02 07:17:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 25, 28264824, 9819, '2021-06-04 10:56:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 55, 483069.6, 3951, '2022-02-14 22:31:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 42, 91591303, 5748, '2020-11-07 00:48:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 42, 36987071, 5112, '2023-11-25 10:11:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 84, 20234162, 2145, '2022-01-27 01:04:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 44, 25986184, 868, '2023-05-09 12:39:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 34, 48587787, 8347, '2021-12-14 10:14:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 24, 63490671, 6949, '2023-12-04 19:42:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 56, 66237109, 777, '2023-05-24 16:48:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 18, 70544248, 6614, '2022-04-29 00:19:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 14, 12852374, 8735, '2021-09-08 13:44:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 13, 47418144, 4481, '2023-08-19 19:31:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 37, 19169696, 2301, '2023-09-08 01:49:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 26, 95452613, 2205, '2020-12-07 11:38:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 65, 19787553, 85.6, '2020-03-10 22:19:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 12, 8462823, 6382, '2022-02-13 23:51:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 69, 95995062, 2698, '2023-06-24 06:19:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 45, 91753777, 6557, '2023-08-30 06:13:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 71, 301829.4, 3468, '2021-10-18 11:55:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 19, 146013, 7853, '2020-08-15 13:56:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 71, 20623228, 9141, '2022-07-11 14:14:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 68, 416983.3, 5494, '2022-09-07 08:08:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 9, 76806364, 2393, '2021-05-25 22:08:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 42, 1748181, 6367, '2023-09-07 15:58:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 93, 13932945, 3175, '2021-12-18 05:02:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 87, 43702335, 4385, '2023-01-23 11:11:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 57, 35800.9, 5431, '2021-09-16 05:47:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 32, 362362.8, 3004, '2023-03-16 04:46:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 47, 21010241, 32.9, '2022-12-11 19:54:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 34, 500525.3, 1296, '2023-12-04 19:54:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 86, 58253652, 8098, '2023-06-17 09:53:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 92, 69307684, 1003, '2021-05-15 23:10:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 2, 29016454, 4373, '2021-11-25 00:44:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 72, 49242806, 5386, '2020-04-10 19:52:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 73, 49947688, 8498, '2022-03-12 14:12:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 83, 84054813, 7304, '2020-05-24 07:45:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 17, 39662919, 5625, '2020-02-18 15:39:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 10, 93259329, 2058, '2022-08-05 03:53:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 96, 54687462, 8958, '2020-09-09 18:58:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 34, 58739921, 1002, '2021-11-01 07:24:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 22, 47926193, 9151, '2022-06-17 03:41:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 21, 43443566, 6069, '2022-01-20 16:33:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 93, 71473484, 588, '2023-06-11 14:58:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 24, 51154782, 3522, '2020-08-04 00:12:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 67, 65513744, 6244, '2021-04-10 05:13:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 12, 50677162, 1766, '2022-07-05 23:19:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 53, 80886098, 4743, '2024-01-14 05:22:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 61, 55443335, 2325, '2021-07-10 06:58:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 34, 73586329, 8837, '2021-01-06 14:35:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 17, 51980969, 3828, '2020-12-25 01:02:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 52, 1996984, 7691, '2023-03-28 01:18:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 96, 10145848, 4278, '2020-05-11 02:09:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 83, 56506056, 8098, '2020-08-27 03:13:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 66, 13870729, 21.4, '2021-11-14 02:16:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 36, 55290202, 3276, '2021-10-28 13:31:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 20, 33375267, 9887, '2022-10-13 07:54:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 63, 569816.3, 6316, '2020-02-16 21:58:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 30, 75066402, 5099, '2021-10-22 19:31:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 59, 3741676, 6028, '2023-08-02 08:20:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 83, 50642815, 9965, '2022-09-29 02:36:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 52, 2379713, 6475, '2023-08-12 22:19:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 24, 1484956, 665, '2021-08-28 14:43:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 50, 11692603, 8916, '2022-02-12 13:58:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 32, 913648.0, 4323, '2022-08-27 19:29:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 91, 54086315, 3944, '2021-05-09 08:39:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 20, 123102.3, 8779, '2021-01-27 01:25:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 31, 19916008, 7519, '2023-01-10 21:15:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 75, 644267.7, 2185, '2021-07-17 21:11:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 42, 35569347, 3289, '2021-05-02 18:42:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 61, 77149578, 6239, '2023-03-27 23:23:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 31, 94662691, 1226, '2021-10-24 04:04:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 62, 11080819, 8976, '2023-12-06 23:51:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 20, 83696496, 1919, '2023-10-21 07:36:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 70, 478889.5, 8509, '2023-03-24 14:56:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 63, 67762786, 9557, '2020-10-08 05:15:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 50, 68271336, 7096, '2021-08-24 21:57:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 61, 42480397, 3407, '2021-05-12 18:58:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 21, 99467396, 5396, '2022-02-21 05:30:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 80, 64797372, 5753, '2020-11-22 04:41:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 73, 64296735, 179, '2022-04-08 23:15:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 56, 39632749, 3051, '2020-03-28 14:53:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 71, 99876719, 7308, '2022-12-13 07:15:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 17, 20347948, 4131, '2020-05-12 17:26:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 45, 96832933, 9784, '2022-08-07 02:06:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 60, 851069.5, 7392, '2022-04-08 10:11:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 34, 78352903, 2848, '2021-08-29 02:47:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 74, 43757268, 3295, '2020-12-13 09:42:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 70, 54198715, 6744, '2022-07-25 08:27:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 78, 35742129, 6315, '2021-05-07 10:56:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 75, 82234067, 7271, '2020-07-18 11:55:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 79, 41069014, 887, '2022-03-14 03:22:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 22, 59763871, 827, '2023-04-12 01:18:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 11, 54626712, 1968, '2020-10-03 14:53:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 42, 87101276, 7698, '2023-10-14 11:14:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 72, 76480978, 4319, '2022-08-27 10:49:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 70, 59500885, 7553, '2021-02-08 07:41:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 93, 32099222, 1012, '2023-11-30 15:13:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 51, 40033277, 612, '2020-11-07 14:44:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 14, 36742587, 7197, '2024-01-25 20:21:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 51, 45909369, 7069, '2020-10-30 20:40:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 26, 67337454, 3238, '2022-03-23 11:06:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 29, 504344.8, 7512, '2023-12-27 11:19:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 76, 2607801, 7917, '2021-10-03 16:56:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 66, 20444081, 7349, '2022-01-12 11:11:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 53, 33601289, 91.3, '2022-01-09 06:12:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 8, 49099714, 7718, '2020-07-04 12:07:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 97, 27014899, 334, '2022-01-01 00:59:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 75, 375808.0, 2279, '2023-12-28 20:48:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 12, 443591.1, 1785, '2022-01-16 23:04:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 8, 22323715, 7649, '2024-01-12 03:56:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 72, 676343.5, 6905, '2022-10-25 14:41:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 22, 55870452, 8296, '2021-03-21 15:03:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 34, 58379828, 3949, '2022-04-01 17:57:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 87, 55582445, 9712, '2022-08-07 21:06:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 83, 57505058, 8438, '2021-10-19 11:15:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 1, 48317708, 873, '2021-10-31 19:16:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 77, 76621543, 7691, '2022-08-01 04:13:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 43, 967670.4, 3592, '2023-01-14 10:19:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 25, 33578968, 5342, '2021-05-18 17:23:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 97, 98118139, 3796, '2020-05-05 19:23:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 89, 7116661, 4847, '2020-12-08 07:39:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 19, 372840.2, 528, '2022-03-29 19:41:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 15, 43904714, 5812, '2022-04-11 23:39:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 37, 28378835, 3609, '2022-11-10 16:12:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 36, 70087906, 2183, '2021-02-01 15:44:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 47, 35369099, 1812, '2022-07-23 21:21:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 8, 13661802, 7126, '2023-07-17 14:46:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 69, 49144542, 962, '2020-05-10 12:14:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 52, 867822.2, 1773, '2020-03-12 02:19:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 20, 52263053, 1962, '2020-03-22 11:46:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 54, 52753014, 7362, '2020-05-30 19:27:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 16, 45777343, 5243, '2023-03-07 02:14:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 88, 62709912, 80.2, '2022-06-24 10:32:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 90, 81105209, 2356, '2024-01-18 02:38:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 7, 41523016, 1034, '2020-02-25 13:12:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 54, 9605027, 4075, '2022-05-23 22:20:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 27, 52746981, 2934, '2022-08-06 09:43:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 79, 45895775, 6354, '2020-08-24 12:22:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 75, 61515509, 9153, '2023-06-10 15:19:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 51, 285549.7, 2169, '2021-02-12 10:19:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 78, 56207606, 52.6, '2022-11-12 03:30:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 17, 50926967, 8818, '2021-12-31 10:10:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 79, 844669, 5611, '2022-12-29 23:53:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 41, 217548.6, 8366, '2022-03-29 18:33:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 37, 89861612, 6342, '2023-10-10 02:34:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 90, 31636516, 5833, '2023-08-22 16:22:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 60, 62628584, 37.8, '2023-12-04 10:44:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 93, 3629706, 9253, '2020-05-20 14:20:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 2, 92246289, 4804, '2023-09-05 23:52:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 15, 73165705, 8588, '2023-05-12 15:16:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 7, 25008508, 2905, '2022-01-18 20:39:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 21, 50059078, 72.3, '2022-09-29 03:37:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 43, 95746105, 9334, '2021-12-01 13:14:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 34, 84955922, 3259, '2023-08-28 12:20:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 8, 83566627, 1306, '2021-12-03 06:59:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 55, 95002603, 2957, '2023-04-13 12:00:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 85, 2861584, 6535, '2022-08-29 20:12:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 90, 75464563, 2329, '2021-10-28 18:21:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 93, 7335752, 4107, '2021-02-22 00:38:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 30, 16700396, 6479, '2023-02-13 06:50:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 18, 49283817, 196, '2023-10-17 16:35:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 36, 63225499, 526, '2020-11-13 13:47:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 72, 716835.0, 79.1, '2020-06-22 10:48:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 58, 26641576, 5259, '2023-07-17 10:11:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 37, 112606.4, 1353, '2024-01-10 04:26:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 54, 37083522, 8116, '2020-08-17 07:38:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 34, 57685371, 7403, '2021-07-10 10:20:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 29, 64608217, 3962, '2023-06-26 13:14:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 65, 55623129, 8685, '2022-04-14 11:27:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 17, 95513822, 1034, '2020-09-26 07:57:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 6, 65394376, 7161, '2020-08-21 10:09:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 66, 16840594, 102, '2022-06-09 00:02:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 65, 75907394, 9585, '2021-09-21 05:28:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 86, 70756739, 5856, '2021-08-05 06:29:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 86, 98023474, 5949, '2020-10-23 12:21:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 29, 406524.0, 4023, '2023-05-19 14:48:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 60, 68991434, 4905, '2020-12-03 07:16:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 52, 30362505, 4262, '2020-05-23 14:11:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 91, 69035561, 3532, '2023-08-15 11:14:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 34, 585587.5, 584, '2023-07-31 01:03:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 66, 83008562, 7478, '2020-12-25 18:21:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 46, 85797649, 17.0, '2022-12-24 00:00:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 18, 2649402, 6699, '2021-09-01 13:57:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 42, 4378736, 2504, '2020-08-30 09:04:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 64, 914647.2, 4297, '2022-03-06 14:26:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 74, 37406486, 8662, '2023-11-14 09:13:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 71, 7862798, 7373, '2022-01-11 14:27:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 64, 27645939, 6513, '2023-08-28 07:56:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 38, 82782578, 1955, '2023-02-25 18:24:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 72, 20674489, 482, '2022-12-10 04:06:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 62, 42132258, 8524, '2021-09-19 21:31:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 87, 11232875, 652, '2023-10-11 16:18:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 9, 27560005, 9423, '2021-12-25 20:52:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 24, 24978788, 1263, '2023-09-16 00:31:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 91, 39966958, 2076, '2020-08-18 20:52:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 3, 8159932, 1526, '2023-03-21 12:03:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 38, 35517045, 9826, '2020-09-23 23:21:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 87, 3904135, 845, '2022-01-21 07:04:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 84, 6762564, 379, '2023-07-17 10:32:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 39, 427220.6, 9624, '2022-08-11 04:30:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 91, 14136526, 8119, '2020-04-27 01:52:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 78, 57030681, 9744, '2022-04-12 00:47:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 36, 98837872, 5076, '2022-02-15 20:53:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 30, 92783726, 7651, '2021-07-19 18:30:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 97, 15672759, 7607, '2020-02-18 00:23:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 75, 17280606, 5701, '2023-09-07 22:36:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 25, 27494624, 481, '2023-08-19 07:34:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 39, 64533107, 12.7, '2020-06-20 07:01:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 76, 25737731, 3283, '2022-05-02 12:34:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 91, 79269653, 11.8, '2020-06-13 06:43:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 83, 63983367, 6335, '2023-01-17 18:13:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 5, 38222229, 8694, '2023-08-11 04:50:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 35, 74533441, 5356, '2022-03-04 23:54:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 1, 26301797, 2541, '2023-09-25 04:03:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 7, 8371008, 3007, '2020-09-03 23:27:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 84, 18297072, 7418, '2020-04-25 00:22:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 77, 56345914, 8598, '2023-03-08 07:12:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 72, 17287358, 9975, '2020-03-14 14:33:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 42, 93677259, 1797, '2023-03-14 10:04:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 10, 97892118, 2384, '2023-02-22 08:25:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 41, 78968.5, 9148, '2021-05-25 21:29:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 63, 14976509, 73.4, '2022-11-29 14:42:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 38, 47613932, 971, '2021-12-14 10:44:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 14, 44452168, 4097, '2023-12-07 12:36:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 29, 41733882, 20.6, '2024-01-11 07:14:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 75, 33038491, 1106, '2022-12-28 05:14:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 67, 53339503, 6312, '2022-05-21 09:48:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 71, 688560.9, 8986, '2022-02-11 01:07:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 75, 485527.0, 7784, '2021-11-13 21:55:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 45, 25119493, 9266, '2023-12-31 01:38:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 59, 96000271, 5183, '2020-12-25 17:10:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 34, 55568195, 7757, '2021-11-07 03:06:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 84, 25723505, 7103, '2023-02-18 13:34:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 24, 60554779, 8511, '2023-05-09 11:38:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 59, 96654862, 3601, '2020-11-13 00:20:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 43, 63301573, 4036, '2022-04-05 03:05:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 87, 469589.2, 22.4, '2023-01-31 08:45:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 96, 9799662, 3782, '2020-05-27 21:32:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 53, 38760052, 3018, '2021-07-29 14:51:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 84, 155836.2, 83.3, '2020-12-22 08:31:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 5, 59022436, 4855, '2021-04-18 11:22:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 44, 5338389, 79.9, '2020-03-17 03:31:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 29, 8382969, 3586, '2020-01-30 21:27:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 57, 46606873, 8373, '2021-07-01 09:54:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 96, 90714946, 59.5, '2023-12-20 23:56:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 21, 1498802, 6955, '2022-10-04 14:22:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 88, 32885194, 5744, '2021-01-18 05:24:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 4, 93151504, 6974, '2023-11-10 21:34:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 46, 344055.6, 3165, '2021-01-30 18:42:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 90, 30319475, 7707, '2023-03-05 15:29:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 27, 75097281, 2675, '2021-02-18 20:23:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 15, 45400116, 6511, '2020-09-01 17:24:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 90, 67287639, 4415, '2021-12-26 11:43:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 44, 55742896, 9784, '2020-03-03 09:31:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 15, 57601158, 4035, '2021-03-03 22:42:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 32, 73073402, 563, '2021-09-10 17:12:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 41, 70677762, 6854, '2022-10-10 11:10:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 79, 432432.5, 1327, '2020-08-28 19:30:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 66, 47587606, 8048, '2023-11-09 10:07:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 77, 43259004, 6462, '2022-10-09 06:53:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 94, 17683983, 9323, '2022-09-12 18:13:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 31, 55170669, 6412, '2020-04-11 11:58:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 24, 59916395, 3903, '2021-07-09 21:40:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 14, 63741253, 3501, '2020-10-07 20:50:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 36, 62470171, 5643, '2021-08-03 11:24:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 63, 61687895, 1886, '2022-12-30 18:10:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 43, 75433603, 2345, '2020-05-02 20:14:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 35, 399134.7, 4086, '2023-10-17 18:06:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 43, 24345413, 2013, '2020-06-20 10:23:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 18, 61878535, 30.0, '2023-04-11 14:17:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 71, 20267718, 3019, '2021-07-09 17:06:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 23, 3953311, 51.4, '2020-12-22 20:12:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 29, 25185257, 5489, '2022-10-05 13:42:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 20, 92320974, 4964, '2023-01-29 11:32:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 49, 68061419, 4626, '2021-12-21 15:10:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 41, 61518973, 7884, '2022-08-14 07:02:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 54, 55840337, 2551, '2022-12-03 04:56:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 4, 84016045, 30.6, '2023-04-27 01:43:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 53, 74886067, 7426, '2022-05-02 08:22:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 60, 15949741, 6118, '2020-06-05 01:26:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 5, 70373402, 7071, '2021-07-01 10:51:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 65, 37978499, 582, '2020-11-27 07:46:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 71, 7057637, 3248, '2024-01-21 20:03:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 3, 12718418, 5782, '2020-03-27 05:23:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 13, 37040275, 5845, '2022-12-01 20:48:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 31, 21968662, 69.6, '2023-11-20 07:14:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 6, 200477.1, 7003, '2020-07-23 13:18:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 26, 50494028, 4097, '2021-07-20 00:18:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 98, 30216383, 1846, '2021-05-30 22:58:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 38, 57857426, 236, '2021-12-07 10:20:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 53, 30688177, 4308, '2022-07-05 03:58:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 24, 24985293, 824, '2022-07-12 18:04:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 60, 38561408, 9502, '2023-04-05 13:55:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 85, 34178515, 2091, '2022-05-14 14:37:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 16, 905761.4, 7959, '2020-10-01 06:57:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 58, 59494027, 2426, '2021-05-07 19:14:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 32, 61114131, 78.9, '2022-11-20 15:26:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 28, 85953351, 5465, '2022-11-10 15:16:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 48, 18579059, 7068, '2023-02-25 23:16:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 54, 9374412, 876, '2020-07-15 23:17:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 48, 79074268, 14.2, '2022-10-12 12:39:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 73, 94768163, 3089, '2020-12-16 16:09:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 64, 426841.8, 3446, '2020-06-25 19:26:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 37, 43429473, 6947, '2023-01-14 04:34:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 19, 86427897, 2928, '2022-12-02 13:12:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 47, 501478, 2295, '2020-06-18 08:23:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 59, 8598545, 4408, '2022-10-22 11:30:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 15, 39749157, 4238, '2021-09-06 00:31:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 17, 77003062, 8868, '2022-04-26 04:24:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 6, 59634449, 8162, '2020-07-19 13:54:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 46, 32155562, 2872, '2020-05-27 16:47:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 38, 32039707, 9491, '2023-01-26 19:58:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 21, 56625456, 6438, '2021-09-21 19:05:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 20, 10396908, 6699, '2020-03-20 18:56:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 77, 74326258, 9488, '2023-09-24 14:41:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 52, 94945718, 2431, '2023-05-24 09:22:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 61, 74615018, 8827, '2020-06-07 17:49:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 44, 450606.7, 7366, '2023-10-09 20:24:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 59, 71471966, 5809, '2023-02-10 19:47:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 33, 15040507, 7667, '2022-09-07 10:39:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 16, 57057113, 29.9, '2023-12-22 22:20:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 82, 81069362, 79.2, '2023-01-20 08:36:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 86, 77131641, 3178, '2021-04-14 01:25:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 14, 55945571, 9961, '2020-06-23 12:24:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 69, 4436511, 65.2, '2022-04-07 01:26:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 57, 47168727, 8614, '2022-05-25 11:41:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 57, 2527143, 16.7, '2021-06-01 22:37:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 43, 32760143, 3498, '2020-03-01 00:28:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 6, 670615.8, 5087, '2021-08-22 19:35:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 16, 76692878, 5637, '2020-06-08 01:30:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 9, 63396411, 3762, '2020-06-27 23:21:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 10, 559934.9, 8937, '2022-10-27 00:17:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 32, 4576833, 2195, '2020-12-12 01:46:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 85, 3768002, 1328, '2022-09-04 14:58:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 93, 52260724, 1695, '2022-08-03 12:41:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 41, 74778199, 6119, '2022-12-22 04:57:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 36, 17633509, 2182, '2020-09-29 04:47:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 70, 38336163, 6707, '2021-09-01 19:15:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 22, 18497553, 3649, '2024-01-23 23:37:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 81, 61135569, 5576, '2020-02-06 21:44:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 51, 98899705, 4852, '2022-11-21 11:23:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 26, 32590521, 891, '2022-09-12 06:07:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 67, 75275738, 8496, '2024-01-17 16:08:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 60, 55424361, 5326, '2023-06-01 05:42:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 46, 16057756, 8066, '2022-03-18 10:32:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 23, 83921973, 613, '2020-11-17 23:09:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 81, 41682219, 4943, '2022-08-17 01:05:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 61, 68281506, 2303, '2021-11-08 02:17:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 77, 22154269, 4864, '2022-09-27 03:25:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 62, 58674681, 3084, '2022-05-12 22:03:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 68, 21767675, 802, '2022-08-15 15:08:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 24, 26342799, 21.8, '2023-04-27 06:35:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 4, 833702.2, 4833, '2023-01-07 06:56:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 41, 28496997, 8773, '2021-04-29 08:58:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 63, 10142541, 7568, '2021-07-18 22:31:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 32, 17989914, 24.8, '2022-01-08 04:39:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 80, 56242987, 9.7, '2022-09-29 07:02:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 37, 64636419, 8457, '2023-11-05 22:14:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 84, 909049.9, 9736, '2022-01-05 21:32:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 96, 31865156, 6869, '2023-01-07 08:45:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 89, 31877343, 3345, '2021-05-29 11:16:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 6, 460241.8, 7768, '2023-05-28 10:05:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 17, 23553379, 8624, '2022-03-01 00:36:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 37, 6981086, 1142, '2021-04-12 09:51:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 41, 8390788, 6766, '2020-08-28 18:39:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 22, 38470138, 257, '2021-06-25 11:09:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 59, 14006408, 4473, '2024-01-06 13:23:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 98, 60928, 6707, '2022-02-25 14:14:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 35, 48039825, 5712, '2020-03-08 19:26:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 60, 6421472, 8468, '2023-11-21 04:37:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 33, 18704219, 2218, '2020-11-19 22:41:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 70, 2048737, 9706, '2020-09-04 15:34:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 55, 78184838, 56.4, '2023-04-29 19:15:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 80, 5853707, 6973, '2021-06-05 20:26:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 75, 10297328, 4658, '2022-02-22 02:10:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 93, 4037435, 7719, '2023-05-14 10:31:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 29, 71241538, 395, '2020-04-25 10:16:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 20, 93709498, 7936, '2020-07-27 17:08:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 60, 62882569, 9606, '2020-12-06 20:38:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 4, 36242659, 286, '2022-07-26 18:30:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 64, 944526.2, 67.1, '2022-11-11 12:31:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 26, 66871043, 7729, '2020-10-31 09:21:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 98, 768124.4, 8925, '2023-08-29 17:44:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 24, 620719.1, 5761, '2023-02-25 01:35:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 64, 50784174, 9439, '2021-11-07 18:14:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 3, 63181259, 50.1, '2022-03-26 09:41:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 91, 1457841, 3784, '2023-06-26 12:44:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 31, 52054202, 657, '2023-06-02 20:58:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 51, 91519783, 1928, '2020-05-19 22:43:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 22, 88771812, 6756, '2021-01-04 05:53:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 85, 12729091, 5619, '2021-06-11 23:55:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 60, 79496985, 1335, '2021-02-22 21:28:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 96, 9287163, 9355, '2023-12-23 06:37:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 68, 69942119, 1018, '2021-10-14 10:17:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 38, 67077555, 2841, '2022-06-30 05:42:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 10, 49680514, 8779, '2020-09-13 12:33:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 37, 52085189, 57.7, '2020-07-13 12:31:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 75, 268609.9, 7594, '2021-01-13 00:10:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 86, 97705903, 90.0, '2022-05-17 03:22:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 41, 51852076, 5201, '2022-10-26 18:39:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 7, 90512051, 2459, '2023-05-17 21:13:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 69, 32164835, 7376, '2021-10-03 00:37:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 14, 52000839, 7584, '2021-12-11 11:23:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 41, 78843695, 8619, '2022-11-18 05:34:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 79, 44609376, 9392, '2022-01-10 20:02:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 26, 12198312, 8358, '2024-01-11 02:03:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 91, 731401.8, 6031, '2020-05-29 03:38:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 19, 71702667, 1338, '2022-05-07 09:53:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 73, 76812418, 1332, '2022-06-12 14:41:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 98, 74859243, 9549, '2020-08-31 19:02:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 61, 97262938, 773, '2022-03-11 14:52:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 62, 33386066, 4503, '2023-12-11 10:41:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 59, 76127357, 7.1, '2021-09-18 22:35:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 9, 95938686, 8863, '2021-07-01 17:24:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 60, 43597627, 9387, '2022-11-19 20:13:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 7, 95944032, 2245, '2023-09-27 07:08:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 70, 91543238, 83.6, '2020-09-01 04:14:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 65, 595578.8, 35.0, '2020-09-06 09:51:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 13, 4125473, 2976, '2022-09-18 16:48:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 41, 96704682, 9909, '2021-03-06 01:54:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 88, 12555959, 172, '2020-08-10 08:44:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 19, 23488368, 1349, '2021-10-01 20:28:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 12, 92919357, 7181, '2022-03-20 03:18:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 40, 41725862, 72.2, '2022-03-20 18:50:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 69, 67826409, 82.5, '2023-11-04 01:36:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 34, 4818095, 995, '2023-10-08 03:44:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 35, 21165833, 86.1, '2022-04-06 07:51:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 70, 97782012, 7643, '2021-10-31 05:47:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 50, 37885375, 9961, '2022-06-27 00:55:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 36, 16276012, 4438, '2022-08-16 06:37:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 89, 53277859, 6231, '2022-03-22 22:19:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 93, 41537042, 3819, '2021-11-09 13:01:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 84, 75246314, 2394, '2022-04-03 16:18:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 53, 36419312, 5077, '2020-10-23 08:07:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 36, 55974409, 6294, '2020-11-03 01:03:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 83, 82275846, 427, '2023-08-21 12:56:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 67, 51149478, 1697, '2022-05-07 08:14:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 70, 35006116, 6196, '2023-05-07 18:58:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 15, 54602771, 6854, '2020-12-31 06:06:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 19, 29670376, 5835, '2021-07-21 10:33:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 86, 47068013, 8647, '2022-04-10 07:57:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 94, 88550181, 2803, '2022-11-05 15:41:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 82, 952427.1, 9749, '2023-11-26 21:32:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 79, 12778893, 6421, '2020-03-10 07:52:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 81, 57742105, 531, '2023-04-16 16:49:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 48, 57152995, 9318, '2021-04-05 08:26:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 8, 65590818, 9681, '2023-08-30 07:31:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 16, 21875611, 4696, '2023-03-30 15:05:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 27, 22971952, 9732, '2022-05-06 04:49:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 11, 48005832, 4037, '2021-06-30 09:27:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 47, 41586498, 4195, '2021-10-13 13:18:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 11, 3896656, 8299, '2023-06-24 09:23:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 92, 70930233, 5955, '2021-04-22 11:23:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 1, 12518683, 8617, '2020-06-14 20:42:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 70, 90781826, 1037, '2021-10-18 08:20:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 35, 44218366, 76.3, '2022-06-13 09:30:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 4, 18184242, 5134, '2022-10-05 07:14:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 55, 92549838, 7154, '2021-10-11 12:45:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 37, 38230605, 1368, '2020-04-23 14:24:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 28, 72177039, 9028, '2022-06-15 20:47:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 88, 78169629, 57.2, '2023-11-01 22:08:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 68, 22326179, 7655, '2021-04-17 09:47:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 27, 9652024, 2806, '2022-10-18 03:39:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 37, 25391884, 6015, '2021-06-02 05:12:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 60, 22731917, 2023, '2022-06-14 03:39:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 92, 94527935, 7445, '2020-07-30 05:39:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 82, 23256056, 1913, '2020-02-06 22:11:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 36, 77668786, 157, '2021-11-29 14:18:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 50, 576546.3, 5904, '2020-05-10 06:41:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 2, 27497653, 3936, '2021-02-27 02:46:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 74, 72512496, 1.6, '2021-07-28 14:48:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 9, 682796.7, 2735, '2021-06-18 10:03:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 97, 690348.0, 8356, '2021-02-10 05:22:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 69, 4573536, 847, '2020-07-08 11:55:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 5, 54576764, 74.2, '2022-08-28 02:19:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 95, 57166728, 7179, '2021-11-20 18:50:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 92, 47953044, 6671, '2021-04-08 04:56:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 41, 47943539, 6472, '2023-12-14 03:15:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 58, 65144348, 9286, '2023-01-01 17:21:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 27, 27394352, 49.6, '2022-09-14 09:23:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 47, 59555015, 9107, '2021-08-26 18:22:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 43, 64813494, 8332, '2020-12-16 17:06:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 78, 69562945, 52.7, '2022-04-25 13:37:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 55, 93635183, 3953, '2020-02-21 19:39:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 87, 41237832, 73.8, '2022-11-07 16:33:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 64, 61450327, 9143, '2024-01-02 21:29:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 74, 24608528, 485, '2022-04-19 03:56:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 97, 44211279, 7625, '2021-06-05 12:18:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 2, 64381688, 225, '2023-06-26 14:31:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 42, 57681517, 429, '2020-04-29 01:04:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 36, 38814187, 263, '2023-06-12 01:58:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 78, 32841849, 1038, '2023-08-22 05:38:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 13, 62513853, 2734, '2020-04-20 02:54:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 25, 26224124, 9216, '2021-11-20 19:06:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 62, 26946547, 2679, '2021-02-22 10:25:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 50, 54394802, 135, '2023-01-11 02:31:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 61, 15468027, 94.1, '2022-11-08 03:32:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 4, 80888405, 8903, '2021-05-28 02:13:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 45, 81958362, 3596, '2022-12-08 23:57:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 36, 436201.4, 9533, '2023-04-29 13:02:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 18, 265136.2, 4464, '2021-04-09 23:45:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 66, 31613078, 95.0, '2020-12-06 17:23:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 81, 787016.4, 4034, '2020-09-12 19:57:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 69, 16621971, 2032, '2022-04-17 05:46:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 12, 99660349, 7772, '2022-01-13 21:22:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 57, 431545.8, 407, '2020-10-30 18:45:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 68, 918986.9, 7383, '2021-07-28 16:14:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 58, 11273527, 9934, '2022-11-13 00:38:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 59, 36854896, 2937, '2020-03-04 14:19:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 57, 65712141, 5859, '2020-11-11 05:17:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 63, 71496578, 4017, '2020-10-14 21:57:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 10, 91600831, 3107, '2020-07-26 01:03:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 16, 75487951, 8038, '2023-11-21 18:05:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 65, 70427057, 5574, '2022-09-06 07:13:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 49, 734592.7, 6434, '2021-05-26 21:28:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 60, 20040426, 3196, '2022-08-19 13:34:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 35, 74902067, 4021, '2020-08-31 20:46:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 22, 61901.9, 73.9, '2023-04-01 05:46:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 90, 88791098, 8461, '2023-12-30 00:26:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 5, 86196433, 4777, '2020-05-03 09:28:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 20, 1745812, 94.3, '2020-11-26 03:14:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 13, 61382498, 2438, '2020-09-30 02:26:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 95, 18225055, 8239, '2021-11-21 04:55:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 10, 99444605, 308, '2020-08-06 23:28:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 5, 67060094, 4751, '2022-08-16 06:28:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 68, 76893837, 3923, '2020-03-26 16:27:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 40, 8785477, 5822, '2020-07-09 19:17:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 24, 98834919, 2847, '2021-06-27 07:45:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 19, 51323591, 201, '2023-12-12 21:52:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 98, 26659313, 693, '2020-04-03 18:11:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 26, 85381227, 2274, '2020-12-06 16:06:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 95, 62349689, 127, '2021-03-31 19:28:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 95, 30707283, 7582, '2020-02-06 22:51:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 82, 91147668, 4187, '2021-04-17 22:26:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 64, 62091698, 7005, '2021-11-18 16:28:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 56, 47406372, 4805, '2020-06-12 16:37:16', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 66, 47037522, 4365, '2022-09-06 00:10:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 86, 17589349, 3354, '2023-09-09 18:22:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 25, 38956489, 3491, '2021-10-14 20:02:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 4, 69728902, 3696, '2022-08-14 18:54:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 8, 39814792, 6095, '2020-05-08 11:56:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 91, 51558346, 4154, '2020-02-10 15:38:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 74, 58784979, 4445, '2021-04-01 07:38:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 73, 16805829, 753, '2022-11-11 23:29:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 63, 34701247, 5389, '2020-04-15 10:26:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 46, 72326447, 9.9, '2022-03-14 22:40:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 33, 71889352, 4855, '2021-09-23 02:41:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 36, 90959528, 2527, '2023-08-09 16:23:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 92, 97004573, 7207, '2020-10-26 06:15:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 59, 24216698, 9954, '2022-06-06 13:02:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 33, 88651978, 2864, '2021-10-08 22:43:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 52, 26710541, 3196, '2022-04-09 19:25:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 57, 43219398, 2998, '2022-04-12 00:23:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 52, 626208.6, 2668, '2023-01-06 15:36:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 87, 85602594, 2277, '2021-01-23 07:04:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 56, 49332781, 86.0, '2022-09-24 11:42:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 88, 60387902, 2756, '2020-08-12 23:43:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 37, 98570781, 5171, '2020-10-03 23:01:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 1, 459248.0, 69.2, '2023-03-29 17:28:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 44, 26065898, 2026, '2022-06-04 22:57:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 72, 814975.9, 2721, '2020-08-07 15:10:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 92, 92946385, 2037, '2021-12-12 04:16:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 32, 71824296, 1677, '2021-03-22 10:30:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 28, 40985163, 9857, '2020-09-22 07:43:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 68, 70100887, 7287, '2020-12-29 04:26:53', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 80, 44147003, 3234, '2022-03-14 19:50:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 5, 83589444, 2607, '2021-12-06 04:23:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 12, 182663.0, 6589, '2022-10-18 01:57:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 14, 28363105, 6842, '2021-12-09 02:33:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 95, 20251726, 4801, '2022-09-17 11:13:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 96, 48887335, 3881, '2023-11-16 15:40:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 7, 51728211, 186, '2023-08-20 16:49:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 51, 24731577, 1285, '2022-10-31 22:16:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 71, 61320279, 2074, '2020-12-18 10:40:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 41, 94731027, 9546, '2022-12-11 06:16:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 39, 83583378, 376, '2023-02-06 20:52:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 18, 17534321, 664, '2022-11-17 20:59:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 6, 62920588, 1337, '2021-09-04 00:09:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 14, 19190774, 303, '2022-04-21 10:41:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 2, 821856.9, 3512, '2022-05-03 04:02:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 67, 45895699, 2962, '2020-10-28 10:51:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 45, 74287928, 7596, '2020-01-29 10:53:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 95, 69861007, 9161, '2023-03-28 21:17:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 29, 979724.2, 35.4, '2021-02-02 06:46:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 55, 225980.8, 2376, '2024-01-14 12:27:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 10, 52918926, 2381, '2020-12-03 04:38:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 19, 35148915, 1238, '2023-11-30 10:42:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 15, 84150934, 437, '2021-01-21 05:14:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 76, 75913661, 9045, '2022-12-09 21:58:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 95, 49768454, 4561, '2022-10-24 17:58:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 18, 68172911, 4522, '2022-12-13 16:58:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 92, 101983.0, 3192, '2020-07-25 16:21:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 49, 16117.6, 8307, '2021-11-18 14:04:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 1, 18747691, 3936, '2023-06-22 04:58:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 16, 71925283, 578, '2023-01-07 17:41:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 87, 20295273, 2719, '2022-01-26 01:30:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 85, 57151204, 5147, '2020-08-26 15:16:36', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 8, 76761712, 5683, '2023-01-15 00:43:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 96, 1030533, 3456, '2023-02-17 16:03:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 62, 10532858, 4823, '2020-12-30 10:23:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 78, 1246818, 6471, '2022-04-14 07:35:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 90, 83774141, 7576, '2021-04-05 10:05:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 75, 113308.8, 6411, '2020-08-25 05:23:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 53, 56182016, 3168, '2021-09-04 12:15:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 29, 92684902, 4821, '2023-09-03 19:14:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 32, 10455672, 3349, '2020-09-18 05:15:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 37, 80341662, 612, '2023-12-14 00:14:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 67, 60962618, 7764, '2021-04-20 07:08:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 70, 52341554, 4225, '2023-07-31 16:49:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 88, 91272099, 4377, '2023-09-08 12:30:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 48, 383953.3, 283, '2020-01-28 07:23:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 20, 84999511, 1308, '2021-10-05 03:43:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 27, 24869305, 5838, '2022-10-17 09:16:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 10, 43543458, 95.3, '2021-01-31 20:25:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 40, 26971526, 11.8, '2020-10-08 03:05:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 10, 82920792, 1539, '2020-04-18 02:15:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 70, 89009313, 6604, '2021-08-14 04:36:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 26, 96731462, 3659, '2024-01-04 14:29:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 8, 83365766, 6151, '2022-01-09 20:42:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 65, 429222.8, 3315, '2020-09-13 23:29:30', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 20, 71122779, 8141, '2020-12-05 02:04:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 17, 18026565, 772, '2020-12-20 13:33:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 46, 97845098, 913, '2021-02-24 16:55:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 47, 69759953, 5944, '2021-10-16 15:11:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 70, 35681191, 8509, '2020-04-05 19:55:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 43, 284336.3, 3165, '2023-04-01 13:54:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 72, 98882448, 6373, '2022-10-28 18:33:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 66, 9305572, 5596, '2022-12-29 14:08:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 2, 14031557, 5667, '2023-10-21 01:14:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 25, 82727568, 9305, '2022-03-05 16:25:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 91, 70696527, 1401, '2023-03-31 09:10:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 67, 94675245, 89.0, '2022-12-05 07:53:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 29, 72967703, 5253, '2023-01-22 06:40:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 78, 216872.1, 1152, '2021-12-17 04:34:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 37, 24624602, 40.9, '2023-10-02 09:15:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 57, 37200185, 4194, '2022-03-18 01:50:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 64, 184678.6, 1331, '2021-01-22 20:11:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 88, 198847.9, 1368, '2023-07-01 18:09:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 29, 13621012, 5136, '2020-06-14 14:29:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 68, 97162508, 5798, '2020-02-06 08:45:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 37, 97105212, 1653, '2021-05-08 16:08:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 54, 59436062, 8504, '2021-10-21 21:33:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 94, 57049201, 60.7, '2022-03-28 06:31:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 20, 29863235, 8043, '2020-05-06 19:35:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 90, 40241232, 7411, '2023-05-07 10:17:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 38, 36424126, 7458, '2020-11-13 03:40:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 90, 35232886, 4666, '2021-02-16 12:12:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 21, 91400635, 8242, '2021-07-13 11:56:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 94, 224792.7, 5558, '2020-07-04 04:45:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 5, 230906.3, 5129, '2023-05-03 09:13:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 2, 48388434, 6442, '2023-09-05 06:22:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 57, 99566015, 1723, '2021-08-03 00:20:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 85, 16192589, 347, '2020-12-23 03:57:19', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 24, 52283788, 95.0, '2020-01-27 18:13:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 43, 49276502, 9263, '2023-04-22 06:19:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 25, 78025864, 1332, '2020-04-29 17:10:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 98, 79289455, 21.6, '2024-01-06 00:58:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 2, 57640.3, 5757, '2020-04-22 16:29:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 44, 1540728, 4759, '2022-06-07 11:40:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 13, 38956374, 7681, '2023-01-26 23:41:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 10, 270499.8, 4258, '2020-07-04 14:18:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 29, 41636608, 6971, '2022-05-11 17:20:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 72, 69007521, 22.2, '2021-10-29 10:10:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 22, 30284174, 3874, '2021-11-06 08:33:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 78, 73412706, 5561, '2022-03-23 21:43:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 83, 13419952, 1714, '2022-12-21 19:05:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 43, 23147185, 5827, '2020-02-21 06:32:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 18, 83102159, 5094, '2020-11-17 17:25:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 67, 63397389, 971, '2022-01-06 00:19:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 79, 26716703, 6537, '2023-04-25 12:28:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 53, 72407805, 5462, '2023-08-24 20:18:35', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 26, 20382475, 6891, '2021-08-31 05:58:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 65, 20101339, 8341, '2021-09-23 16:02:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 82, 77864965, 38.4, '2022-08-19 08:05:03', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 8, 48161836, 30.1, '2020-09-09 21:41:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 46, 368031.7, 4435, '2022-07-29 09:14:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 94, 20656431, 905, '2020-08-30 05:53:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 30, 30776712, 9861, '2023-10-05 16:12:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 12, 49474582, 1838, '2024-01-16 07:03:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 88, 82975529, 2899, '2023-07-17 11:32:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 40, 68489679, 9965, '2023-08-28 07:01:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 38, 47716232, 1135, '2021-09-15 21:05:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 62, 69324275, 9001, '2023-09-10 23:07:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 18, 89245264, 10.6, '2023-10-25 22:25:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 26, 98742333, 6879, '2022-05-09 22:54:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 52, 77218374, 8403, '2022-04-27 03:33:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 37, 33751701, 5224, '2020-08-07 21:41:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 9, 28237198, 3248, '2021-07-22 05:00:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 40, 18345074, 345, '2021-07-24 15:58:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 86, 49861737, 19.6, '2023-05-11 04:14:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 87, 8417221, 2372, '2022-01-27 17:22:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 61, 43801552, 9298, '2021-11-19 22:32:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 10, 27934403, 9592, '2021-08-21 00:27:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 63, 59392307, 4625, '2022-02-15 22:13:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 17, 30784649, 4262, '2023-09-24 17:55:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 97, 11072798, 3471, '2022-12-10 18:26:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 65, 81692544, 3436, '2023-02-12 01:20:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 18, 16867203, 8499, '2022-04-28 15:51:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 79, 67673996, 4875, '2021-10-02 22:22:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 62, 85370807, 1552, '2023-01-02 06:47:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 61, 80269952, 8961, '2023-12-31 17:35:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 91, 99014228, 9433, '2023-02-11 01:13:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 14, 19070106, 451, '2022-12-04 03:43:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 24, 49220265, 9991, '2022-02-16 10:40:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 92, 23486314, 9317, '2021-08-23 14:12:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 10, 15251936, 6486, '2022-01-25 11:09:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 97, 13828663, 3195, '2021-10-11 18:14:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 13, 31733321, 76.6, '2021-09-11 21:40:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 71, 87358137, 1686, '2021-05-13 15:05:01', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 98, 74729757, 1418, '2020-03-24 15:40:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 37, 93327533, 6587, '2023-06-18 09:14:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 89, 41122945, 5581, '2023-09-04 05:25:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 79, 87853632, 97.4, '2023-01-09 13:47:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 16, 98796826, 738, '2023-10-18 02:42:46', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 80, 10372215, 2086, '2021-07-07 10:36:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 79, 13091116, 9476, '2021-11-28 07:45:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 47, 35002248, 9486, '2023-04-05 18:04:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 4, 25249459, 52.5, '2020-02-23 10:50:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 38, 603169.1, 5051, '2022-04-05 18:20:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 92, 38557745, 8765, '2021-10-29 08:22:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 84, 55347006, 2812, '2020-08-04 16:23:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 26, 3199055, 2206, '2022-06-30 13:49:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 57, 46463888, 7359, '2021-06-13 02:03:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 64, 160911.4, 8709, '2022-07-16 13:09:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 11, 54051337, 1426, '2020-12-12 00:32:02', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 81, 318920.6, 9306, '2021-06-23 12:05:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 62, 48446089, 3265, '2022-12-23 05:12:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 28, 12181084, 2136, '2021-09-24 08:48:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 32, 98837415, 2452, '2022-09-05 18:28:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 8, 11606264, 3784, '2021-04-02 11:24:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 46, 112599.3, 2352, '2023-03-27 11:28:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 10, 16859112, 3151, '2021-02-14 18:55:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 3, 87178736, 5046, '2021-12-09 10:22:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 32, 45988676, 3.8, '2023-02-01 22:51:57', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 31, 4398855, 6241, '2022-11-20 11:11:26', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 58, 11105073, 1696, '2022-04-22 23:26:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 98, 78926506, 8098, '2023-02-02 17:43:54', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 77, 46584762, 569, '2020-05-30 04:24:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 70, 36648.6, 8183, '2021-04-08 17:50:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 63, 743643.3, 3415, '2023-08-30 07:21:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 48, 92316395, 946, '2020-08-05 01:48:13', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 82, 3652319, 6197, '2021-06-08 15:38:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 91, 12603566, 6282, '2023-06-16 19:29:07', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 76, 68255314, 773, '2023-09-25 04:22:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 46, 99454139, 518, '2023-09-18 03:45:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 66, 80654256, 3925, '2023-06-03 10:20:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 79, 16550955, 7947, '2022-04-02 19:47:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 40, 76300016, 9176, '2023-04-26 14:52:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 91, 10966085, 4029, '2022-08-23 00:48:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 71, 10534818, 3606, '2022-09-07 08:28:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 17, 47737916, 2732, '2022-09-14 17:58:23', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 8, 741776.2, 7982, '2023-10-07 19:51:21', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 71, 17317.9, 6736, '2023-11-04 19:54:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 31, 16474965, 8329, '2021-01-01 09:51:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 87, 27090003, 1494, '2022-09-18 00:31:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 71, 74023382, 6114, '2021-10-04 22:25:42', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 25, 94623058, 3977, '2020-10-11 08:48:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 59, 93677554, 7951, '2023-03-01 03:25:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 84, 96838254, 2698, '2021-09-23 04:16:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 60, 32101879, 5223, '2022-06-11 21:56:14', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 90, 82284389, 5742, '2023-09-10 04:12:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 34, 56047146, 7115, '2020-06-22 08:15:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 52, 16418555, 185, '2021-01-04 21:09:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 50, 16282765, 6845, '2022-12-01 02:33:09', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 4, 37088202, 79.2, '2023-08-08 18:12:48', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 82, 41569807, 5656, '2020-10-16 06:42:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 61, 77617132, 9191, '2022-09-07 08:21:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 55, 9787926, 80.2, '2021-05-19 12:09:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 39, 60506778, 7591, '2021-12-12 14:19:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 96, 39486114, 8359, '2023-09-11 13:11:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 12, 17079526, 7078, '2021-02-21 22:59:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 53, 54798232, 64.6, '2021-07-01 21:15:29', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 63, 11079714, 8711, '2022-06-27 02:14:56', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 6, 96867812, 4352, '2022-02-01 16:26:15', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 19, 19191897, 5834, '2023-12-26 05:13:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 79, 56678555, 5029, '2021-01-23 09:17:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 28, 95408188, 9478, '2023-01-04 23:06:22', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 89, 57437284, 9928, '2020-11-21 04:43:39', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 51, 17100855, 2673, '2023-11-02 15:09:05', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 67, 3286237, 17.8, '2021-07-07 16:21:55', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 82, 34555088, 9845, '2023-10-11 02:13:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 2, 63, 76361408, 3355, '2022-02-24 08:11:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 42, 29655982, 1109, '2021-05-01 08:37:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 52, 22502754, 7589, '2021-08-10 05:12:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 15, 12844274, 3216, '2023-08-24 19:26:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 74, 56096096, 9671, '2023-08-13 00:32:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 59, 84635545, 5427, '2022-01-07 21:31:41', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 3, 73, 69272078, 3245, '2021-08-19 00:58:50', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 32, 374323.5, 2274, '2022-09-01 04:46:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 75, 82910453, 5869, '2022-02-18 08:54:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 20, 61033463, 1018, '2021-07-30 10:24:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 39, 93736538, 6884, '2023-07-12 16:19:44', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 28, 859510.5, 5721, '2023-12-25 20:51:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 3, 29, 87787724, 3617, '2020-07-14 01:07:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 85, 49706746, 7452, '2023-07-24 23:50:06', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 16, 66147417, 1348, '2022-10-02 13:23:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 72, 2007289, 4213, '2022-03-31 15:09:51', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 48, 88350254, 5599, '2021-10-05 09:20:45', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 56, 922975.2, 9336, '2023-12-23 14:59:37', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 93, 4933664, 9171, '2020-05-07 06:04:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 3, 6, 85663669, 4759, '2020-03-18 02:57:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 84, 20414394, 3051, '2020-03-07 15:42:32', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 6, 93011707, 4761, '2021-12-29 05:21:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 50, 88842117, 5404, '2024-01-12 11:27:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 56, 71856388, 5847, '2021-10-14 23:13:52', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 14, 40986513, 303, '2023-01-14 01:06:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 3, 22, 56860299, 7723, '2023-03-28 19:58:20', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 67, 27393701, 4143, '2022-10-05 10:53:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 19, 92528226, 5995, '2024-01-01 22:17:34', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 39, 993024.4, 5092, '2021-03-03 23:29:28', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 28, 35747434, 32.5, '2024-01-13 06:14:49', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 96, 36452621, 1878, '2021-02-28 19:00:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 2, 46, 91217548, 4039, '2023-08-25 08:04:25', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (4, 1, 6, 62564423, 8382, '2023-09-20 00:52:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 47, 682923.6, 6014, '2020-09-02 08:34:40', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 37, 23981729, 5679, '2021-03-31 11:01:10', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 9, 23753229, 4992, '2020-05-14 23:56:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 92, 67715278, 8654, '2022-06-07 04:06:31', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 71, 414263.9, 5752, '2023-12-29 01:39:17', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 55, 391188.1, 30.9, '2020-04-15 05:14:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 58, 865038.5, 2014, '2021-12-23 00:11:18', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 2, 51, 66855229, 9467, '2022-05-12 08:32:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (3, 1, 11, 83661476, 3082, '2020-07-30 04:49:27', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 2, 560350.3, 6434, '2022-09-11 23:18:24', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 95, 23400687, 3671, '2020-09-26 23:10:04', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 2, 29, 95260389, 9656, '2020-11-24 06:28:58', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 1, 89, 65843993, 145, '2022-10-31 01:18:43', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 97, 43129467, 2365, '2022-06-19 21:31:47', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 3, 1, 72752092, 5768, '2023-11-26 21:13:11', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 2, 70, 96893248, 5225, '2023-04-12 03:28:38', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (6, 1, 24, 2792, 5992, '2022-10-29 08:17:00', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (2, 1, 28, 5857904, 8925, '2023-05-02 18:50:12', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 1, 80, 56849451, 7196, '2022-03-27 12:27:08', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 65, 99778189, 6751, '2020-09-06 13:56:33', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (5, 2, 35, 10088762, 5945, '2021-11-27 03:16:59', '');
-insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date, description) values (1, 3, 81, 96196315, 2063, '2020-10-09 19:40:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 12, 38185204, 2392, '2022-08-18 04:54:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 43, 85089821, 9612, '2023-09-01 03:20:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 38, 53527584, 8024, '2022-09-22 23:09:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 27, 24119777, 1288, '2022-03-11 08:20:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 2, 973960.6, 8827, '2023-07-08 02:46:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 83, 259494.7, 85.0, '2023-04-30 13:53:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 22, 54491447, 914, '2022-05-06 21:24:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 7, 77488458, 2195, '2020-05-10 18:39:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 43, 5271386, 5951, '2022-02-27 08:48:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 21, 94075273, 886, '2023-10-05 11:29:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 2, 52255693, 4608, '2023-05-02 03:13:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 48, 23065565, 6789, '2023-11-29 15:42:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 9, 46842994, 4593, '2022-07-29 14:06:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 47, 46336059, 5252, '2021-04-13 23:10:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 4, 55694238, 6071, '2021-10-03 11:10:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 6, 34531396, 8268, '2020-05-02 08:11:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 2, 74209297, 6439, '2023-12-26 21:17:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 80, 30669737, 8285, '2020-10-11 23:55:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 89, 8723033, 2297, '2023-06-13 15:45:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 65, 14560541, 9424, '2022-03-29 11:57:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 64, 84148628, 4041, '2022-08-30 22:30:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 44, 17889927, 2715, '2022-03-22 05:29:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 36, 1149603, 13.9, '2022-11-30 15:42:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 86, 91845099, 7819, '2022-11-12 21:42:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 9, 91086397, 5186, '2020-02-25 10:39:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 73, 45793323, 8992, '2020-10-05 17:31:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 93, 23161903, 5923, '2023-01-01 03:00:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 36, 22472694, 3098, '2022-01-28 02:28:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 12, 14634147, 6368, '2022-04-22 04:45:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 11, 194177.0, 1559, '2021-09-23 09:52:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 73, 54137158, 9218, '2021-06-26 01:26:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 55, 36453052, 9371, '2022-11-13 15:56:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 73, 51522018, 9353, '2021-04-30 19:23:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 33, 57013313, 8437, '2023-09-03 20:10:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 60, 65851002, 3498, '2023-02-06 19:54:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 89, 64785592, 32.1, '2022-11-10 07:59:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 76, 96205762, 4873, '2023-07-25 02:34:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 19, 57151697, 3674, '2023-02-22 17:32:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 73, 15746447, 16.1, '2023-08-16 09:52:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 1, 7919845, 6284, '2022-11-28 00:00:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 37, 12941072, 7338, '2022-12-04 21:40:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 85, 63514815, 9136, '2023-09-11 05:12:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 12, 80872769, 1389, '2020-02-06 12:59:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 87, 8245474, 1762, '2023-06-13 18:16:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 76, 35987346, 5528, '2021-03-23 04:46:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 10, 21233748, 76.7, '2022-09-29 20:32:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 79, 58446796, 2084, '2023-03-14 05:53:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 22, 1742299, 303, '2021-11-06 20:49:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 84, 26118356, 7258, '2020-08-20 21:18:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 42, 67014211, 4846, '2023-10-30 22:14:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 47, 7515593, 4128, '2020-09-12 19:49:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 3, 27045515, 8852, '2021-09-28 11:34:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 30, 911121.6, 7969, '2021-10-13 12:28:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 32, 82408383, 9527, '2022-06-23 22:34:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 16, 43112909, 8045, '2023-08-08 20:07:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 65, 48476903, 8279, '2023-01-19 02:25:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 68, 6807418, 3201, '2022-06-15 16:52:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 60, 37113147, 765, '2020-09-03 12:00:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 74, 97141795, 3321, '2020-07-30 00:32:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 21, 34100261, 885, '2021-04-02 15:22:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 53, 989191.4, 9852, '2020-06-04 21:22:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 56, 34351237, 8554, '2021-04-14 06:45:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 27, 86308621, 4956, '2023-05-07 07:18:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 38, 28279523, 5057, '2021-12-05 20:44:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 74, 81690017, 9139, '2021-02-08 08:35:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 91, 3451992, 24.6, '2021-06-16 05:08:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 45, 14706279, 5813, '2022-04-21 03:56:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 75, 87947093, 6305, '2022-04-23 09:38:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 26, 386429.5, 2993, '2023-08-03 19:39:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 21, 119458.1, 5288, '2022-07-31 10:54:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 33, 91172235, 8124, '2020-04-27 11:09:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 98, 28438498, 7685, '2022-05-25 02:51:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 89, 41298857, 3752, '2023-02-17 08:43:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 82, 12440541, 1382, '2021-07-29 04:51:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 83, 29925004, 5817, '2020-08-06 10:47:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 44, 94103308, 7136, '2022-11-01 14:32:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 55, 42938203, 7319, '2022-02-19 18:52:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 68, 22653461, 9171, '2023-05-26 14:29:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 86, 37619308, 4738, '2023-03-17 23:02:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 88, 15371037, 4544, '2020-11-25 23:53:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 77, 94043272, 9068, '2023-03-31 04:00:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 9, 13081165, 9129, '2022-07-27 01:40:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 19, 42203617, 5672, '2022-01-08 03:52:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 73, 53767733, 385, '2020-06-28 12:39:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 54, 23187727, 5078, '2022-10-06 11:48:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 61, 852497.5, 3.4, '2023-07-17 09:34:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 53, 34525873, 806, '2021-10-12 21:43:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 64, 78659355, 9093, '2020-06-21 05:16:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 50, 84334705, 9.2, '2020-07-28 17:51:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 14, 93906096, 1409, '2021-04-01 04:31:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 94, 52053465, 2335, '2021-08-13 14:16:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 44, 7494535, 8869, '2021-05-26 03:35:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 59, 8084262, 14.5, '2022-04-21 22:03:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 51, 60526033, 8189, '2022-04-01 02:33:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 66, 99788435, 4001, '2023-01-22 21:35:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 20, 86575164, 6539, '2020-09-18 12:56:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 88, 49433951, 7921, '2022-02-11 07:43:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 30, 8019245, 3052, '2023-05-06 01:35:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 53, 29711099, 77.2, '2022-07-07 21:08:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 19, 62117103, 1937, '2021-09-28 00:58:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 4, 84902982, 3898, '2022-04-07 22:53:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 2, 78601594, 4175, '2021-12-29 16:00:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 82, 45441673, 1813, '2023-08-24 13:08:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 28, 26295342, 1927, '2023-11-22 06:26:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 98, 79063852, 2123, '2021-01-09 09:54:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 14, 14030037, 2836, '2023-10-04 21:45:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 94, 8547038, 8609, '2022-12-14 19:28:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 88, 30124283, 8161, '2023-04-24 10:01:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 77, 31245585, 7142, '2020-12-15 09:12:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 50, 15832447, 2.0, '2021-04-09 17:18:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 25, 90149285, 688, '2022-03-31 22:34:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 17, 60678648, 8381, '2022-05-23 14:20:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 55, 49444706, 929, '2021-10-01 04:28:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 80, 82712163, 7276, '2023-12-07 22:36:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 64, 83487729, 1121, '2020-09-01 12:34:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 64, 13094827, 751, '2020-08-21 15:35:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 51, 47585855, 7525, '2022-12-29 10:21:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 47, 9540255, 204, '2021-07-21 13:39:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 93, 34483823, 9429, '2020-05-17 11:59:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 94, 759153.8, 617, '2022-06-12 19:06:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 71, 40013815, 8379, '2020-02-24 10:52:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 75, 40211098, 9215, '2022-01-30 17:25:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 45, 20130063, 9961, '2021-02-01 08:45:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 34, 234292.6, 3721, '2021-01-07 05:38:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 10, 43757197, 6529, '2024-01-16 04:59:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 19, 1275988, 5769, '2023-11-06 02:30:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 60, 6602639, 959, '2021-09-05 03:13:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 62, 60682264, 3301, '2021-10-17 08:14:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 12, 99285337, 1207, '2020-11-25 23:51:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 72, 29856773, 1532, '2022-07-29 05:26:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 28, 99851733, 9131, '2022-06-03 01:23:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 92, 254177.6, 7055, '2023-08-04 17:55:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 57, 69020012, 4145, '2020-02-19 20:12:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 51, 60856321, 298, '2023-10-04 19:14:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 96, 48826626, 5011, '2020-08-03 01:54:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 53, 92413665, 4818, '2023-09-23 03:07:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 76, 79369039, 2002, '2022-03-07 18:19:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 54, 74903609, 9008, '2020-12-12 13:02:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 90, 90040885, 168, '2022-05-12 14:15:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 2, 962202.1, 5635, '2023-08-24 07:33:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 74, 91124656, 8098, '2021-10-22 02:57:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 62, 75307177, 8652, '2023-12-24 07:00:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 66, 33609751, 2615, '2021-12-07 23:31:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 16, 96076735, 5566, '2020-09-24 12:04:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 80, 27516108, 27.1, '2022-08-22 13:02:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 75, 85144388, 2931, '2021-12-11 09:15:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 2, 98505143, 3135, '2020-01-30 10:29:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 55, 73837323, 9286, '2022-06-25 20:09:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 51, 81966226, 7723, '2023-12-10 14:14:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 33, 68458021, 8412, '2021-02-21 11:08:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 53, 11320549, 8262, '2021-03-02 18:38:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 33, 32506303, 29.9, '2023-02-17 02:52:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 56, 25947435, 6734, '2020-03-22 12:19:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 43, 18610175, 858, '2021-11-14 03:44:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 42, 49162917, 8879, '2021-08-27 23:33:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 88, 46662435, 2085, '2020-11-23 03:17:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 10, 18417849, 1492, '2022-10-29 01:34:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 61, 77428959, 6854, '2023-07-09 12:29:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 16, 53213062, 2788, '2022-07-20 03:43:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 31, 95575992, 9106, '2022-10-30 00:48:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 89, 90448205, 11.2, '2023-07-01 06:48:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 74, 840282.4, 2757, '2023-01-17 16:45:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 71, 34514824, 20.8, '2023-12-02 13:03:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 64, 32657352, 8879, '2021-02-02 07:17:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 25, 28264824, 9819, '2021-06-04 10:56:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 55, 483069.6, 3951, '2022-02-14 22:31:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 42, 91591303, 5748, '2020-11-07 00:48:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 42, 36987071, 5112, '2023-11-25 10:11:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 84, 20234162, 2145, '2022-01-27 01:04:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 44, 25986184, 868, '2023-05-09 12:39:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 34, 48587787, 8347, '2021-12-14 10:14:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 24, 63490671, 6949, '2023-12-04 19:42:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 56, 66237109, 777, '2023-05-24 16:48:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 18, 70544248, 6614, '2022-04-29 00:19:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 14, 12852374, 8735, '2021-09-08 13:44:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 13, 47418144, 4481, '2023-08-19 19:31:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 37, 19169696, 2301, '2023-09-08 01:49:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 26, 95452613, 2205, '2020-12-07 11:38:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 65, 19787553, 85.6, '2020-03-10 22:19:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 12, 8462823, 6382, '2022-02-13 23:51:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 69, 95995062, 2698, '2023-06-24 06:19:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 45, 91753777, 6557, '2023-08-30 06:13:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 71, 301829.4, 3468, '2021-10-18 11:55:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 19, 146013, 7853, '2020-08-15 13:56:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 71, 20623228, 9141, '2022-07-11 14:14:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 68, 416983.3, 5494, '2022-09-07 08:08:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 9, 76806364, 2393, '2021-05-25 22:08:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 42, 1748181, 6367, '2023-09-07 15:58:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 93, 13932945, 3175, '2021-12-18 05:02:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 87, 43702335, 4385, '2023-01-23 11:11:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 57, 35800.9, 5431, '2021-09-16 05:47:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 32, 362362.8, 3004, '2023-03-16 04:46:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 47, 21010241, 32.9, '2022-12-11 19:54:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 34, 500525.3, 1296, '2023-12-04 19:54:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 86, 58253652, 8098, '2023-06-17 09:53:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 92, 69307684, 1003, '2021-05-15 23:10:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 2, 29016454, 4373, '2021-11-25 00:44:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 72, 49242806, 5386, '2020-04-10 19:52:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 73, 49947688, 8498, '2022-03-12 14:12:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 83, 84054813, 7304, '2020-05-24 07:45:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 17, 39662919, 5625, '2020-02-18 15:39:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 10, 93259329, 2058, '2022-08-05 03:53:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 96, 54687462, 8958, '2020-09-09 18:58:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 34, 58739921, 1002, '2021-11-01 07:24:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 22, 47926193, 9151, '2022-06-17 03:41:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 21, 43443566, 6069, '2022-01-20 16:33:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 93, 71473484, 588, '2023-06-11 14:58:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 24, 51154782, 3522, '2020-08-04 00:12:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 67, 65513744, 6244, '2021-04-10 05:13:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 12, 50677162, 1766, '2022-07-05 23:19:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 53, 80886098, 4743, '2024-01-14 05:22:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 61, 55443335, 2325, '2021-07-10 06:58:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 34, 73586329, 8837, '2021-01-06 14:35:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 17, 51980969, 3828, '2020-12-25 01:02:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 52, 1996984, 7691, '2023-03-28 01:18:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 96, 10145848, 4278, '2020-05-11 02:09:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 83, 56506056, 8098, '2020-08-27 03:13:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 66, 13870729, 21.4, '2021-11-14 02:16:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 36, 55290202, 3276, '2021-10-28 13:31:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 20, 33375267, 9887, '2022-10-13 07:54:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 63, 569816.3, 6316, '2020-02-16 21:58:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 30, 75066402, 5099, '2021-10-22 19:31:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 59, 3741676, 6028, '2023-08-02 08:20:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 83, 50642815, 9965, '2022-09-29 02:36:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 52, 2379713, 6475, '2023-08-12 22:19:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 24, 1484956, 665, '2021-08-28 14:43:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 50, 11692603, 8916, '2022-02-12 13:58:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 32, 913648.0, 4323, '2022-08-27 19:29:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 91, 54086315, 3944, '2021-05-09 08:39:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 20, 123102.3, 8779, '2021-01-27 01:25:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 31, 19916008, 7519, '2023-01-10 21:15:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 75, 644267.7, 2185, '2021-07-17 21:11:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 42, 35569347, 3289, '2021-05-02 18:42:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 61, 77149578, 6239, '2023-03-27 23:23:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 31, 94662691, 1226, '2021-10-24 04:04:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 62, 11080819, 8976, '2023-12-06 23:51:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 20, 83696496, 1919, '2023-10-21 07:36:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 70, 478889.5, 8509, '2023-03-24 14:56:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 63, 67762786, 9557, '2020-10-08 05:15:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 50, 68271336, 7096, '2021-08-24 21:57:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 61, 42480397, 3407, '2021-05-12 18:58:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 21, 99467396, 5396, '2022-02-21 05:30:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 80, 64797372, 5753, '2020-11-22 04:41:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 73, 64296735, 179, '2022-04-08 23:15:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 56, 39632749, 3051, '2020-03-28 14:53:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 71, 99876719, 7308, '2022-12-13 07:15:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 17, 20347948, 4131, '2020-05-12 17:26:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 45, 96832933, 9784, '2022-08-07 02:06:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 60, 851069.5, 7392, '2022-04-08 10:11:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 34, 78352903, 2848, '2021-08-29 02:47:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 74, 43757268, 3295, '2020-12-13 09:42:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 70, 54198715, 6744, '2022-07-25 08:27:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 78, 35742129, 6315, '2021-05-07 10:56:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 75, 82234067, 7271, '2020-07-18 11:55:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 79, 41069014, 887, '2022-03-14 03:22:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 22, 59763871, 827, '2023-04-12 01:18:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 11, 54626712, 1968, '2020-10-03 14:53:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 42, 87101276, 7698, '2023-10-14 11:14:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 72, 76480978, 4319, '2022-08-27 10:49:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 70, 59500885, 7553, '2021-02-08 07:41:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 93, 32099222, 1012, '2023-11-30 15:13:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 51, 40033277, 612, '2020-11-07 14:44:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 14, 36742587, 7197, '2024-01-25 20:21:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 51, 45909369, 7069, '2020-10-30 20:40:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 26, 67337454, 3238, '2022-03-23 11:06:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 29, 504344.8, 7512, '2023-12-27 11:19:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 76, 2607801, 7917, '2021-10-03 16:56:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 66, 20444081, 7349, '2022-01-12 11:11:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 53, 33601289, 91.3, '2022-01-09 06:12:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 8, 49099714, 7718, '2020-07-04 12:07:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 97, 27014899, 334, '2022-01-01 00:59:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 75, 375808.0, 2279, '2023-12-28 20:48:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 12, 443591.1, 1785, '2022-01-16 23:04:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 8, 22323715, 7649, '2024-01-12 03:56:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 72, 676343.5, 6905, '2022-10-25 14:41:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 22, 55870452, 8296, '2021-03-21 15:03:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 34, 58379828, 3949, '2022-04-01 17:57:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 87, 55582445, 9712, '2022-08-07 21:06:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 83, 57505058, 8438, '2021-10-19 11:15:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 1, 48317708, 873, '2021-10-31 19:16:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 77, 76621543, 7691, '2022-08-01 04:13:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 43, 967670.4, 3592, '2023-01-14 10:19:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 25, 33578968, 5342, '2021-05-18 17:23:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 97, 98118139, 3796, '2020-05-05 19:23:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 89, 7116661, 4847, '2020-12-08 07:39:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 19, 372840.2, 528, '2022-03-29 19:41:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 15, 43904714, 5812, '2022-04-11 23:39:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 37, 28378835, 3609, '2022-11-10 16:12:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 36, 70087906, 2183, '2021-02-01 15:44:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 47, 35369099, 1812, '2022-07-23 21:21:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 8, 13661802, 7126, '2023-07-17 14:46:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 69, 49144542, 962, '2020-05-10 12:14:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 52, 867822.2, 1773, '2020-03-12 02:19:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 20, 52263053, 1962, '2020-03-22 11:46:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 54, 52753014, 7362, '2020-05-30 19:27:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 16, 45777343, 5243, '2023-03-07 02:14:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 88, 62709912, 80.2, '2022-06-24 10:32:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 90, 81105209, 2356, '2024-01-18 02:38:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 7, 41523016, 1034, '2020-02-25 13:12:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 54, 9605027, 4075, '2022-05-23 22:20:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 27, 52746981, 2934, '2022-08-06 09:43:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 79, 45895775, 6354, '2020-08-24 12:22:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 75, 61515509, 9153, '2023-06-10 15:19:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 51, 285549.7, 2169, '2021-02-12 10:19:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 78, 56207606, 52.6, '2022-11-12 03:30:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 17, 50926967, 8818, '2021-12-31 10:10:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 79, 844669, 5611, '2022-12-29 23:53:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 41, 217548.6, 8366, '2022-03-29 18:33:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 37, 89861612, 6342, '2023-10-10 02:34:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 90, 31636516, 5833, '2023-08-22 16:22:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 60, 62628584, 37.8, '2023-12-04 10:44:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 93, 3629706, 9253, '2020-05-20 14:20:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 2, 92246289, 4804, '2023-09-05 23:52:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 15, 73165705, 8588, '2023-05-12 15:16:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 7, 25008508, 2905, '2022-01-18 20:39:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 21, 50059078, 72.3, '2022-09-29 03:37:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 43, 95746105, 9334, '2021-12-01 13:14:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 34, 84955922, 3259, '2023-08-28 12:20:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 8, 83566627, 1306, '2021-12-03 06:59:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 55, 95002603, 2957, '2023-04-13 12:00:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 85, 2861584, 6535, '2022-08-29 20:12:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 90, 75464563, 2329, '2021-10-28 18:21:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 93, 7335752, 4107, '2021-02-22 00:38:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 30, 16700396, 6479, '2023-02-13 06:50:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 18, 49283817, 196, '2023-10-17 16:35:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 36, 63225499, 526, '2020-11-13 13:47:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 72, 716835.0, 79.1, '2020-06-22 10:48:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 58, 26641576, 5259, '2023-07-17 10:11:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 37, 112606.4, 1353, '2024-01-10 04:26:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 54, 37083522, 8116, '2020-08-17 07:38:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 34, 57685371, 7403, '2021-07-10 10:20:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 29, 64608217, 3962, '2023-06-26 13:14:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 65, 55623129, 8685, '2022-04-14 11:27:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 17, 95513822, 1034, '2020-09-26 07:57:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 6, 65394376, 7161, '2020-08-21 10:09:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 66, 16840594, 102, '2022-06-09 00:02:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 65, 75907394, 9585, '2021-09-21 05:28:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 86, 70756739, 5856, '2021-08-05 06:29:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 86, 98023474, 5949, '2020-10-23 12:21:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 29, 406524.0, 4023, '2023-05-19 14:48:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 60, 68991434, 4905, '2020-12-03 07:16:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 52, 30362505, 4262, '2020-05-23 14:11:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 91, 69035561, 3532, '2023-08-15 11:14:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 34, 585587.5, 584, '2023-07-31 01:03:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 66, 83008562, 7478, '2020-12-25 18:21:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 46, 85797649, 17.0, '2022-12-24 00:00:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 18, 2649402, 6699, '2021-09-01 13:57:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 42, 4378736, 2504, '2020-08-30 09:04:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 64, 914647.2, 4297, '2022-03-06 14:26:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 74, 37406486, 8662, '2023-11-14 09:13:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 71, 7862798, 7373, '2022-01-11 14:27:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 64, 27645939, 6513, '2023-08-28 07:56:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 38, 82782578, 1955, '2023-02-25 18:24:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 72, 20674489, 482, '2022-12-10 04:06:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 62, 42132258, 8524, '2021-09-19 21:31:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 87, 11232875, 652, '2023-10-11 16:18:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 9, 27560005, 9423, '2021-12-25 20:52:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 24, 24978788, 1263, '2023-09-16 00:31:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 91, 39966958, 2076, '2020-08-18 20:52:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 3, 8159932, 1526, '2023-03-21 12:03:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 38, 35517045, 9826, '2020-09-23 23:21:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 87, 3904135, 845, '2022-01-21 07:04:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 84, 6762564, 379, '2023-07-17 10:32:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 39, 427220.6, 9624, '2022-08-11 04:30:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 91, 14136526, 8119, '2020-04-27 01:52:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 78, 57030681, 9744, '2022-04-12 00:47:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 36, 98837872, 5076, '2022-02-15 20:53:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 30, 92783726, 7651, '2021-07-19 18:30:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 97, 15672759, 7607, '2020-02-18 00:23:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 75, 17280606, 5701, '2023-09-07 22:36:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 25, 27494624, 481, '2023-08-19 07:34:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 39, 64533107, 12.7, '2020-06-20 07:01:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 76, 25737731, 3283, '2022-05-02 12:34:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 91, 79269653, 11.8, '2020-06-13 06:43:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 83, 63983367, 6335, '2023-01-17 18:13:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 5, 38222229, 8694, '2023-08-11 04:50:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 35, 74533441, 5356, '2022-03-04 23:54:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 1, 26301797, 2541, '2023-09-25 04:03:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 7, 8371008, 3007, '2020-09-03 23:27:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 84, 18297072, 7418, '2020-04-25 00:22:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 77, 56345914, 8598, '2023-03-08 07:12:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 72, 17287358, 9975, '2020-03-14 14:33:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 42, 93677259, 1797, '2023-03-14 10:04:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 10, 97892118, 2384, '2023-02-22 08:25:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 41, 78968.5, 9148, '2021-05-25 21:29:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 63, 14976509, 73.4, '2022-11-29 14:42:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 38, 47613932, 971, '2021-12-14 10:44:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 14, 44452168, 4097, '2023-12-07 12:36:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 29, 41733882, 20.6, '2024-01-11 07:14:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 75, 33038491, 1106, '2022-12-28 05:14:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 67, 53339503, 6312, '2022-05-21 09:48:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 71, 688560.9, 8986, '2022-02-11 01:07:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 75, 485527.0, 7784, '2021-11-13 21:55:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 45, 25119493, 9266, '2023-12-31 01:38:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 59, 96000271, 5183, '2020-12-25 17:10:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 34, 55568195, 7757, '2021-11-07 03:06:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 84, 25723505, 7103, '2023-02-18 13:34:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 24, 60554779, 8511, '2023-05-09 11:38:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 59, 96654862, 3601, '2020-11-13 00:20:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 43, 63301573, 4036, '2022-04-05 03:05:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 87, 469589.2, 22.4, '2023-01-31 08:45:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 96, 9799662, 3782, '2020-05-27 21:32:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 53, 38760052, 3018, '2021-07-29 14:51:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 84, 155836.2, 83.3, '2020-12-22 08:31:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 5, 59022436, 4855, '2021-04-18 11:22:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 44, 5338389, 79.9, '2020-03-17 03:31:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 29, 8382969, 3586, '2020-01-30 21:27:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 57, 46606873, 8373, '2021-07-01 09:54:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 96, 90714946, 59.5, '2023-12-20 23:56:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 21, 1498802, 6955, '2022-10-04 14:22:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 88, 32885194, 5744, '2021-01-18 05:24:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 4, 93151504, 6974, '2023-11-10 21:34:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 46, 344055.6, 3165, '2021-01-30 18:42:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 90, 30319475, 7707, '2023-03-05 15:29:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 27, 75097281, 2675, '2021-02-18 20:23:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 15, 45400116, 6511, '2020-09-01 17:24:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 90, 67287639, 4415, '2021-12-26 11:43:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 44, 55742896, 9784, '2020-03-03 09:31:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 15, 57601158, 4035, '2021-03-03 22:42:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 32, 73073402, 563, '2021-09-10 17:12:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 41, 70677762, 6854, '2022-10-10 11:10:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 79, 432432.5, 1327, '2020-08-28 19:30:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 66, 47587606, 8048, '2023-11-09 10:07:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 77, 43259004, 6462, '2022-10-09 06:53:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 94, 17683983, 9323, '2022-09-12 18:13:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 31, 55170669, 6412, '2020-04-11 11:58:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 24, 59916395, 3903, '2021-07-09 21:40:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 14, 63741253, 3501, '2020-10-07 20:50:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 36, 62470171, 5643, '2021-08-03 11:24:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 63, 61687895, 1886, '2022-12-30 18:10:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 43, 75433603, 2345, '2020-05-02 20:14:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 35, 399134.7, 4086, '2023-10-17 18:06:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 43, 24345413, 2013, '2020-06-20 10:23:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 18, 61878535, 30.0, '2023-04-11 14:17:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 71, 20267718, 3019, '2021-07-09 17:06:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 23, 3953311, 51.4, '2020-12-22 20:12:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 29, 25185257, 5489, '2022-10-05 13:42:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 20, 92320974, 4964, '2023-01-29 11:32:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 49, 68061419, 4626, '2021-12-21 15:10:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 41, 61518973, 7884, '2022-08-14 07:02:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 54, 55840337, 2551, '2022-12-03 04:56:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 4, 84016045, 30.6, '2023-04-27 01:43:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 53, 74886067, 7426, '2022-05-02 08:22:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 60, 15949741, 6118, '2020-06-05 01:26:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 5, 70373402, 7071, '2021-07-01 10:51:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 65, 37978499, 582, '2020-11-27 07:46:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 71, 7057637, 3248, '2024-01-21 20:03:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 3, 12718418, 5782, '2020-03-27 05:23:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 13, 37040275, 5845, '2022-12-01 20:48:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 31, 21968662, 69.6, '2023-11-20 07:14:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 6, 200477.1, 7003, '2020-07-23 13:18:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 26, 50494028, 4097, '2021-07-20 00:18:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 98, 30216383, 1846, '2021-05-30 22:58:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 38, 57857426, 236, '2021-12-07 10:20:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 53, 30688177, 4308, '2022-07-05 03:58:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 24, 24985293, 824, '2022-07-12 18:04:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 60, 38561408, 9502, '2023-04-05 13:55:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 85, 34178515, 2091, '2022-05-14 14:37:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 16, 905761.4, 7959, '2020-10-01 06:57:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 58, 59494027, 2426, '2021-05-07 19:14:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 32, 61114131, 78.9, '2022-11-20 15:26:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 28, 85953351, 5465, '2022-11-10 15:16:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 48, 18579059, 7068, '2023-02-25 23:16:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 54, 9374412, 876, '2020-07-15 23:17:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 48, 79074268, 14.2, '2022-10-12 12:39:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 73, 94768163, 3089, '2020-12-16 16:09:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 64, 426841.8, 3446, '2020-06-25 19:26:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 37, 43429473, 6947, '2023-01-14 04:34:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 19, 86427897, 2928, '2022-12-02 13:12:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 47, 501478, 2295, '2020-06-18 08:23:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 59, 8598545, 4408, '2022-10-22 11:30:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 15, 39749157, 4238, '2021-09-06 00:31:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 17, 77003062, 8868, '2022-04-26 04:24:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 6, 59634449, 8162, '2020-07-19 13:54:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 46, 32155562, 2872, '2020-05-27 16:47:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 38, 32039707, 9491, '2023-01-26 19:58:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 21, 56625456, 6438, '2021-09-21 19:05:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 20, 10396908, 6699, '2020-03-20 18:56:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 77, 74326258, 9488, '2023-09-24 14:41:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 52, 94945718, 2431, '2023-05-24 09:22:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 61, 74615018, 8827, '2020-06-07 17:49:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 44, 450606.7, 7366, '2023-10-09 20:24:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 59, 71471966, 5809, '2023-02-10 19:47:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 33, 15040507, 7667, '2022-09-07 10:39:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 16, 57057113, 29.9, '2023-12-22 22:20:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 82, 81069362, 79.2, '2023-01-20 08:36:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 86, 77131641, 3178, '2021-04-14 01:25:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 14, 55945571, 9961, '2020-06-23 12:24:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 69, 4436511, 65.2, '2022-04-07 01:26:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 57, 47168727, 8614, '2022-05-25 11:41:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 57, 2527143, 16.7, '2021-06-01 22:37:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 43, 32760143, 3498, '2020-03-01 00:28:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 6, 670615.8, 5087, '2021-08-22 19:35:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 16, 76692878, 5637, '2020-06-08 01:30:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 9, 63396411, 3762, '2020-06-27 23:21:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 10, 559934.9, 8937, '2022-10-27 00:17:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 32, 4576833, 2195, '2020-12-12 01:46:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 85, 3768002, 1328, '2022-09-04 14:58:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 93, 52260724, 1695, '2022-08-03 12:41:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 41, 74778199, 6119, '2022-12-22 04:57:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 36, 17633509, 2182, '2020-09-29 04:47:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 70, 38336163, 6707, '2021-09-01 19:15:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 22, 18497553, 3649, '2024-01-23 23:37:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 81, 61135569, 5576, '2020-02-06 21:44:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 51, 98899705, 4852, '2022-11-21 11:23:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 26, 32590521, 891, '2022-09-12 06:07:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 67, 75275738, 8496, '2024-01-17 16:08:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 60, 55424361, 5326, '2023-06-01 05:42:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 46, 16057756, 8066, '2022-03-18 10:32:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 23, 83921973, 613, '2020-11-17 23:09:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 81, 41682219, 4943, '2022-08-17 01:05:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 61, 68281506, 2303, '2021-11-08 02:17:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 77, 22154269, 4864, '2022-09-27 03:25:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 62, 58674681, 3084, '2022-05-12 22:03:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 68, 21767675, 802, '2022-08-15 15:08:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 24, 26342799, 21.8, '2023-04-27 06:35:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 4, 833702.2, 4833, '2023-01-07 06:56:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 41, 28496997, 8773, '2021-04-29 08:58:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 63, 10142541, 7568, '2021-07-18 22:31:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 32, 17989914, 24.8, '2022-01-08 04:39:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 80, 56242987, 9.7, '2022-09-29 07:02:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 37, 64636419, 8457, '2023-11-05 22:14:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 84, 909049.9, 9736, '2022-01-05 21:32:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 96, 31865156, 6869, '2023-01-07 08:45:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 89, 31877343, 3345, '2021-05-29 11:16:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 6, 460241.8, 7768, '2023-05-28 10:05:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 17, 23553379, 8624, '2022-03-01 00:36:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 37, 6981086, 1142, '2021-04-12 09:51:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 41, 8390788, 6766, '2020-08-28 18:39:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 22, 38470138, 257, '2021-06-25 11:09:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 59, 14006408, 4473, '2024-01-06 13:23:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 98, 60928, 6707, '2022-02-25 14:14:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 35, 48039825, 5712, '2020-03-08 19:26:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 60, 6421472, 8468, '2023-11-21 04:37:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 33, 18704219, 2218, '2020-11-19 22:41:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 70, 2048737, 9706, '2020-09-04 15:34:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 55, 78184838, 56.4, '2023-04-29 19:15:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 80, 5853707, 6973, '2021-06-05 20:26:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 75, 10297328, 4658, '2022-02-22 02:10:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 93, 4037435, 7719, '2023-05-14 10:31:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 29, 71241538, 395, '2020-04-25 10:16:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 20, 93709498, 7936, '2020-07-27 17:08:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 60, 62882569, 9606, '2020-12-06 20:38:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 4, 36242659, 286, '2022-07-26 18:30:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 64, 944526.2, 67.1, '2022-11-11 12:31:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 26, 66871043, 7729, '2020-10-31 09:21:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 98, 768124.4, 8925, '2023-08-29 17:44:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 24, 620719.1, 5761, '2023-02-25 01:35:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 64, 50784174, 9439, '2021-11-07 18:14:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 3, 63181259, 50.1, '2022-03-26 09:41:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 91, 1457841, 3784, '2023-06-26 12:44:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 31, 52054202, 657, '2023-06-02 20:58:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 51, 91519783, 1928, '2020-05-19 22:43:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 22, 88771812, 6756, '2021-01-04 05:53:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 85, 12729091, 5619, '2021-06-11 23:55:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 60, 79496985, 1335, '2021-02-22 21:28:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 96, 9287163, 9355, '2023-12-23 06:37:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 68, 69942119, 1018, '2021-10-14 10:17:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 38, 67077555, 2841, '2022-06-30 05:42:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 10, 49680514, 8779, '2020-09-13 12:33:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 37, 52085189, 57.7, '2020-07-13 12:31:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 75, 268609.9, 7594, '2021-01-13 00:10:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 86, 97705903, 90.0, '2022-05-17 03:22:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 41, 51852076, 5201, '2022-10-26 18:39:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 7, 90512051, 2459, '2023-05-17 21:13:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 69, 32164835, 7376, '2021-10-03 00:37:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 14, 52000839, 7584, '2021-12-11 11:23:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 41, 78843695, 8619, '2022-11-18 05:34:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 79, 44609376, 9392, '2022-01-10 20:02:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 26, 12198312, 8358, '2024-01-11 02:03:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 91, 731401.8, 6031, '2020-05-29 03:38:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 19, 71702667, 1338, '2022-05-07 09:53:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 73, 76812418, 1332, '2022-06-12 14:41:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 98, 74859243, 9549, '2020-08-31 19:02:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 61, 97262938, 773, '2022-03-11 14:52:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 62, 33386066, 4503, '2023-12-11 10:41:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 59, 76127357, 7.1, '2021-09-18 22:35:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 9, 95938686, 8863, '2021-07-01 17:24:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 60, 43597627, 9387, '2022-11-19 20:13:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 7, 95944032, 2245, '2023-09-27 07:08:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 70, 91543238, 83.6, '2020-09-01 04:14:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 65, 595578.8, 35.0, '2020-09-06 09:51:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 13, 4125473, 2976, '2022-09-18 16:48:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 41, 96704682, 9909, '2021-03-06 01:54:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 88, 12555959, 172, '2020-08-10 08:44:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 19, 23488368, 1349, '2021-10-01 20:28:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 12, 92919357, 7181, '2022-03-20 03:18:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 40, 41725862, 72.2, '2022-03-20 18:50:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 69, 67826409, 82.5, '2023-11-04 01:36:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 34, 4818095, 995, '2023-10-08 03:44:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 35, 21165833, 86.1, '2022-04-06 07:51:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 70, 97782012, 7643, '2021-10-31 05:47:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 50, 37885375, 9961, '2022-06-27 00:55:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 36, 16276012, 4438, '2022-08-16 06:37:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 89, 53277859, 6231, '2022-03-22 22:19:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 93, 41537042, 3819, '2021-11-09 13:01:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 84, 75246314, 2394, '2022-04-03 16:18:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 53, 36419312, 5077, '2020-10-23 08:07:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 36, 55974409, 6294, '2020-11-03 01:03:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 83, 82275846, 427, '2023-08-21 12:56:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 67, 51149478, 1697, '2022-05-07 08:14:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 70, 35006116, 6196, '2023-05-07 18:58:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 15, 54602771, 6854, '2020-12-31 06:06:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 19, 29670376, 5835, '2021-07-21 10:33:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 86, 47068013, 8647, '2022-04-10 07:57:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 94, 88550181, 2803, '2022-11-05 15:41:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 82, 952427.1, 9749, '2023-11-26 21:32:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 79, 12778893, 6421, '2020-03-10 07:52:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 81, 57742105, 531, '2023-04-16 16:49:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 48, 57152995, 9318, '2021-04-05 08:26:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 8, 65590818, 9681, '2023-08-30 07:31:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 16, 21875611, 4696, '2023-03-30 15:05:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 27, 22971952, 9732, '2022-05-06 04:49:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 11, 48005832, 4037, '2021-06-30 09:27:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 47, 41586498, 4195, '2021-10-13 13:18:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 11, 3896656, 8299, '2023-06-24 09:23:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 92, 70930233, 5955, '2021-04-22 11:23:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 1, 12518683, 8617, '2020-06-14 20:42:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 70, 90781826, 1037, '2021-10-18 08:20:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 35, 44218366, 76.3, '2022-06-13 09:30:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 4, 18184242, 5134, '2022-10-05 07:14:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 55, 92549838, 7154, '2021-10-11 12:45:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 37, 38230605, 1368, '2020-04-23 14:24:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 28, 72177039, 9028, '2022-06-15 20:47:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 88, 78169629, 57.2, '2023-11-01 22:08:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 68, 22326179, 7655, '2021-04-17 09:47:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 27, 9652024, 2806, '2022-10-18 03:39:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 37, 25391884, 6015, '2021-06-02 05:12:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 60, 22731917, 2023, '2022-06-14 03:39:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 92, 94527935, 7445, '2020-07-30 05:39:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 82, 23256056, 1913, '2020-02-06 22:11:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 36, 77668786, 157, '2021-11-29 14:18:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 50, 576546.3, 5904, '2020-05-10 06:41:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 2, 27497653, 3936, '2021-02-27 02:46:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 74, 72512496, 1.6, '2021-07-28 14:48:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 9, 682796.7, 2735, '2021-06-18 10:03:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 97, 690348.0, 8356, '2021-02-10 05:22:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 69, 4573536, 847, '2020-07-08 11:55:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 5, 54576764, 74.2, '2022-08-28 02:19:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 95, 57166728, 7179, '2021-11-20 18:50:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 92, 47953044, 6671, '2021-04-08 04:56:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 41, 47943539, 6472, '2023-12-14 03:15:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 58, 65144348, 9286, '2023-01-01 17:21:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 27, 27394352, 49.6, '2022-09-14 09:23:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 47, 59555015, 9107, '2021-08-26 18:22:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 43, 64813494, 8332, '2020-12-16 17:06:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 78, 69562945, 52.7, '2022-04-25 13:37:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 55, 93635183, 3953, '2020-02-21 19:39:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 87, 41237832, 73.8, '2022-11-07 16:33:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 64, 61450327, 9143, '2024-01-02 21:29:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 74, 24608528, 485, '2022-04-19 03:56:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 97, 44211279, 7625, '2021-06-05 12:18:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 2, 64381688, 225, '2023-06-26 14:31:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 42, 57681517, 429, '2020-04-29 01:04:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 36, 38814187, 263, '2023-06-12 01:58:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 78, 32841849, 1038, '2023-08-22 05:38:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 13, 62513853, 2734, '2020-04-20 02:54:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 25, 26224124, 9216, '2021-11-20 19:06:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 62, 26946547, 2679, '2021-02-22 10:25:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 50, 54394802, 135, '2023-01-11 02:31:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 61, 15468027, 94.1, '2022-11-08 03:32:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 4, 80888405, 8903, '2021-05-28 02:13:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 45, 81958362, 3596, '2022-12-08 23:57:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 36, 436201.4, 9533, '2023-04-29 13:02:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 18, 265136.2, 4464, '2021-04-09 23:45:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 66, 31613078, 95.0, '2020-12-06 17:23:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 81, 787016.4, 4034, '2020-09-12 19:57:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 69, 16621971, 2032, '2022-04-17 05:46:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 12, 99660349, 7772, '2022-01-13 21:22:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 57, 431545.8, 407, '2020-10-30 18:45:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 68, 918986.9, 7383, '2021-07-28 16:14:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 58, 11273527, 9934, '2022-11-13 00:38:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 59, 36854896, 2937, '2020-03-04 14:19:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 57, 65712141, 5859, '2020-11-11 05:17:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 63, 71496578, 4017, '2020-10-14 21:57:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 10, 91600831, 3107, '2020-07-26 01:03:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 16, 75487951, 8038, '2023-11-21 18:05:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 65, 70427057, 5574, '2022-09-06 07:13:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 49, 734592.7, 6434, '2021-05-26 21:28:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 60, 20040426, 3196, '2022-08-19 13:34:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 35, 74902067, 4021, '2020-08-31 20:46:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 22, 61901.9, 73.9, '2023-04-01 05:46:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 90, 88791098, 8461, '2023-12-30 00:26:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 5, 86196433, 4777, '2020-05-03 09:28:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 20, 1745812, 94.3, '2020-11-26 03:14:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 13, 61382498, 2438, '2020-09-30 02:26:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 95, 18225055, 8239, '2021-11-21 04:55:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 10, 99444605, 308, '2020-08-06 23:28:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 5, 67060094, 4751, '2022-08-16 06:28:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 68, 76893837, 3923, '2020-03-26 16:27:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 40, 8785477, 5822, '2020-07-09 19:17:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 24, 98834919, 2847, '2021-06-27 07:45:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 19, 51323591, 201, '2023-12-12 21:52:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 98, 26659313, 693, '2020-04-03 18:11:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 26, 85381227, 2274, '2020-12-06 16:06:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 95, 62349689, 127, '2021-03-31 19:28:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 95, 30707283, 7582, '2020-02-06 22:51:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 82, 91147668, 4187, '2021-04-17 22:26:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 64, 62091698, 7005, '2021-11-18 16:28:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 56, 47406372, 4805, '2020-06-12 16:37:16', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 66, 47037522, 4365, '2022-09-06 00:10:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 86, 17589349, 3354, '2023-09-09 18:22:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 25, 38956489, 3491, '2021-10-14 20:02:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 4, 69728902, 3696, '2022-08-14 18:54:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 8, 39814792, 6095, '2020-05-08 11:56:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 91, 51558346, 4154, '2020-02-10 15:38:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 74, 58784979, 4445, '2021-04-01 07:38:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 73, 16805829, 753, '2022-11-11 23:29:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 63, 34701247, 5389, '2020-04-15 10:26:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 46, 72326447, 9.9, '2022-03-14 22:40:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 33, 71889352, 4855, '2021-09-23 02:41:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 36, 90959528, 2527, '2023-08-09 16:23:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 92, 97004573, 7207, '2020-10-26 06:15:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 59, 24216698, 9954, '2022-06-06 13:02:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 33, 88651978, 2864, '2021-10-08 22:43:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 52, 26710541, 3196, '2022-04-09 19:25:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 57, 43219398, 2998, '2022-04-12 00:23:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 52, 626208.6, 2668, '2023-01-06 15:36:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 87, 85602594, 2277, '2021-01-23 07:04:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 56, 49332781, 86.0, '2022-09-24 11:42:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 88, 60387902, 2756, '2020-08-12 23:43:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 37, 98570781, 5171, '2020-10-03 23:01:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 1, 459248.0, 69.2, '2023-03-29 17:28:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 44, 26065898, 2026, '2022-06-04 22:57:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 72, 814975.9, 2721, '2020-08-07 15:10:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 92, 92946385, 2037, '2021-12-12 04:16:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 32, 71824296, 1677, '2021-03-22 10:30:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 28, 40985163, 9857, '2020-09-22 07:43:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 68, 70100887, 7287, '2020-12-29 04:26:53', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 80, 44147003, 3234, '2022-03-14 19:50:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 5, 83589444, 2607, '2021-12-06 04:23:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 12, 182663.0, 6589, '2022-10-18 01:57:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 14, 28363105, 6842, '2021-12-09 02:33:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 95, 20251726, 4801, '2022-09-17 11:13:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 96, 48887335, 3881, '2023-11-16 15:40:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 7, 51728211, 186, '2023-08-20 16:49:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 51, 24731577, 1285, '2022-10-31 22:16:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 71, 61320279, 2074, '2020-12-18 10:40:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 41, 94731027, 9546, '2022-12-11 06:16:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 39, 83583378, 376, '2023-02-06 20:52:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 18, 17534321, 664, '2022-11-17 20:59:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 6, 62920588, 1337, '2021-09-04 00:09:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 14, 19190774, 303, '2022-04-21 10:41:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 2, 821856.9, 3512, '2022-05-03 04:02:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 67, 45895699, 2962, '2020-10-28 10:51:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 45, 74287928, 7596, '2020-01-29 10:53:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 95, 69861007, 9161, '2023-03-28 21:17:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 29, 979724.2, 35.4, '2021-02-02 06:46:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 55, 225980.8, 2376, '2024-01-14 12:27:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 10, 52918926, 2381, '2020-12-03 04:38:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 19, 35148915, 1238, '2023-11-30 10:42:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 15, 84150934, 437, '2021-01-21 05:14:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 76, 75913661, 9045, '2022-12-09 21:58:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 95, 49768454, 4561, '2022-10-24 17:58:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 18, 68172911, 4522, '2022-12-13 16:58:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 92, 101983.0, 3192, '2020-07-25 16:21:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 49, 16117.6, 8307, '2021-11-18 14:04:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 1, 18747691, 3936, '2023-06-22 04:58:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 16, 71925283, 578, '2023-01-07 17:41:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 87, 20295273, 2719, '2022-01-26 01:30:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 85, 57151204, 5147, '2020-08-26 15:16:36', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 8, 76761712, 5683, '2023-01-15 00:43:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 96, 1030533, 3456, '2023-02-17 16:03:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 62, 10532858, 4823, '2020-12-30 10:23:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 78, 1246818, 6471, '2022-04-14 07:35:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 90, 83774141, 7576, '2021-04-05 10:05:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 75, 113308.8, 6411, '2020-08-25 05:23:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 53, 56182016, 3168, '2021-09-04 12:15:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 29, 92684902, 4821, '2023-09-03 19:14:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 32, 10455672, 3349, '2020-09-18 05:15:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 37, 80341662, 612, '2023-12-14 00:14:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 67, 60962618, 7764, '2021-04-20 07:08:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 70, 52341554, 4225, '2023-07-31 16:49:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 88, 91272099, 4377, '2023-09-08 12:30:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 48, 383953.3, 283, '2020-01-28 07:23:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 20, 84999511, 1308, '2021-10-05 03:43:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 27, 24869305, 5838, '2022-10-17 09:16:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 10, 43543458, 95.3, '2021-01-31 20:25:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 40, 26971526, 11.8, '2020-10-08 03:05:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 10, 82920792, 1539, '2020-04-18 02:15:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 70, 89009313, 6604, '2021-08-14 04:36:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 26, 96731462, 3659, '2024-01-04 14:29:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 8, 83365766, 6151, '2022-01-09 20:42:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 65, 429222.8, 3315, '2020-09-13 23:29:30', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 20, 71122779, 8141, '2020-12-05 02:04:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 17, 18026565, 772, '2020-12-20 13:33:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 46, 97845098, 913, '2021-02-24 16:55:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 47, 69759953, 5944, '2021-10-16 15:11:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 70, 35681191, 8509, '2020-04-05 19:55:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 43, 284336.3, 3165, '2023-04-01 13:54:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 72, 98882448, 6373, '2022-10-28 18:33:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 66, 9305572, 5596, '2022-12-29 14:08:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 2, 14031557, 5667, '2023-10-21 01:14:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 25, 82727568, 9305, '2022-03-05 16:25:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 91, 70696527, 1401, '2023-03-31 09:10:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 67, 94675245, 89.0, '2022-12-05 07:53:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 29, 72967703, 5253, '2023-01-22 06:40:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 78, 216872.1, 1152, '2021-12-17 04:34:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 37, 24624602, 40.9, '2023-10-02 09:15:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 57, 37200185, 4194, '2022-03-18 01:50:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 64, 184678.6, 1331, '2021-01-22 20:11:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 88, 198847.9, 1368, '2023-07-01 18:09:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 29, 13621012, 5136, '2020-06-14 14:29:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 68, 97162508, 5798, '2020-02-06 08:45:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 37, 97105212, 1653, '2021-05-08 16:08:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 54, 59436062, 8504, '2021-10-21 21:33:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 94, 57049201, 60.7, '2022-03-28 06:31:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 20, 29863235, 8043, '2020-05-06 19:35:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 90, 40241232, 7411, '2023-05-07 10:17:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 38, 36424126, 7458, '2020-11-13 03:40:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 90, 35232886, 4666, '2021-02-16 12:12:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 21, 91400635, 8242, '2021-07-13 11:56:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 94, 224792.7, 5558, '2020-07-04 04:45:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 5, 230906.3, 5129, '2023-05-03 09:13:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 2, 48388434, 6442, '2023-09-05 06:22:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 57, 99566015, 1723, '2021-08-03 00:20:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 85, 16192589, 347, '2020-12-23 03:57:19', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 24, 52283788, 95.0, '2020-01-27 18:13:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 43, 49276502, 9263, '2023-04-22 06:19:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 25, 78025864, 1332, '2020-04-29 17:10:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 98, 79289455, 21.6, '2024-01-06 00:58:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 2, 57640.3, 5757, '2020-04-22 16:29:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 44, 1540728, 4759, '2022-06-07 11:40:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 13, 38956374, 7681, '2023-01-26 23:41:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 10, 270499.8, 4258, '2020-07-04 14:18:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 29, 41636608, 6971, '2022-05-11 17:20:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 72, 69007521, 22.2, '2021-10-29 10:10:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 22, 30284174, 3874, '2021-11-06 08:33:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 78, 73412706, 5561, '2022-03-23 21:43:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 83, 13419952, 1714, '2022-12-21 19:05:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 43, 23147185, 5827, '2020-02-21 06:32:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 18, 83102159, 5094, '2020-11-17 17:25:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 67, 63397389, 971, '2022-01-06 00:19:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 79, 26716703, 6537, '2023-04-25 12:28:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 53, 72407805, 5462, '2023-08-24 20:18:35', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 26, 20382475, 6891, '2021-08-31 05:58:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 65, 20101339, 8341, '2021-09-23 16:02:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 82, 77864965, 38.4, '2022-08-19 08:05:03', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 8, 48161836, 30.1, '2020-09-09 21:41:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 46, 368031.7, 4435, '2022-07-29 09:14:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 94, 20656431, 905, '2020-08-30 05:53:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 30, 30776712, 9861, '2023-10-05 16:12:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 12, 49474582, 1838, '2024-01-16 07:03:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 88, 82975529, 2899, '2023-07-17 11:32:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 40, 68489679, 9965, '2023-08-28 07:01:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 38, 47716232, 1135, '2021-09-15 21:05:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 62, 69324275, 9001, '2023-09-10 23:07:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 18, 89245264, 10.6, '2023-10-25 22:25:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 26, 98742333, 6879, '2022-05-09 22:54:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 52, 77218374, 8403, '2022-04-27 03:33:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 37, 33751701, 5224, '2020-08-07 21:41:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 9, 28237198, 3248, '2021-07-22 05:00:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 40, 18345074, 345, '2021-07-24 15:58:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 86, 49861737, 19.6, '2023-05-11 04:14:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 87, 8417221, 2372, '2022-01-27 17:22:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 61, 43801552, 9298, '2021-11-19 22:32:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 10, 27934403, 9592, '2021-08-21 00:27:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 63, 59392307, 4625, '2022-02-15 22:13:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 17, 30784649, 4262, '2023-09-24 17:55:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 97, 11072798, 3471, '2022-12-10 18:26:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 65, 81692544, 3436, '2023-02-12 01:20:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 18, 16867203, 8499, '2022-04-28 15:51:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 79, 67673996, 4875, '2021-10-02 22:22:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 62, 85370807, 1552, '2023-01-02 06:47:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 61, 80269952, 8961, '2023-12-31 17:35:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 91, 99014228, 9433, '2023-02-11 01:13:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 14, 19070106, 451, '2022-12-04 03:43:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 24, 49220265, 9991, '2022-02-16 10:40:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 92, 23486314, 9317, '2021-08-23 14:12:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 10, 15251936, 6486, '2022-01-25 11:09:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 97, 13828663, 3195, '2021-10-11 18:14:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 13, 31733321, 76.6, '2021-09-11 21:40:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 71, 87358137, 1686, '2021-05-13 15:05:01', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 98, 74729757, 1418, '2020-03-24 15:40:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 37, 93327533, 6587, '2023-06-18 09:14:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 89, 41122945, 5581, '2023-09-04 05:25:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 79, 87853632, 97.4, '2023-01-09 13:47:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 16, 98796826, 738, '2023-10-18 02:42:46', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 80, 10372215, 2086, '2021-07-07 10:36:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 79, 13091116, 9476, '2021-11-28 07:45:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 47, 35002248, 9486, '2023-04-05 18:04:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 4, 25249459, 52.5, '2020-02-23 10:50:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 38, 603169.1, 5051, '2022-04-05 18:20:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 92, 38557745, 8765, '2021-10-29 08:22:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 84, 55347006, 2812, '2020-08-04 16:23:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 26, 3199055, 2206, '2022-06-30 13:49:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 57, 46463888, 7359, '2021-06-13 02:03:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 64, 160911.4, 8709, '2022-07-16 13:09:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 11, 54051337, 1426, '2020-12-12 00:32:02', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 81, 318920.6, 9306, '2021-06-23 12:05:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 62, 48446089, 3265, '2022-12-23 05:12:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 28, 12181084, 2136, '2021-09-24 08:48:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 32, 98837415, 2452, '2022-09-05 18:28:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 8, 11606264, 3784, '2021-04-02 11:24:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 46, 112599.3, 2352, '2023-03-27 11:28:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 10, 16859112, 3151, '2021-02-14 18:55:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 3, 87178736, 5046, '2021-12-09 10:22:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 32, 45988676, 3.8, '2023-02-01 22:51:57', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 31, 4398855, 6241, '2022-11-20 11:11:26', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 58, 11105073, 1696, '2022-04-22 23:26:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 98, 78926506, 8098, '2023-02-02 17:43:54', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 77, 46584762, 569, '2020-05-30 04:24:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 70, 36648.6, 8183, '2021-04-08 17:50:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 63, 743643.3, 3415, '2023-08-30 07:21:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 48, 92316395, 946, '2020-08-05 01:48:13', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 82, 3652319, 6197, '2021-06-08 15:38:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 91, 12603566, 6282, '2023-06-16 19:29:07', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 76, 68255314, 773, '2023-09-25 04:22:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 46, 99454139, 518, '2023-09-18 03:45:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 66, 80654256, 3925, '2023-06-03 10:20:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 79, 16550955, 7947, '2022-04-02 19:47:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 40, 76300016, 9176, '2023-04-26 14:52:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 91, 10966085, 4029, '2022-08-23 00:48:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 71, 10534818, 3606, '2022-09-07 08:28:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 17, 47737916, 2732, '2022-09-14 17:58:23', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 8, 741776.2, 7982, '2023-10-07 19:51:21', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 71, 17317.9, 6736, '2023-11-04 19:54:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 31, 16474965, 8329, '2021-01-01 09:51:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 87, 27090003, 1494, '2022-09-18 00:31:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 71, 74023382, 6114, '2021-10-04 22:25:42', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 25, 94623058, 3977, '2020-10-11 08:48:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 59, 93677554, 7951, '2023-03-01 03:25:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 84, 96838254, 2698, '2021-09-23 04:16:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 60, 32101879, 5223, '2022-06-11 21:56:14', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 90, 82284389, 5742, '2023-09-10 04:12:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 34, 56047146, 7115, '2020-06-22 08:15:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 52, 16418555, 185, '2021-01-04 21:09:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 50, 16282765, 6845, '2022-12-01 02:33:09', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 4, 37088202, 79.2, '2023-08-08 18:12:48', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 82, 41569807, 5656, '2020-10-16 06:42:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 61, 77617132, 9191, '2022-09-07 08:21:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 55, 9787926, 80.2, '2021-05-19 12:09:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 39, 60506778, 7591, '2021-12-12 14:19:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 96, 39486114, 8359, '2023-09-11 13:11:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 12, 17079526, 7078, '2021-02-21 22:59:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 53, 54798232, 64.6, '2021-07-01 21:15:29', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 63, 11079714, 8711, '2022-06-27 02:14:56', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 6, 96867812, 4352, '2022-02-01 16:26:15', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 19, 19191897, 5834, '2023-12-26 05:13:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 79, 56678555, 5029, '2021-01-23 09:17:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 28, 95408188, 9478, '2023-01-04 23:06:22', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 89, 57437284, 9928, '2020-11-21 04:43:39', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 51, 17100855, 2673, '2023-11-02 15:09:05', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 67, 3286237, 17.8, '2021-07-07 16:21:55', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 82, 34555088, 9845, '2023-10-11 02:13:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 2, 63, 76361408, 3355, '2022-02-24 08:11:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 42, 29655982, 1109, '2021-05-01 08:37:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 52, 22502754, 7589, '2021-08-10 05:12:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 15, 12844274, 3216, '2023-08-24 19:26:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 74, 56096096, 9671, '2023-08-13 00:32:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 59, 84635545, 5427, '2022-01-07 21:31:41', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 3, 73, 69272078, 3245, '2021-08-19 00:58:50', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 32, 374323.5, 2274, '2022-09-01 04:46:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 75, 82910453, 5869, '2022-02-18 08:54:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 20, 61033463, 1018, '2021-07-30 10:24:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 39, 93736538, 6884, '2023-07-12 16:19:44', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 28, 859510.5, 5721, '2023-12-25 20:51:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 3, 29, 87787724, 3617, '2020-07-14 01:07:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 85, 49706746, 7452, '2023-07-24 23:50:06', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 16, 66147417, 1348, '2022-10-02 13:23:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 72, 2007289, 4213, '2022-03-31 15:09:51', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 48, 88350254, 5599, '2021-10-05 09:20:45', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 56, 922975.2, 9336, '2023-12-23 14:59:37', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 93, 4933664, 9171, '2020-05-07 06:04:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 3, 6, 85663669, 4759, '2020-03-18 02:57:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 84, 20414394, 3051, '2020-03-07 15:42:32', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 6, 93011707, 4761, '2021-12-29 05:21:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 50, 88842117, 5404, '2024-01-12 11:27:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 56, 71856388, 5847, '2021-10-14 23:13:52', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 14, 40986513, 303, '2023-01-14 01:06:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 3, 22, 56860299, 7723, '2023-03-28 19:58:20', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 67, 27393701, 4143, '2022-10-05 10:53:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 19, 92528226, 5995, '2024-01-01 22:17:34', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 39, 993024.4, 5092, '2021-03-03 23:29:28', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 28, 35747434, 32.5, '2024-01-13 06:14:49', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 96, 36452621, 1878, '2021-02-28 19:00:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 2, 46, 91217548, 4039, '2023-08-25 08:04:25', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (4, 1, 6, 62564423, 8382, '2023-09-20 00:52:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 47, 682923.6, 6014, '2020-09-02 08:34:40', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 37, 23981729, 5679, '2021-03-31 11:01:10', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 9, 23753229, 4992, '2020-05-14 23:56:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 92, 67715278, 8654, '2022-06-07 04:06:31', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 71, 414263.9, 5752, '2023-12-29 01:39:17', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 55, 391188.1, 30.9, '2020-04-15 05:14:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 58, 865038.5, 2014, '2021-12-23 00:11:18', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 2, 51, 66855229, 9467, '2022-05-12 08:32:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (3, 1, 11, 83661476, 3082, '2020-07-30 04:49:27', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 2, 560350.3, 6434, '2022-09-11 23:18:24', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 95, 23400687, 3671, '2020-09-26 23:10:04', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 2, 29, 95260389, 9656, '2020-11-24 06:28:58', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 1, 89, 65843993, 145, '2022-10-31 01:18:43', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 97, 43129467, 2365, '2022-06-19 21:31:47', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 3, 1, 72752092, 5768, '2023-11-26 21:13:11', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 2, 70, 96893248, 5225, '2023-04-12 03:28:38', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (6, 1, 24, 2792, 5992, '2022-10-29 08:17:00', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (2, 1, 28, 5857904, 8925, '2023-05-02 18:50:12', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 1, 80, 56849451, 7196, '2022-03-27 12:27:08', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 65, 99778189, 6751, '2020-09-06 13:56:33', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (5, 2, 35, 10088762, 5945, '2021-11-27 03:16:59', '');
+insert into `transaction` (transaction_type_id, transaction_status_id, currency_id, amount, fees, transaction_date,
+                           description)
+values (1, 3, 81, 96196315, 2063, '2020-10-09 19:40:50', '');

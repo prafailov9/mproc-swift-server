@@ -1,5 +1,6 @@
 package com.ntros.mprocswift.dto.transfer;
 
+import com.ntros.mprocswift.utils.TransferRequestHasher;
 import com.ntros.mprocswift.validation.GreaterThanZeroTransferAmount;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,18 +16,21 @@ import java.math.BigDecimal;
 @GreaterThanZeroTransferAmount
 public abstract class TransferRequest {
 
-    @NotNull(message = "source AN cannot be null.")
-    @NotBlank(message = "source AN cannot be empty.")
-    @Pattern(regexp = "\\d+", message = "source AN must be a number.")
-    @Size(min = 8, max = 12, message = "Invalid source AN: must be 8 - 12 digits.")
-    private String sourceAccountNumber;
+  @NotNull(message = "source AN cannot be null.")
+  @NotBlank(message = "source AN cannot be empty.")
+  //    @Pattern(regexp = "\\d+", message = "source AN must be a number.")
+  @Size(min = 8, max = 12, message = "Invalid source AN: must be 8 - 12 digits.")
+  private String sourceAccountNumber;
 
   @NotNull(message = "Transfer amount cannot be null.")
   private BigDecimal amount;
 
-    @NotNull(message = "currency code cannot be null.")
-    @NotBlank(message = "currency code cannot be empty.")
-    private String currencyCode;
-    private String description;
+  @NotNull(message = "currency code cannot be null.")
+  @NotBlank(message = "currency code cannot be empty.")
+  private String currencyCode;
+
+  private String description;
+  // idempotency key
+  private String requestId;
 
 }

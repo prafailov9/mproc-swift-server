@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * Extension of the Transaction entity, holds data specific to money transfers
  */
@@ -29,6 +31,9 @@ public class MoneyTransfer {
     @ManyToOne
     @JoinColumn(name = "receiver_account_id")
     private Account receiverAccount;
+
+    @Column(name = "received_amount", nullable = false)
+    private long receivedAmount;
 
     private String targetCurrencyCode;
 

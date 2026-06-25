@@ -4,6 +4,7 @@ import com.ntros.mprocswift.dto.transfer.ExternalTransferRequest;
 import com.ntros.mprocswift.dto.transfer.ExternalTransferResponse;
 import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.currency.MoneyMovement;
+import com.ntros.mprocswift.model.currency.RatedMoneyMovement;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +12,9 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional
-public class ExternalTransferService
-    extends AbstractTransferService<ExternalTransferRequest, ExternalTransferResponse, Account> {
+public class ExternalTransferAsyncService
+    extends AbstractTransferAsyncService<
+        ExternalTransferRequest, ExternalTransferResponse, Account> {
 
   @Override
   protected CompletableFuture<Account> getSender(ExternalTransferRequest transferRequest) {
@@ -25,25 +27,18 @@ public class ExternalTransferService
   }
 
   @Override
-  protected MoneyMovement performTransfer(
-      Account sender, Account receiver, ExternalTransferRequest transferRequest) {
-    return new MoneyMovement(
-        1,
-        sender.getMainWallet().get().getCurrency(),
-        2,
-        receiver.getMainWallet().get().getCurrency());
-  }
-
-  @Override
-  protected void createTransferTransaction(
-      Account sender,
-      Account receiver,
-      ExternalTransferRequest transferRequest,
-      MoneyMovement moneyMovement) {}
-
-  @Override
-  protected ExternalTransferResponse buildTransferResponse(
-      ExternalTransferRequest transferRequest) {
+  protected RatedMoneyMovement performTransfer(Account sender, Account receiver, ExternalTransferRequest transferRequest) {
     return null;
   }
+
+  @Override
+  protected void createTransferTransaction(Account sender, Account receiver, ExternalTransferRequest transferRequest, RatedMoneyMovement ratedMoneyMovement) {
+
+  }
+
+  @Override
+  protected ExternalTransferResponse buildTransferResponse(ExternalTransferRequest transferRequest) {
+    return null;
+  }
+
 }

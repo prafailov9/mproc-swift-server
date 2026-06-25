@@ -17,7 +17,7 @@ public interface CurrencyExchangeRateRepository extends JpaRepository<CurrencyEx
     Optional<CurrencyExchangeRate> findExchangeRateBySourceAndTarget(@Param("source") Currency source, @Param("target") Currency target);
 
     @Query(value = "SELECT r.exchangeRate FROM CurrencyExchangeRate r WHERE r.sourceCurrency = :source AND r.targetCurrency = :target")
-    Optional<BigDecimal> findExchangeRateValueBySourceAndTarget(@Param("source") Currency source, @Param("target") Currency target);
+    Optional<Long> findExchangeRateValueBySourceAndTarget(@Param("source") Currency source, @Param("target") Currency target);
 
 
     @Query(value = """

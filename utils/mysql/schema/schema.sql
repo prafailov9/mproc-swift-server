@@ -265,12 +265,12 @@ CREATE TABLE IF NOT EXISTS card (
 
 CREATE TABLE IF NOT EXISTS transaction_type (
     transaction_type_id INT AUTO_INCREMENT PRIMARY KEY,
-    type_name VARCHAR(64) NOT NULL -- DEPOSIT, WITHDRAWAL, WALLET_TO_WALLET_TRANSFER, INTERNAL_TRANSFER, EXTERNAL_TRANSFER, CARD_PAYMENT
+    type_name VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS transaction_status (
     transaction_status_id INT AUTO_INCREMENT PRIMARY KEY,
-    status_name VARCHAR(32) NOT NULL -- ('pending', 'completed', 'cancelled')
+    status_name VARCHAR(32) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `transaction` (
@@ -298,7 +298,7 @@ CREATE TABLE IF NOT EXISTS money_transfer (
     sender_account_id INT NOT NULL,
     receiver_account_id INT NOT NULL,
     target_currency_code VARCHAR(6),
-
+    received_amount BIGINT NOT NULL,
     FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id),
     FOREIGN KEY (sender_account_id) REFERENCES account(account_id),
     FOREIGN KEY (receiver_account_id) REFERENCES account(account_id)
@@ -354,8 +354,9 @@ CREATE TABLE hold_settlement (
 CREATE TABLE IF NOT EXISTS ledger_entry (
     ledger_entry_id INT AUTO_INCREMENT PRIMARY KEY,
 
-    entry_group_key VARCHAR(128) NOT NULL, -- ensure uniqueness on entry groups by base transaction
-
+    -- key and seq ensure uniqueness on entry groups by base transaction
+    entry_group_key VARCHAR(128) NOT NULL,
+    entry_seq INT NOT NULL,
     transaction_id INT NOT NULL,
     ledger_account_id INT NOT NULL,
 
@@ -370,5 +371,19 @@ CREATE TABLE IF NOT EXISTS ledger_entry (
     INDEX idx_ledger_account (ledger_account_id),
     INDEX idx_ledger_account_date (ledger_account_id, entry_date)
 );
+CREATE UNIQUE INDEX u_idx_entry_group_leg ON ledger_entry (entry_group_key, entry_seq);
 
-CREATE UNIQUE INDEX u_idx_entry_group_key ON ledger_entry(entry_group_key, transaction_id);
+CREATE TABLE idempotency_record (
+    idempotency_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    idempotency_key VARCHAR(255) NOT NULL,
+    request_hash CHAR(64),
+    transaction_id INT NULL,
+    status ENUM('IN_PROGRESS', 'COMPLETED', 'FAILED') NOT NULL,
+    status_code INT NULL,
+    response_body VARCHAR(5000) NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at DATETIME NULL,
+    CONSTRAINT uq_idempotency_key UNIQUE (idempotency_key),
+    CONSTRAINT fk_idempotency_transaction FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id)
+);

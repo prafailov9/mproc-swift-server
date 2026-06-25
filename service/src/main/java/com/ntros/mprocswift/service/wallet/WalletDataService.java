@@ -169,7 +169,13 @@ public class WalletDataService implements WalletService {
   }
 
   @Override
-  public CompletableFuture<Void> updateBalance(int walletId, long balance) {
+  public void updateBalance(int walletId, long balance) {
+    walletRepository.updateBalance(walletId, balance);
+    log.info("walletId:{} balance updated", walletId);
+  }
+
+  @Override
+  public CompletableFuture<Void> updateBalanceAsync(int walletId, long balance) {
     return CompletableFuture.runAsync(
         () -> {
           try {

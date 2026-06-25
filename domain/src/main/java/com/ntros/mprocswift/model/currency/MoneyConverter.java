@@ -11,7 +11,7 @@ public final class MoneyConverter {
 
   public static long toMinor(BigDecimal major, int exponent) {
     try {
-      BigDecimal normalized = major.setScale(exponent, RoundingMode.UNNECESSARY);
+      BigDecimal normalized = major.setScale(exponent, RoundingMode.HALF_UP);
       return normalized.movePointRight(exponent).longValueExact();
     } catch (ArithmeticException ex) {
       throw new IllegalArgumentException(

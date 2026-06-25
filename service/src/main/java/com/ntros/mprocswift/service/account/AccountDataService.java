@@ -6,6 +6,7 @@ import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.exceptions.WalletNotFoundException;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.account.Account;
+import com.ntros.mprocswift.model.currency.ConvertedAmount;
 import com.ntros.mprocswift.model.currency.MoneyConverter;
 import com.ntros.mprocswift.repository.WalletRepository;
 import com.ntros.mprocswift.repository.account.AccountRepository;
@@ -158,8 +159,8 @@ public class AccountDataService implements AccountService {
                                 "No wallet found for account: %s", account.getAccNumber())));
         main.setMain(true);
         wallets = wallets.stream().filter(wallet -> !wallet.isMain()).collect(Collectors.toList());
-        BigDecimal amount = getTotal(wallets, account.getAccountId(), main);
-        account.setTotalBalance(MoneyConverter.toMinor(amount, main.getCurrency().getMinorUnits()));
+        long amount = getTotal(wallets, account.getAccountId(), main);
+        account.setTotalBalance(amount);
         log.info(
             "Saving total balance {} {}",
             account.getTotalBalance(),
@@ -195,10 +196,9 @@ public class AccountDataService implements AccountService {
                 () ->
                     new IllegalArgumentException(
                         String.format("No wallet found for account: %s", account.getAccNumber())));
-    BigDecimal totalAccountBalance = getTotal(wallets, account.getAccountId(), mainWallet);
+    long totalAccountBalance = getTotal(wallets, account.getAccountId(), mainWallet);
 
-    account.setTotalBalance(
-        MoneyConverter.toMinor(totalAccountBalance, mainWallet.getCurrency().getMinorUnits()));
+    account.setTotalBalance(totalAccountBalance);
     log.info("Updated total balance for account: {}", account.getTotalBalance());
     accountRepository.save(account);
     return account;
@@ -218,7 +218,7 @@ public class AccountDataService implements AccountService {
     }
   }
 
-  private BigDecimal getTotal(List<Wallet> wallets, int accountId, Wallet main) {
+  private Long getTotal(List<Wallet> wallets, int accountId, Wallet main) {
     if (isEmpty(wallets)) {
       log.info("No wallets for accountId: {}", accountId);
       throw new WalletNotFoundException(format("No wallets tied to accountId: %s", accountId));
@@ -228,9 +228,8 @@ public class AccountDataService implements AccountService {
         .map(
             wallet ->
                 currencyExchangeRateDataService.convert(
-                    BigDecimal.valueOf(wallet.getBalance()),
-                    wallet.getCurrency(),
-                    main.getCurrency()))
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    wallet.getBalance(), wallet.getCurrency(), main.getCurrency()))
+        .map(ConvertedAmount::amount)
+        .reduce(0L, Long::sum);
   }
 }

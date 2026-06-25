@@ -2,6 +2,7 @@ package com.ntros.mprocswift.service.currency;
 
 import com.ntros.mprocswift.exceptions.CurrencyNotSupportedException;
 import com.ntros.mprocswift.exceptions.ExchangeRateNotFoundForPairException;
+import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.currency.*;
 import com.ntros.mprocswift.repository.currency.CurrencyExchangeRateRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -41,18 +42,18 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
   }
 
   @Override
-  public MoneyMovement convert(BigDecimal amount, String source, String target) {
+  public RatedMoneyMovement convert(long amount, String source, String target) {
     Currency sourceCurrency = currencyService.getCurrencyByCode(source);
     Currency targetCurrency = currencyService.getCurrencyByCode(target);
 
     // TODO: add money valObj for target amount
-    BigDecimal converted = convert(amount, sourceCurrency, targetCurrency);
+    ConvertedAmount converted = convert(amount, sourceCurrency, targetCurrency);
 
-    Money sourceMoney = new Money(toMinor(amount, sourceCurrency.getMinorUnits()), sourceCurrency);
-    Money targetMoney =
-        new Money(toMinor(converted, targetCurrency.getMinorUnits()), targetCurrency);
+    Money sourceMoney = new Money(amount, sourceCurrency);
+    Money targetMoney = new Money(converted.amount(), targetCurrency);
 
-    return new MoneyMovement(sourceMoney, targetMoney);
+    return new RatedMoneyMovement(
+        new MoneyMovement(sourceMoney, targetMoney), converted.appliedRate());
   }
 
   /**
@@ -65,17 +66,27 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
    * @return converted amount
    */
   @Override
-  public BigDecimal convert(final BigDecimal amount, Currency source, Currency target) {
+  public ConvertedAmount convert(long amount, Currency source, Currency target) {
     if (source.getCurrencyCode().equals(target.getCurrencyCode())) {
       log.info("Currencies are the same: {}", source.getCurrencyCode());
-      return amount;
+      var exchangeRate =
+          currencyExchangeRateRepository
+              .findExchangeRateBySourceAndTarget(source, target)
+              .orElseThrow(
+                  () ->
+                      new NotFoundException(
+                          String.format(
+                              "Could not find rate:[%s -> %s]",
+                              source.getCurrencyCode(), target.getCurrencyCode())));
+      return new ConvertedAmount(amount, exchangeRate);
     }
     return currencyExchangeRateRepository
-        .findExchangeRateValueBySourceAndTarget(source, target)
+        .findExchangeRateBySourceAndTarget(source, target)
         .map(
-            rate -> {
-              log.info("Found direct exchange rate: {}", rate);
-              return amount.multiply(rate.setScale(target.getMinorUnits(), RoundingMode.HALF_UP));
+            exchangeRate -> {
+              log.info("Found direct exchange rate: {}", exchangeRate);
+              return new ConvertedAmount(
+                  applyRate(amount, source, target, exchangeRate.getExchangeRate()), exchangeRate);
             })
         .orElseGet(
             () -> {
@@ -98,19 +109,27 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
    *
    * @return converted amount with base rate
    */
-  private BigDecimal convertWithBase(BigDecimal amountToConvert, Currency source, Currency target) {
+  private ConvertedAmount convertWithBase(long amountToConvert, Currency source, Currency target) {
     CurrencyExchangeRate sourceToBase = getExchangeRateForBase(source, true);
     CurrencyExchangeRate baseToTarget = getExchangeRateForBase(target, false);
-    BigDecimal sourceToBaseAmount =
-        amountToConvert.divide(
-            sourceToBase.getExchangeRate(), getScale(amountToConvert), RoundingMode.HALF_UP);
+    long sourceToBaseAmount =
+        applyRate(
+            amountToConvert,
+            source,
+            sourceToBase.getTargetCurrency(),
+            sourceToBase.getExchangeRate());
 
     if (sourceToBase
         .getTargetCurrency()
         .getCurrencyCode()
         .equals(baseToTarget.getSourceCurrency().getCurrencyCode())) {
       // convert source to base
-      BigDecimal baseToTargetAmount = sourceToBaseAmount.multiply(baseToTarget.getExchangeRate());
+      long baseToTargetAmount =
+          applyRate(
+              sourceToBaseAmount,
+              source,
+              baseToTarget.getTargetCurrency(),
+              baseToTarget.getExchangeRate());
       log.info(
           "Converted {} {} to {} {} with base currency {}",
           amountToConvert,
@@ -118,8 +137,7 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
           baseToTargetAmount,
           target.getCurrencyCode(),
           sourceToBase.getTargetCurrency().getCurrencyCode());
-      return baseToTargetAmount.setScale(
-          baseToTarget.getTargetCurrency().getMinorUnits(), RoundingMode.HALF_UP);
+      return new ConvertedAmount(baseToTargetAmount, baseToTarget);
     }
 
     log.info("Found different bases: {} {}", sourceToBase, baseToTarget);
@@ -135,26 +153,30 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
    * @param baseToTarget - rate for target's base to the target
    * @return converted target amount
    */
-  private BigDecimal convertWithIntermediateBase(
-      BigDecimal sourceToBaseAmount,
+  private ConvertedAmount convertWithIntermediateBase(
+      long sourceToBaseAmount,
       CurrencyExchangeRate sourceToBase,
       CurrencyExchangeRate baseToTarget) {
     CurrencyExchangeRate intermediateBase =
         getExchangeRate(sourceToBase.getTargetCurrency(), baseToTarget.getSourceCurrency());
-    BigDecimal intermediateAmount = sourceToBaseAmount.multiply(intermediateBase.getExchangeRate());
+    long intermediateAmount =
+        applyRate(
+            sourceToBaseAmount,
+            sourceToBase.getTargetCurrency(),
+            baseToTarget.getSourceCurrency(),
+            intermediateBase.getExchangeRate());
     log.info(
         "Intermediate amount: {} {}",
         intermediateAmount,
         baseToTarget.getSourceCurrency().getCurrencyCode());
 
-    BigDecimal targetAmount =
-        intermediateAmount.multiply(
-            baseToTarget
-                .getExchangeRate()
-                .setScale(baseToTarget.getTargetCurrency().getMinorUnits(), RoundingMode.HALF_UP));
+    long targetAmount =
+        intermediateAmount
+            * MoneyConverter.toMinor(
+                baseToTarget.getExchangeRate(), baseToTarget.getTargetCurrency().getExponent());
     log.info("Converted amount: {}", targetAmount);
 
-    return targetAmount;
+    return new ConvertedAmount(targetAmount, baseToTarget);
   }
 
   private CurrencyExchangeRate getExchangeRateForBase(Currency currencyToConvert, boolean isBase) {
@@ -172,5 +194,14 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
     return direction
         ? currencyExchangeRateRepository.findExchangeRateBySourceCodeAndTargetCode(toConvert, base)
         : currencyExchangeRateRepository.findExchangeRateBySourceCodeAndTargetCode(base, toConvert);
+  }
+
+  private long applyRate(long sourceMinor, Currency source, Currency target, BigDecimal rate) {
+    return BigDecimal.valueOf(sourceMinor)
+        .movePointLeft(source.getExponent()) // minor -> major (source)
+        .multiply(rate) // major source -> major target
+        .movePointRight(target.getExponent()) // major -> minor (target)
+        .setScale(0, RoundingMode.HALF_UP)
+        .longValueExact();
   }
 }

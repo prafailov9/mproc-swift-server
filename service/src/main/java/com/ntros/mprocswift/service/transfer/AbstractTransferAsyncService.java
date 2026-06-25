@@ -4,6 +4,7 @@ import com.ntros.mprocswift.dto.transfer.TransferRequest;
 import com.ntros.mprocswift.dto.transfer.TransferResponse;
 import com.ntros.mprocswift.exceptions.TransferProcessingFailedException;
 import com.ntros.mprocswift.model.currency.MoneyMovement;
+import com.ntros.mprocswift.model.currency.RatedMoneyMovement;
 import com.ntros.mprocswift.repository.transaction.MoneyTransferRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionStatusRepository;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public abstract class AbstractTransferService<
+public abstract class AbstractTransferAsyncService<
         T extends TransferRequest, R extends TransferResponse, S>
     implements TransferService<T, R> {
 
@@ -41,7 +42,7 @@ public abstract class AbstractTransferService<
   @Autowired protected LedgerAccountService ledgerAccountService;
   @Autowired protected LedgerEntryService ledgerEntryService;
 
-  public CompletableFuture<R> transfer(T transferRequest) {
+  public CompletableFuture<R> transferAsync(T transferRequest) {
 
     CompletableFuture<S> senderFuture = getSender(transferRequest);
     CompletableFuture<S> receiverFuture = getReceiver(transferRequest);
@@ -61,7 +62,7 @@ public abstract class AbstractTransferService<
 
   @Transactional
   protected R execInTransaction(TransferContext<T, S> ctx) {
-    MoneyMovement moneyMovement = performTransfer(ctx.sender(), ctx.receiver(), ctx.request());
+    RatedMoneyMovement moneyMovement = performTransfer(ctx.sender(), ctx.receiver(), ctx.request());
 
     createTransferTransaction(ctx.sender(), ctx.receiver(), ctx.request(), moneyMovement);
     return buildTransferResponse(ctx.request());
@@ -71,10 +72,10 @@ public abstract class AbstractTransferService<
 
   protected abstract CompletableFuture<S> getReceiver(T transferRequest);
 
-  protected abstract MoneyMovement performTransfer(S sender, S receiver, T transferRequest);
+  protected abstract RatedMoneyMovement performTransfer(S sender, S receiver, T transferRequest);
 
   protected abstract void createTransferTransaction(
-      S sender, S receiver, T transferRequest, MoneyMovement moneyMovement);
+      S sender, S receiver, T transferRequest, RatedMoneyMovement ratedMoneyMovement);
 
   protected abstract R buildTransferResponse(T transferRequest);
 

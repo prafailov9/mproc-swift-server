@@ -7,18 +7,35 @@ start() {
 }
 # start containers in development mode
 start_dev() {
-    echo "Starting in development mode..."
-    # remove volume for fresh start
-    docker volume rm mproc-swift_db-data
-    # remove docker-compose cache
-    docker compose down --volumes --remove-orphans
-    # rebuild and start
-    docker compose up --build -d
+       echo "Starting in development mode..."
+
+        docker compose down --volumes --remove-orphans
+        docker volume rm mproc-swift_db-data 2>/dev/null || true
+
+        docker compose up --build -d
 }
 
 stop_containers() {
     echo "Stopping containers..."
     docker compose down
+}
+
+restart() {
+  stop_containers
+  if ! mvn clean install; then
+    echo "Maven build failed. Skipping docker compose start."
+    return 1
+  fi
+  start
+}
+
+restart_dev() {
+  stop_containers
+     if ! mvn clean install; then
+        echo "Maven build failed. Skipping docker compose start in dev mode."
+        return 1
+      fi
+    start_dev
 }
 
 # Main script logic
@@ -38,6 +55,12 @@ case "$1" in
     stop)
         stop_containers
         ;;
+    restart)
+      restart
+      ;;
+    restart_dev)
+    restart_dev
+    ;;
     *)
         echo "Usage: mpsrun {start|start --dev|stop}"
         exit 1

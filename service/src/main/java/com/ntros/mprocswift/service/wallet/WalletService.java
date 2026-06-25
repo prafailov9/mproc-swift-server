@@ -4,7 +4,6 @@ import com.ntros.mprocswift.dto.UniqueWalletDTO;
 import com.ntros.mprocswift.dto.WalletDTO;
 import com.ntros.mprocswift.model.Wallet;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -39,5 +38,6 @@ public interface WalletService {
 
   CompletableFuture<Integer> deleteWallet(final UniqueWalletDTO uniqueWalletDTO);
 
-  CompletableFuture<Void> updateBalance(final int walletId, final long balance);
+  void updateBalance(final int walletId, final long balance);
+  CompletableFuture<Void> updateBalanceAsync(final int walletId, final long balance);
 }

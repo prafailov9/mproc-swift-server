@@ -32,12 +32,10 @@ public class LedgerEntryPostingService implements LedgerEntryService {
   @Transactional
   public void createLedgerEntries(Transaction transaction, List<Posting> postings) {
     if (transaction.getTransactionId() == null) {
-      throw new IllegalArgumentException(
-          "Transaction must be persisted before posting ledger entries.");
+      throw new IllegalArgumentException("Transaction must exist before posting ledger entries.");
     }
-
     List<LedgerEntry> entries = populateEntries(transaction, postings);
-
+    log.info("Assembled ledger entries for processing: {}", entries);
     // entries are grouped by currency for the entire posting for each currency, group all of its
     // entries and sum the amount
     Map<Integer, Long> totalsByCurrency = getTotalsByCurrency(entries);
@@ -45,7 +43,6 @@ public class LedgerEntryPostingService implements LedgerEntryService {
     validateBalancedLedgersByCurrency(transaction, totalsByCurrency);
 
     ledgerEntryRepository.saveAll(entries);
-
     // apply to balances (group by ledger_account_id)
     Map<Integer, Long> deltaByAccountId = new HashMap<>();
     for (LedgerEntry e : entries) {
@@ -54,10 +51,10 @@ public class LedgerEntryPostingService implements LedgerEntryService {
     }
 
     // lock/apply in deterministic order to avoid deadlocks
-    List<Integer> ids = new ArrayList<>(deltaByAccountId.keySet());
-    Collections.sort(ids);
+    List<Integer> accountIds = new ArrayList<>(deltaByAccountId.keySet());
+    Collections.sort(accountIds);
 
-    for (Integer ledgerAccountId : ids) {
+    for (Integer ledgerAccountId : accountIds) {
       LedgerAccountBalance lockedBalance =
           ledgerAccountBalanceService.getLedgerAccountBalance(ledgerAccountId);
       if (lockedBalance == null) {
@@ -70,13 +67,22 @@ public class LedgerEntryPostingService implements LedgerEntryService {
     }
   }
 
+  @Override
+  public List<LedgerEntry> getAllEntries() {
+    return ledgerEntryRepository.findAll();
+  }
+
+  @Override
+  public List<LedgerEntry> getAllForTransaction(Transaction transaction) {
+    return ledgerEntryRepository.findAllByTransaction(transaction);
+  }
+
   private void validateBalancedLedgersByCurrency(
       Transaction txn, Map<Integer, Long> totalsByCurrency) {
     for (Map.Entry<Integer, Long> e : totalsByCurrency.entrySet()) {
-      long sum = e.getValue();
+      Long sum = e.getValue();
 
-      // Use compareTo(0) to ignore scale differences.
-      if (sum != 0) {
+      if (sum.compareTo(0L) != 0) {
         throw new IllegalStateException(
             "Unbalanced ledger postings for transaction "
                 + txn.getTransactionId()
@@ -106,6 +112,8 @@ public class LedgerEntryPostingService implements LedgerEntryService {
   private List<LedgerEntry> populateEntries(Transaction transaction, List<Posting> postings) {
     List<LedgerEntry> entries = new ArrayList<>();
 
+    // entry sequence for the entire posting list
+    int seq = 0;
     for (Posting posting : postings) {
       validatePosting(posting);
       // Debit: +amount, true
@@ -115,11 +123,16 @@ public class LedgerEntryPostingService implements LedgerEntryService {
 
       LedgerEntry debitEntry =
           buildLedgerEntry(
-              transaction, posting, posting.debitAccount(), debit, posting.entryGroupKey());
+              transaction, posting, posting.debitAccount(), debit, posting.entryGroupKey(), ++seq);
 
       LedgerEntry creditEntry =
           buildLedgerEntry(
-              transaction, posting, posting.creditAccount(), credit, posting.entryGroupKey());
+              transaction,
+              posting,
+              posting.creditAccount(),
+              credit,
+              posting.entryGroupKey(),
+              ++seq);
       entries.add(debitEntry);
       entries.add(creditEntry);
     }
@@ -132,11 +145,13 @@ public class LedgerEntryPostingService implements LedgerEntryService {
       Posting posting,
       LedgerAccount ledgerAccount,
       long amountMinorUnits,
-      String entryGroupKey) {
+      String entryGroupKey,
+      int entrySeq) {
 
     //    long normalized = Money.toMinor(amount, ledgerAccount.getCurrency().getMinorUnits());
     LedgerEntry entry = new LedgerEntry();
     entry.setEntryGroupKey(entryGroupKey);
+    entry.setEntrySequence(entrySeq);
     entry.setTransaction(transaction);
     entry.setLedgerAccount(ledgerAccount);
     entry.setAmount(amountMinorUnits);

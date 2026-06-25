@@ -3,6 +3,7 @@ package com.ntros.mprocswift.model.account;
 import com.ntros.mprocswift.model.User;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.card.Card;
+import com.ntros.mprocswift.model.currency.Currency;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -63,6 +64,14 @@ public class Account {
     }
 
     return walletOpt;
+  }
+
+  public Optional<Wallet> getWallet(int id) {
+    return wallets.stream().filter(x -> x.getWalletId() == id).findFirst();
+  }
+
+  public Optional<Wallet> getWallet(Currency currency) {
+    return wallets.stream().filter(x -> x.getCurrency().getCurrencyCode().equalsIgnoreCase(currency.getCurrencyCode())).findFirst();
   }
 
   public Optional<Wallet> getMainWallet() {

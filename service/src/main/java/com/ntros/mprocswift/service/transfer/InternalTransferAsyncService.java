@@ -7,7 +7,7 @@ import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.currency.Currency;
 import com.ntros.mprocswift.model.currency.MoneyConverter;
-import com.ntros.mprocswift.model.currency.MoneyMovement;
+import com.ntros.mprocswift.model.currency.RatedMoneyMovement;
 import com.ntros.mprocswift.model.transactions.MoneyTransfer;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.TransactionStatus;
@@ -25,8 +25,9 @@ import static com.ntros.mprocswift.model.currency.MoneyConverter.toMinor;
 
 @Service
 @Slf4j
-public class InternalTransferService
-    extends AbstractTransferService<InternalTransferRequest, InternalTransferResponse, Account> {
+public class InternalTransferAsyncService
+    extends AbstractTransferAsyncService<
+        InternalTransferRequest, InternalTransferResponse, Account> {
 
   @Override
   protected CompletableFuture<Account> getSender(InternalTransferRequest transferRequest) {
@@ -35,15 +36,14 @@ public class InternalTransferService
 
   @Override
   protected CompletableFuture<Account> getReceiver(InternalTransferRequest transferRequest) {
-    return accountService.getAccountByAccountNumberAsync(transferRequest.getRecipientAccountNumber());
+    return accountService.getAccountByAccountNumberAsync(
+        transferRequest.getRecipientAccountNumber());
   }
 
   @Override
-  protected MoneyMovement performTransfer(
+  protected RatedMoneyMovement performTransfer(
       Account sender, Account receiver, InternalTransferRequest transferRequest) {
     String currencyCode = transferRequest.getCurrencyCode();
-    MoneyMovement money;
-
     Wallet senderWallet =
         getWallet(
             sender.getWallets(), currencyCode, transferRequest.getSourceAccountNumber(), true);
@@ -56,28 +56,24 @@ public class InternalTransferService
     withdrawFromSender(
         senderWallet,
         MoneyConverter.toMinor(
-            transferRequest.getAmount(), senderWallet.getCurrency().getMinorUnits()),
+            transferRequest.getAmount(), senderWallet.getCurrency().getExponent()),
         currencyCode,
         transferRequest.getSourceAccountNumber());
 
-    if (receiverWallet.getCurrency().getCurrencyCode().equals(currencyCode)) {
-      long addedAmount = receiverWallet.getBalance() + transferRequest.getAmount().longValue();
-      money =
-          new MoneyMovement(
-              addedAmount, senderWallet.getCurrency(), addedAmount, receiverWallet.getCurrency());
-    } else {
-      money =
-          currencyExchangeRateService.convert(
-              transferRequest.getAmount(),
-              currencyCode,
-              receiverWallet.getCurrency().getCurrencyCode());
-    }
+    // always get the money movement with the rate applied
+    var ratedMoney =
+        currencyExchangeRateService.convert(
+            MoneyConverter.toMinor(
+                transferRequest.getAmount(), receiverWallet.getCurrency().getExponent()),
+            currencyCode,
+            receiverWallet.getCurrency().getCurrencyCode());
+
     //    receiverWallet.setBalance(
     //        receiverWallet.getBalance().add(MoneyConverter.toMajor(money.getReceivedMoney(),
     // ex)));
     //    updateAccountsAndWallets(sender, receiver, senderWallet, receiverWallet);
     // TODO: add ledger entries and update ledger balance
-    return money;
+    return ratedMoney;
   }
 
   @Override
@@ -85,7 +81,7 @@ public class InternalTransferService
       Account sender,
       Account receiver,
       InternalTransferRequest transferRequest,
-      MoneyMovement moneyMovement) {
+      RatedMoneyMovement ratedMoneyMovement) {
     Transaction transaction = buildTransaction(sender, transferRequest);
     createAndSaveMoneyTransfer(transaction, sender, receiver);
   }
@@ -120,7 +116,7 @@ public class InternalTransferService
                         String.format("TX Type not found: %s", "INTERNAL_TRANSFER")));
     Currency currency = getCurrency(sender, transferRequest);
     Transaction transaction = new Transaction();
-    transaction.setAmount(toMinor(transferRequest.getAmount(), currency.getMinorUnits()));
+    transaction.setAmount(toMinor(transferRequest.getAmount(), currency.getExponent()));
     transaction.setType(type);
     transaction.setStatus(status);
     transaction.setTransactionDate(OffsetDateTime.now());
@@ -135,7 +131,6 @@ public class InternalTransferService
   protected InternalTransferResponse buildTransferResponse(
       InternalTransferRequest transferRequest) {
     InternalTransferResponse response = new InternalTransferResponse();
-    response.setTransferRequest(transferRequest);
     response.setStatus("success");
     return response;
   }
@@ -143,8 +138,8 @@ public class InternalTransferService
   @Transactional
   private void updateAccountsAndWallets(
       Account sender, Account receiver, Wallet senderWallet, Wallet receiverWallet) {
-    walletService.updateBalance(senderWallet.getWalletId(), senderWallet.getBalance());
-    walletService.updateBalance(receiverWallet.getWalletId(), receiverWallet.getBalance());
+    walletService.updateBalanceAsync(senderWallet.getWalletId(), senderWallet.getBalance());
+    walletService.updateBalanceAsync(receiverWallet.getWalletId(), receiverWallet.getBalance());
 
     // update total balance
     accountService.updateTotalBalance(sender);

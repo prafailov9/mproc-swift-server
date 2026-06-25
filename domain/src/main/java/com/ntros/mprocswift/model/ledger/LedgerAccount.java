@@ -2,6 +2,7 @@ package com.ntros.mprocswift.model.ledger;
 
 import com.ntros.mprocswift.model.Merchant;
 import com.ntros.mprocswift.model.Wallet;
+import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.account.ExternalAccount;
 import com.ntros.mprocswift.model.currency.Currency;
 import jakarta.persistence.*;

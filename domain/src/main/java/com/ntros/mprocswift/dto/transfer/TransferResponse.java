@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class TransferResponse {
 
-    protected String status;
-    protected TransferRequest transferRequest;
-
+  protected String status;
+  protected String idemKey;
 }

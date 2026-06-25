@@ -22,6 +22,9 @@ public class LedgerEntry {
   @Column(name = "entry_group_key", nullable = false)
   private String entryGroupKey;
 
+  @Column(name = "entry_seq", nullable = false)
+  private Integer entrySequence;
+
   @ManyToOne
   @JoinColumn(name = "transaction_id")
   private Transaction transaction;
@@ -34,4 +37,28 @@ public class LedgerEntry {
 
   private OffsetDateTime entryDate;
   private String description;
+
+  @Override
+  public String toString() {
+    return "LedgerEntry{"
+        + "ledgerEntryId="
+        + ledgerEntryId
+        + ", entryGroupKey='"
+        + entryGroupKey
+        + '\''
+        + ", txnId="
+        + transaction.getTransactionId()
+        + ", ledgerAccount="
+        + ledgerAccount.getLedgerAccountName()
+        + ", amount="
+        + amount
+        + ", currency="
+        + transaction.getCurrency().getCurrencyCode()
+        + ", entryDate="
+        + entryDate
+        + ", description='"
+        + description
+        + '\''
+        + '}';
+  }
 }

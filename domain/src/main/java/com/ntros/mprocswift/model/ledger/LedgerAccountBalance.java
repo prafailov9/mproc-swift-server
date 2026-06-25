@@ -12,9 +12,12 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 public class LedgerAccountBalance {
 
-  @Id
-  @Column(name = "ledger_account_id")
-  private Integer ledgerAccountId;
+  @Id private Integer ledgerAccountId;
+
+  @OneToOne(fetch = FetchType.LAZY, optional = false)
+  @MapsId
+  @JoinColumn(name = "ledger_account_id")
+  private LedgerAccount ledgerAccount;
 
   @Column(name = "balance_minor", nullable = false)
   private long balanceMinor;

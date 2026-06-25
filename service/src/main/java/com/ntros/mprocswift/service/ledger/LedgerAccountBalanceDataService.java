@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class LedgerAccountBalanceDataService implements LedgerAccountBalanceService {
@@ -40,5 +42,25 @@ public class LedgerAccountBalanceDataService implements LedgerAccountBalanceServ
   @Override
   public int updateBalance(Integer ledgerAccountId, long delta) {
     return ledgerAccountBalanceRepository.updateBalance(ledgerAccountId, delta);
+  }
+
+  @Override
+  public List<LedgerAccountBalance> getAllLedgerAccountBalances() {
+    return ledgerAccountBalanceRepository.findAll();
+  }
+
+  @Override
+  public List<LedgerAccountBalance> getAllHeldLedgerAccountBalances() {
+    return ledgerAccountBalanceRepository.findAllHeld();
+  }
+
+  @Override
+  public List<LedgerAccountBalance> getAllAvailableLedgerAccountBalances() {
+    return ledgerAccountBalanceRepository.findAllAvailable();
+  }
+
+  @Override
+  public boolean hasAvailableFunds(int walletId, long minAllowedFunds) {
+    return ledgerAccountBalanceRepository.hasAvailableFunds(walletId, minAllowedFunds);
   }
 }

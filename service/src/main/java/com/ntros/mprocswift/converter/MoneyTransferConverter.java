@@ -14,8 +14,8 @@ public class MoneyTransferConverter implements Converter<MoneyTransferDTO, Money
   public MoneyTransferDTO toDto(MoneyTransfer model) {
     Currency currency = model.getTransaction().getCurrency();
     MoneyTransferDTO dto = new MoneyTransferDTO();
-    dto.setAmount(toMajor(model.getTransaction().getAmount(), currency.getMinorUnits()));
-    dto.setFees(toMajor(model.getTransaction().getFees(), currency.getMinorUnits()));
+    dto.setAmount(toMajor(model.getTransaction().getAmount(), currency.getExponent()));
+    dto.setFees(toMajor(model.getTransaction().getFees(), currency.getExponent()));
     dto.setDescription(model.getTransaction().getDescription());
     dto.setSenderAccountNumber(model.getSenderAccount().getAccountDetails().getAccountNumber());
     dto.setReceiverAccountNumber(model.getReceiverAccount().getAccountDetails().getAccountNumber());

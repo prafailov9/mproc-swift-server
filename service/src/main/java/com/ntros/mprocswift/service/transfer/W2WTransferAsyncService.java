@@ -5,16 +5,14 @@ import com.ntros.mprocswift.dto.transfer.W2WTransferResponse;
 import com.ntros.mprocswift.exceptions.InsufficientFundsException;
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.Wallet;
-import com.ntros.mprocswift.model.currency.Currency;
-import com.ntros.mprocswift.model.currency.MoneyConverter;
-import com.ntros.mprocswift.model.currency.MoneyMovement;
+import com.ntros.mprocswift.model.currency.*;
 import com.ntros.mprocswift.model.ledger.LedgerAccount;
 import com.ntros.mprocswift.model.transactions.MoneyTransfer;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.TransactionStatus;
 import com.ntros.mprocswift.model.transactions.TransactionType;
 import com.ntros.mprocswift.service.ledger.Posting;
-import java.math.BigDecimal;
+
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +22,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class W2WTransferService
-    extends AbstractTransferService<W2WTransferRequest, W2WTransferResponse, Wallet> {
+public class W2WTransferAsyncService
+    extends AbstractTransferAsyncService<W2WTransferRequest, W2WTransferResponse, Wallet> {
 
   @Override
   protected CompletableFuture<Wallet> getSender(W2WTransferRequest transferRequest) {
@@ -41,31 +39,34 @@ public class W2WTransferService
 
   // TODO: refactor to lock both wallets and update the ledgerAccountBalance for each one
   @Override
-  protected MoneyMovement performTransfer(Wallet sender, Wallet receiver, W2WTransferRequest req) {
+  protected RatedMoneyMovement performTransfer(
+      Wallet sender, Wallet receiver, W2WTransferRequest req) {
     if (!sender.getAccount().getAccountId().equals(receiver.getAccount().getAccountId())) {
       throw new IllegalStateException("W2W wallets must belong to the same account.");
     }
 
-    long sentMinor = MoneyConverter.toMinor(req.getAmount(), sender.getCurrency().getMinorUnits());
+    long sentMinor = MoneyConverter.toMinor(req.getAmount(), sender.getCurrency().getExponent());
     if (!sender.hasAvailableBalance(sentMinor)) {
       throw new InsufficientFundsException("Insufficient funds for W2W transfer.");
     }
 
     // compute receivedMinor
-    BigDecimal receivedMajor =
+    ConvertedAmount convertedAmount =
         currencyExchangeRateService.convert(
-            req.getAmount(), sender.getCurrency(), receiver.getCurrency());
-    long receivedMinor =
-        MoneyConverter.toMinor(receivedMajor, receiver.getCurrency().getMinorUnits());
+            MoneyConverter.toMinor(req.getAmount(), receiver.getCurrency().getExponent()),
+            sender.getCurrency(),
+            receiver.getCurrency());
 
     // update wallets (minor units)
     sender.decreaseBalance(sentMinor);
-    receiver.increaseBalance(receivedMinor);
+    receiver.increaseBalance(convertedAmount.amount());
 
     //    updateWalletsAndAccounts(sender, receiver);
 
-    return new MoneyMovement(
-        sentMinor, sender.getCurrency(), receivedMinor, receiver.getCurrency());
+    return new RatedMoneyMovement(
+        new MoneyMovement(
+            sentMinor, sender.getCurrency(), convertedAmount.amount(), receiver.getCurrency()),
+        convertedAmount.appliedRate());
   }
 
   @Override
@@ -73,17 +74,17 @@ public class W2WTransferService
       Wallet sender,
       Wallet receiver,
       W2WTransferRequest transferRequest,
-      MoneyMovement moneyMovement) {
+      RatedMoneyMovement ratedMoneyMovement) {
     Transaction transaction =
-        buildTransaction(sender, receiver, moneyMovement.sentMoney().minorAmount());
+        buildTransaction(
+            sender, receiver, ratedMoneyMovement.moneyMovement().sentMoney().minorAmount());
     createAndSaveMoneyTransfer(transaction, sender, receiver);
-    createLedgerEntries(transaction, sender, receiver, moneyMovement);
+    createLedgerEntries(transaction, sender, receiver, ratedMoneyMovement);
   }
 
   @Override
   protected W2WTransferResponse buildTransferResponse(W2WTransferRequest transferRequest) {
     W2WTransferResponse response = new W2WTransferResponse();
-    response.setTransferRequest(transferRequest);
     response.setStatus("success");
     return response;
   }
@@ -139,7 +140,10 @@ public class W2WTransferService
   }
 
   private void createLedgerEntries(
-      Transaction transaction, Wallet sender, Wallet receiver, MoneyMovement moneyMovement) {
+      Transaction transaction,
+      Wallet sender,
+      Wallet receiver,
+      RatedMoneyMovement ratedMoneyMovement) {
     // get available ledgers for both wallets
     String entryGroupKey = "W2W:" + transaction.getTransactionId();
     LedgerAccount senderLedger = ledgerAccountService.getAvailableForWallet(sender);
@@ -155,7 +159,7 @@ public class W2WTransferService
           new Posting(
               receiverLedger,
               senderLedger,
-              moneyMovement.sentMoney().minorAmount(),
+              ratedMoneyMovement.moneyMovement().sentMoney().minorAmount(),
               String.format(
                   "W2W: Sender %s -> Receiver %s Transfer",
                   sender.getCurrency().getCurrencyCode(), receiver.getCurrency().getCurrencyCode()),
@@ -170,14 +174,14 @@ public class W2WTransferService
               new Posting(
                   senderBridge,
                   senderLedger,
-                  moneyMovement.sentMoney().minorAmount(),
+                  ratedMoneyMovement.moneyMovement().sentMoney().minorAmount(),
                   String.format(
                       "W2W:Sender to System_%s_Account transfer", senderCurrency.getCurrencyCode()),
                   entryGroupKey),
               new Posting(
                   receiverLedger,
                   receiverBridge,
-                  moneyMovement.receivedMoney().minorAmount(),
+                  ratedMoneyMovement.moneyMovement().receivedMoney().minorAmount(),
                   String.format(
                       "W2W:System_%s_Account to Receiver transfer",
                       receiverCurrency.getCurrencyCode()),

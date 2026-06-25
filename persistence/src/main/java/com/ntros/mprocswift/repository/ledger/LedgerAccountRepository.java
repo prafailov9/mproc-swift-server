@@ -22,7 +22,7 @@ public interface LedgerAccountRepository extends JpaRepository<LedgerAccount, In
                         FROM LedgerAccount la
                         WHERE la.wallet IS NOT NULL
                           AND la.ledgerAccountType.ledgerAccountTypeId IN (1, 2)
-                    """)
+                    """) // TODO: pull balances from ledger_balance table
     List<LedgerAccount> findAllWalletLedgerAccounts();
 
     @Query(
@@ -81,7 +81,7 @@ public interface LedgerAccountRepository extends JpaRepository<LedgerAccount, In
                         AND la.merchant IS NULL
                         AND la.externalAccount IS NULL
                         AND la.ledgerAccountType.typeCode = :typeCode
-                        AND la.currency.currencyCode = :currencyCodeƒ
+                        AND la.currency.currencyCode = :currencyCode
                     """)
     Optional<LedgerAccount> findSystemAccount(@Param("typeCode") String typeCode,
                                               @Param("currencyCode") String currencyCode);
