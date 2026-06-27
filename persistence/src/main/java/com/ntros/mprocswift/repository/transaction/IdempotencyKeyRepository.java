@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface IdempotencyRecordRepository extends JpaRepository<IdempotencyKey, Long> {
+public interface IdempotencyKeyRepository extends JpaRepository<IdempotencyKey, String> {
 
   Optional<IdempotencyKey> findByIdempotencyKey(String idempotencyKey);
 }

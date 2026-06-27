@@ -1,9 +1,8 @@
-package com.ntros.mprocswift.service.transfer;
+package com.ntros.mprocswift.service.transfer.async;
 
 import com.ntros.mprocswift.dto.transfer.TransferRequest;
 import com.ntros.mprocswift.dto.transfer.TransferResponse;
 import com.ntros.mprocswift.exceptions.TransferProcessingFailedException;
-import com.ntros.mprocswift.model.currency.MoneyMovement;
 import com.ntros.mprocswift.model.currency.RatedMoneyMovement;
 import com.ntros.mprocswift.repository.transaction.MoneyTransferRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionRepository;
@@ -24,9 +23,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public abstract class AbstractTransferAsyncService<
+public abstract class AbstractAsyncTransferAsyncService<
         T extends TransferRequest, R extends TransferResponse, S>
-    implements TransferService<T, R> {
+    implements AsyncTransferService<T, R> {
 
   @Autowired
   @Qualifier("taskExecutor")

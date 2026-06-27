@@ -38,10 +38,10 @@ public interface LedgerAccountBalanceRepository
     join lab.ledgerAccount la
     where la.wallet.walletId = :walletId
       and la.ledgerAccountType.typeCode = 'WALLET_AVAILABLE'
-      and lab.balanceMinor >= :minAmountMinor
+      and lab.balanceMinor >= :amount
     """)
   boolean hasAvailableFunds(
-      @Param("walletId") int walletId, @Param("minAmountMinor") long minAmountMinor);
+      @Param("walletId") int walletId, @Param("amount") long amount);
 
   @Query(
 """

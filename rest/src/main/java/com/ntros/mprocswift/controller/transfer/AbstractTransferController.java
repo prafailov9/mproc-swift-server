@@ -3,7 +3,7 @@ package com.ntros.mprocswift.controller.transfer;
 import com.ntros.mprocswift.controller.AbstractApiController;
 import com.ntros.mprocswift.dto.transfer.TransferRequest;
 import com.ntros.mprocswift.dto.transfer.TransferResponse;
-import com.ntros.mprocswift.service.transfer.TransferService;
+import com.ntros.mprocswift.service.transfer.async.AsyncTransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -17,18 +17,18 @@ public abstract class AbstractTransferController<
         T extends TransferRequest, R extends TransferResponse>
     extends AbstractApiController {
 
-  protected final TransferService<T, R> transferService;
+  protected final AsyncTransferService<T, R> asyncTransferService;
 
   @Autowired
   @Qualifier("taskExecutor")
   protected Executor executor;
 
-  protected AbstractTransferController(TransferService<T, R> transferService) {
-    this.transferService = transferService;
+  protected AbstractTransferController(AsyncTransferService<T, R> asyncTransferService) {
+    this.asyncTransferService = asyncTransferService;
   }
 
   protected CompletableFuture<ResponseEntity<?>> processTransferAsync(T transferRequest) {
-    return transferService
+    return asyncTransferService
         .transferAsync(transferRequest)
         .handleAsync(this::handleResponseAsync, executor);
   }

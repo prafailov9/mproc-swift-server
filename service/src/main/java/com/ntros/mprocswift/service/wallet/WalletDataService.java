@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -68,6 +69,11 @@ public class WalletDataService implements WalletService {
                     String.format("Wallet not found for [%s, %s]", currencyCode, accountNumber)));
   }
 
+  /**
+   * MANDATORY = Method must be called within an existing transaction, otherwise Spring will throw
+   * an exception.
+   */
+  @Transactional(propagation = Propagation.MANDATORY)
   @Override
   public List<Wallet> getAllWalletsLocked(String accountNumber) {
     List<Wallet> wallets = walletRepository.findAllByAccountNumberForUpdate(accountNumber);

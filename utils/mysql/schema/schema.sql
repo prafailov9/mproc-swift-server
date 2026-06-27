@@ -373,17 +373,26 @@ CREATE TABLE IF NOT EXISTS ledger_entry (
 );
 CREATE UNIQUE INDEX u_idx_entry_group_leg ON ledger_entry (entry_group_key, entry_seq);
 
-CREATE TABLE idempotency_record (
-    idempotency_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    idempotency_key VARCHAR(255) NOT NULL,
-    request_hash CHAR(64),
-    transaction_id INT NULL,
+-- CREATE TABLE idempotency_record (
+--     idempotency_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--     idempotency_key VARCHAR(255) NOT NULL,
+--     request_hash CHAR(64),
+--     transaction_id INT NULL,
+--     status ENUM('IN_PROGRESS', 'COMPLETED', 'FAILED') NOT NULL,
+--     status_code INT NULL,
+--     response_body VARCHAR(5000) NULL,
+--
+--     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     expires_at DATETIME NULL,
+--     CONSTRAINT uq_idempotency_key UNIQUE (idempotency_key),
+--     CONSTRAINT fk_idempotency_transaction FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id)
+-- );
+CREATE TABLE idempotency_key (
+    idempotency_key   VARCHAR(255) PRIMARY KEY,   -- supplied by the client
+    request_hash      CHAR(64),                   -- hash of the request params
+    transaction_id    INT,                        -- the result, once known
     status ENUM('IN_PROGRESS', 'COMPLETED', 'FAILED') NOT NULL,
-    status_code INT NULL,
-    response_body VARCHAR(5000) NULL,
-
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    expires_at DATETIME NULL,
-    CONSTRAINT uq_idempotency_key UNIQUE (idempotency_key),
-    CONSTRAINT fk_idempotency_transaction FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id)
+    created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at        DATETIME,
+    FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id)
 );

@@ -2,7 +2,7 @@ package com.ntros.mprocswift.controller.transfer;
 
 import com.ntros.mprocswift.dto.transfer.InternalTransferRequest;
 import com.ntros.mprocswift.dto.transfer.InternalTransferResponse;
-import com.ntros.mprocswift.service.transfer.InternalTransferAsyncService;
+import com.ntros.mprocswift.service.transfer.async.InternalAsyncTransferAsyncService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/transfer/internal")
 public class InternalTransferController extends AbstractTransferController<InternalTransferRequest, InternalTransferResponse> {
 
-    protected InternalTransferController(InternalTransferAsyncService transferService) {
+    protected InternalTransferController(InternalAsyncTransferAsyncService transferService) {
         super(transferService);
     }
 

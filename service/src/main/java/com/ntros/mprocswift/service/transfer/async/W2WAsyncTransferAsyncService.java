@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.service.transfer;
+package com.ntros.mprocswift.service.transfer.async;
 
 import com.ntros.mprocswift.dto.transfer.W2WTransferRequest;
 import com.ntros.mprocswift.dto.transfer.W2WTransferResponse;
@@ -11,6 +11,7 @@ import com.ntros.mprocswift.model.transactions.MoneyTransfer;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.TransactionStatus;
 import com.ntros.mprocswift.model.transactions.TransactionType;
+import com.ntros.mprocswift.model.transactions.idempotency.IdempotencyStatus;
 import com.ntros.mprocswift.service.ledger.Posting;
 
 import java.time.OffsetDateTime;
@@ -20,10 +21,12 @@ import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import static com.ntros.mprocswift.model.transactions.idempotency.IdempotencyStatus.COMPLETED;
+
 @Service
 @Slf4j
-public class W2WTransferAsyncService
-    extends AbstractTransferAsyncService<W2WTransferRequest, W2WTransferResponse, Wallet> {
+public class W2WAsyncTransferAsyncService
+    extends AbstractAsyncTransferAsyncService<W2WTransferRequest, W2WTransferResponse, Wallet> {
 
   @Override
   protected CompletableFuture<Wallet> getSender(W2WTransferRequest transferRequest) {
@@ -85,7 +88,7 @@ public class W2WTransferAsyncService
   @Override
   protected W2WTransferResponse buildTransferResponse(W2WTransferRequest transferRequest) {
     W2WTransferResponse response = new W2WTransferResponse();
-    response.setStatus("success");
+    response.setStatus(COMPLETED);
     return response;
   }
 

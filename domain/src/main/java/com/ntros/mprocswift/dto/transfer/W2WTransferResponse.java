@@ -13,8 +13,6 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Data
-@RequiredArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(
     callSuper = true) // include superclass fields in Lombok's equals and hashCode impls.
 public class W2WTransferResponse extends TransferResponse {
@@ -27,4 +25,9 @@ public class W2WTransferResponse extends TransferResponse {
   private String processedAt;
   // 1:new execution, 0: idempotent replay
   private boolean fresh;
+
+  public W2WTransferResponse() {
+
+  }
+
 }

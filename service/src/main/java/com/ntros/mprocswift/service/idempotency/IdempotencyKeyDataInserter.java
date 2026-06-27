@@ -10,12 +10,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class IdempotencyKeyDataSaver implements IdempotencyKeySaver {
+public class IdempotencyKeyDataInserter implements IdempotencyKeyInserter {
 
   private final IdempotencyKeyRepository idempotencyKeyRepository;
 
   @Autowired
-  public IdempotencyKeyDataSaver(IdempotencyKeyRepository idempotencyKeyRepository) {
+  public IdempotencyKeyDataInserter(IdempotencyKeyRepository idempotencyKeyRepository) {
     this.idempotencyKeyRepository = idempotencyKeyRepository;
   }
 
@@ -26,6 +26,7 @@ public class IdempotencyKeyDataSaver implements IdempotencyKeySaver {
     idempotencyKeyRepository.saveAndFlush(new IdempotencyKey(key, hash, IN_PROGRESS));
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public IdempotencyKey insert(IdempotencyKey idempotencyKey) {
     return idempotencyKeyRepository.saveAndFlush(idempotencyKey);

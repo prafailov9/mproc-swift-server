@@ -1,6 +1,5 @@
 package com.ntros.mprocswift.service.transaction;
 
-import com.ntros.mprocswift.model.currency.MoneyConverter;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.card.AuthorizedHold;
 import com.ntros.mprocswift.model.transactions.card.CardAuthorization;

@@ -1,64 +1,100 @@
 package com.ntros.mprocswift.service.idempotency;
 
+import static com.ntros.mprocswift.model.transactions.idempotency.IdempotencyStatus.*;
+
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.transactions.idempotency.IdempotencyKey;
-import com.ntros.mprocswift.repository.transaction.IdempotencyRecordRepository;
+import com.ntros.mprocswift.model.transactions.idempotency.IdempotencyStatus;
+import com.ntros.mprocswift.repository.transaction.IdempotencyKeyRepository;
+import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-public class IdempotencyRecordDataService implements IdempotencyRecordMarkingService  {
+@Slf4j
+public class IdempotencyKeyDataService implements IdempotencyKeyMarkingService {
 
-  private final IdempotencyRecordRepository idempotencyRecordRepository;
+  private final IdempotencyKeyRepository idempotencyKeyRepository;
+  private final IdempotencyKeyInserter idempotencyKeyInserter;
 
   @Autowired
-  public IdempotencyRecordDataService(IdempotencyRecordRepository idempotencyRecordRepository) {
-    this.idempotencyRecordRepository = idempotencyRecordRepository;
+  public IdempotencyKeyDataService(
+      IdempotencyKeyRepository idempotencyKeyRepository, IdempotencyKeyInserter idempotencyKeyInserter) {
+    this.idempotencyKeyRepository = idempotencyKeyRepository;
+    this.idempotencyKeyInserter = idempotencyKeyInserter;
   }
 
   @Override
-  public void saveRecord(IdempotencyKey idempotencyKey) {
-    idempotencyRecordRepository.save(idempotencyKey);
-  }
-
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
-  @Override
-  public IdempotencyKey load(String key) {
-    return idempotencyRecordRepository
-        .findByIdempotencyKey(key)
-        .orElseThrow(() -> new NotFoundException("No idempotency row for " + key));
+  public void saveKey(IdempotencyKey idempotencyKey) {
+    idempotencyKeyRepository.save(idempotencyKey);
   }
 
   @Override
   public List<IdempotencyKey> loadAll() {
-    return idempotencyRecordRepository.findAll();
+    return idempotencyKeyRepository.findAll();
   }
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Override
+  public void deleteKey(String key) {
+    idempotencyKeyRepository.deleteById(key);
+  }
+
+  @Override
+  public void deleteAll() {
+    idempotencyKeyRepository.deleteAll();
+  }
+
+  @Override
+  public void claim(String key, String requestHash) {
+    idempotencyKeyInserter.insert(key, requestHash);
+  }
+
   public boolean tryClaim(String key, String requestHash) {
+    var idempotencyKey = new IdempotencyKey(key, requestHash, IN_PROGRESS);
     try {
-      idempotencyRecordRepository.saveAndFlush(
-          new IdempotencyKey(key, requestHash, "IN_PROGRESS"));
-      return true;                          // we own it
-    } catch (DuplicateKeyException dup) {
-      return false;                         // someone already claimed it
+      var savedKey = idempotencyKeyInserter.insert(idempotencyKey);
+      log.info("Key saved: {}", savedKey);
+      return true; // key not exist
+    } catch (DataIntegrityViolationException ex) {
+      log.error("Error while saving key {}.", idempotencyKey, ex);
+      return false; // key exist
     }
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public IdempotencyKey load(String key) {
-    return idempotencyRecordRepository.findById(key)
-            .orElseThrow(() -> new NotFoundException("No idempotency row for " + key));
+    return idempotencyKeyRepository
+        .findById(key)
+        .orElseThrow(() -> new NotFoundException("No idempotency row for " + key));
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void markFailed(String key) {
-    idempotencyRecordRepository.findById(key).ifPresent(k -> { k.setStatus("FAILED"); repo.save(k); });
+    mark(key, FAILED, null);
   }
 
+  @Transactional // default REQUIRED -> joins the parent transaction
+  @Override
+  public void markCompleted(String key, Integer transactionId) {
+    mark(key, COMPLETED, transactionId);
+  }
+
+  private void mark(String key, IdempotencyStatus status, Integer txnId) {
+    var keyOpt = idempotencyKeyRepository.findById(key);
+    if (keyOpt.isPresent()) {
+      var k = keyOpt.get();
+      k.setStatus(status);
+      if (txnId != null) {
+        k.setTransactionId(txnId);
+      }
+      var saved = idempotencyKeyRepository.save(k);
+      log.info("Idempotency key {} marked {} in db.", saved, status);
+    }
+    log.info("Idempotency key {} not found.", key);
+  }
 }

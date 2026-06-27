@@ -36,16 +36,15 @@ public interface WalletRepository extends JpaRepository<Wallet, Integer> {
   Optional<Wallet> findByCurrencyCodeAccountNumberForUpdate(
       @Param("currencyCode") String currencyCode, @Param("accountNumber") String accountNumber);
 
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
   @Query(
       value =
           """
-    SELECT w.* FROM wallet w
-    JOIN account a ON w.account_id=a.account_id
-    JOIN account_details ad ON a.account_details_id=ad.account_details_id
-    WHERE ad.account_number = :accountNumber
-    FOR UPDATE
-  """,
-      nativeQuery = true)
+                  SELECT w FROM Wallet w
+                  JOIN w.account acc
+                  JOIN acc.accountDetails ad
+                  WHERE ad.accountNumber = :accountNumber
+                  """)
   List<Wallet> findAllByAccountNumberForUpdate(@Param("accountNumber") String accountNumber);
 
   @Query(value = "SELECT * FROM wallet w WHERE w.currency_id=:currencyId", nativeQuery = true)

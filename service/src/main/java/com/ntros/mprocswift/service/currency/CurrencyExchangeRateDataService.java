@@ -11,10 +11,11 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static com.ntros.mprocswift.model.currency.MoneyConverter.toMinor;
-import static com.ntros.mprocswift.service.currency.CurrencyUtils.getScale;
+import static com.ntros.mprocswift.service.currency.CurrencyUtils.BASE_CURRENCIES;
 
 @Service
 @Slf4j
@@ -110,12 +111,17 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
    * @return converted amount with base rate
    */
   private ConvertedAmount convertWithBase(long amountToConvert, Currency source, Currency target) {
-    CurrencyExchangeRate sourceToBase = getExchangeRateForBase(source, true);
-    CurrencyExchangeRate baseToTarget = getExchangeRateForBase(target, false);
+    CurrencyExchangeRate sourceToBase =
+        getExchangeRateFromBase(source, true)
+            .orElseThrow(() -> new CurrencyNotSupportedException(source.getCurrencyCode()));
+    CurrencyExchangeRate baseToTarget =
+        getExchangeRateFromBase(target, false)
+            .orElseThrow(() -> new CurrencyNotSupportedException(target.getCurrencyCode()));
+
     long sourceToBaseAmount =
         applyRate(
             amountToConvert,
-            source,
+            sourceToBase.getTargetCurrency(),
             sourceToBase.getTargetCurrency(),
             sourceToBase.getExchangeRate());
 
@@ -171,22 +177,24 @@ public class CurrencyExchangeRateDataService implements CurrencyExchangeRateServ
         baseToTarget.getSourceCurrency().getCurrencyCode());
 
     long targetAmount =
-        intermediateAmount
-            * MoneyConverter.toMinor(
-                baseToTarget.getExchangeRate(), baseToTarget.getTargetCurrency().getExponent());
+        applyRate(
+            intermediateAmount,
+            baseToTarget.getSourceCurrency(),
+            baseToTarget.getTargetCurrency(),
+            baseToTarget.getExchangeRate());
     log.info("Converted amount: {}", targetAmount);
 
     return new ConvertedAmount(targetAmount, baseToTarget);
   }
 
-  private CurrencyExchangeRate getExchangeRateForBase(Currency currencyToConvert, boolean isBase) {
-    return CurrencyUtils.BASE_CURRENCIES.stream()
+  private Optional<CurrencyExchangeRate> getExchangeRateFromBase(
+      Currency currencyToConvert, boolean isBase) {
+    return BASE_CURRENCIES.stream()
         .map(
             baseCurrencyCode ->
                 getRate(currencyToConvert.getCurrencyCode(), baseCurrencyCode, isBase))
         .flatMap(Optional::stream) // filters empty Optionals, unwraps values of non-empty ones
-        .findFirst()
-        .orElseThrow(() -> new CurrencyNotSupportedException(currencyToConvert.getCurrencyCode()));
+        .findFirst();
   }
 
   /** if direction is true -> toConvert/base else -> base/toConvert */

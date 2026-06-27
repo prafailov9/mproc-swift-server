@@ -60,7 +60,7 @@ public class LedgerAccountBalanceDataService implements LedgerAccountBalanceServ
   }
 
   @Override
-  public boolean hasAvailableFunds(int walletId, long minAllowedFunds) {
-    return ledgerAccountBalanceRepository.hasAvailableFunds(walletId, minAllowedFunds);
+  public boolean hasAvailableFunds(int walletId, long amount) {
+    return ledgerAccountBalanceRepository.hasAvailableFunds(walletId, amount);
   }
 }

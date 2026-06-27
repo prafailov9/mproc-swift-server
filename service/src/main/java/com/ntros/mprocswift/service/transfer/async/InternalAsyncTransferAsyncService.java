@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.service.transfer;
+package com.ntros.mprocswift.service.transfer.async;
 
 import com.ntros.mprocswift.dto.transfer.InternalTransferRequest;
 import com.ntros.mprocswift.dto.transfer.InternalTransferResponse;
@@ -12,6 +12,7 @@ import com.ntros.mprocswift.model.transactions.MoneyTransfer;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.TransactionStatus;
 import com.ntros.mprocswift.model.transactions.TransactionType;
+import com.ntros.mprocswift.model.transactions.idempotency.IdempotencyStatus;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,13 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static com.ntros.mprocswift.model.currency.MoneyConverter.toMinor;
+import static com.ntros.mprocswift.model.transactions.idempotency.IdempotencyStatus.COMPLETED;
 
 @Service
 @Slf4j
-public class InternalTransferAsyncService
-    extends AbstractTransferAsyncService<
-        InternalTransferRequest, InternalTransferResponse, Account> {
+public class InternalAsyncTransferAsyncService
+    extends AbstractAsyncTransferAsyncService<
+            InternalTransferRequest, InternalTransferResponse, Account> {
 
   @Override
   protected CompletableFuture<Account> getSender(InternalTransferRequest transferRequest) {
@@ -131,7 +133,7 @@ public class InternalTransferAsyncService
   protected InternalTransferResponse buildTransferResponse(
       InternalTransferRequest transferRequest) {
     InternalTransferResponse response = new InternalTransferResponse();
-    response.setStatus("success");
+    response.setStatus(COMPLETED);
     return response;
   }
 

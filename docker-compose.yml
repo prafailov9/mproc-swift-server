@@ -17,6 +17,10 @@ services:
   db:
     container_name: mprocs-db
     image: mysql:8.2.0
+    command: # dev-only command. Skips flushing to disk on every commit, speeding up inserts. Never use in prod
+      - --innodb-flush-log-at-trx-commit=0
+      - --sync-binlog=0
+      - --skip-log-bin
     ports:
       - "3306:3306"
     environment:

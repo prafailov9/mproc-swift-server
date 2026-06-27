@@ -3,6 +3,7 @@ package com.ntros.mprocswift.service.currency;
 import com.ntros.mprocswift.model.currency.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface CurrencyExchangeRateService {
 
