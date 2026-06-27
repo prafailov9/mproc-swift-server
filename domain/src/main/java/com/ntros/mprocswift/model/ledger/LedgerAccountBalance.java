@@ -2,13 +2,16 @@ package com.ntros.mprocswift.model.ledger;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "ledger_account_balances")
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
 public class LedgerAccountBalance {
 

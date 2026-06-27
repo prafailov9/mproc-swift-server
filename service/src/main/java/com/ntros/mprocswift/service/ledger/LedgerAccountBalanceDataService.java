@@ -1,15 +1,16 @@
 package com.ntros.mprocswift.service.ledger;
 
+import com.ntros.mprocswift.exceptions.EntityCreateFailedException;
 import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.model.ledger.LedgerAccount;
 import com.ntros.mprocswift.model.ledger.LedgerAccountBalance;
 import com.ntros.mprocswift.repository.ledger.LedgerAccountBalanceRepository;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -21,6 +22,21 @@ public class LedgerAccountBalanceDataService implements LedgerAccountBalanceServ
   public LedgerAccountBalanceDataService(
       LedgerAccountBalanceRepository ledgerAccountBalanceRepository) {
     this.ledgerAccountBalanceRepository = ledgerAccountBalanceRepository;
+  }
+
+  @Transactional
+  @Override
+  public LedgerAccountBalance createLedgerAccountBalance(
+      LedgerAccountBalance ledgerAccountBalance) {
+    try {
+      return ledgerAccountBalanceRepository.saveAndFlush(ledgerAccountBalance);
+    } catch (DataIntegrityViolationException ex) {
+      log.error(
+          "Could not create ledger account balance: {}. Error: {}",
+          ledgerAccountBalance,
+          ex.getMessage());
+      throw new EntityCreateFailedException(ex.getMessage());
+    }
   }
 
   @Override
@@ -57,6 +73,11 @@ public class LedgerAccountBalanceDataService implements LedgerAccountBalanceServ
   @Override
   public List<LedgerAccountBalance> getAllAvailableLedgerAccountBalances() {
     return ledgerAccountBalanceRepository.findAllAvailable();
+  }
+
+  @Override
+  public List<LedgerAccountBalance> getAllSystemBalances() {
+    return ledgerAccountBalanceRepository.findAllSystemBalances();
   }
 
   @Override

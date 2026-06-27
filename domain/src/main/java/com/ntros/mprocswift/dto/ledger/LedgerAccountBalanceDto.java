@@ -7,6 +7,7 @@ public class LedgerAccountBalanceDto {
 
   private String ownerId;
   private long balance;
+  private String accountCurrency;
   private String type;
   private String updatedAt;
 }

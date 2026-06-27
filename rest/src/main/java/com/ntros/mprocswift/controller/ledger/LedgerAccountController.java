@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,22 +28,20 @@ public class LedgerAccountController extends AbstractApiController {
     this.ledgerAccountConverter = ledgerAccountConverter;
   }
 
-  //    @GetMapping("/all")
-  public CompletableFuture<ResponseEntity<?>> getAllLedgerAccounts() {
-    return CompletableFuture.supplyAsync(ledgerAccountService::getAllWalletLedgerAccounts)
-        .thenApplyAsync(
-            ledgerAccounts ->
-                ledgerAccounts.stream()
-                    .map(ledgerAccountConverter::toDto)
-                    .collect(Collectors.toList()))
-        .handleAsync(this::handleResponseAsync);
-  }
-
   @GetMapping("/all")
-  public ResponseEntity<Set<LedgerAccountDTO>> getAllLedgerAccountsV2() {
+  public ResponseEntity<Set<LedgerAccountDTO>> getAllLedgerAccounts() {
     return ResponseEntity.ok(
         ledgerAccountService.getAllWalletLedgerAccounts().stream()
             .map(ledgerAccountConverter::toDto)
             .collect(Collectors.toSet()));
+  }
+
+  @GetMapping("/{accountNumber}")
+  public ResponseEntity<?> getAllLedgerAccountsByAccountNumber(@PathVariable String accountNumber) {
+    var accounts =
+        ledgerAccountService.getAllAccountsByAccountNumber(accountNumber).stream()
+            .map(ledgerAccountConverter::toDto)
+            .toList();
+    return ResponseEntity.ok(accounts);
   }
 }

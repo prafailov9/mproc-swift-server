@@ -97,6 +97,11 @@ public class LedgerAccountDataService implements LedgerAccountService {
         .orElseGet(() -> createSystemAccount(typeCode, currency));
   }
 
+  @Override
+  public List<LedgerAccount> getAllAccountsByAccountNumber(String accountNumber) {
+    return ledgerAccountRepository.findAllByAccountNumber(accountNumber);
+  }
+
   private LedgerAccount createWalletAccount(Wallet wallet, String typeCode, String currencyCode) {
     LedgerAccountType ledgerAccountType =
         ledgerAccountTypeRepository

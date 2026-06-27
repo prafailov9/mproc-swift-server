@@ -61,7 +61,7 @@ public class IdempotencyKeyDataService implements IdempotencyKeyMarkingService {
       log.info("Key saved: {}", savedKey);
       return true; // key not exist
     } catch (DataIntegrityViolationException ex) {
-      log.error("Error while saving key {}.", idempotencyKey, ex);
+      log.error("Could not save idempotency key: {}. Error: {}", idempotencyKey, ex.getMessage());
       return false; // key exist
     }
   }

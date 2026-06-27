@@ -6,12 +6,12 @@ import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.account.ExternalAccount;
 import com.ntros.mprocswift.model.currency.Currency;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
 @RequiredArgsConstructor
+@Getter
+@Setter
 @Table(name = "ledger_accounts")
 public class LedgerAccount {
 
@@ -46,6 +46,9 @@ public class LedgerAccount {
   @ManyToOne
   @JoinColumn(name = "external_account_id")
   private ExternalAccount externalAccount;
+
+  @OneToOne(mappedBy = "ledgerAccount")
+  private LedgerAccountBalance balance;
 
   @Column(name = "is_active")
   private boolean active;

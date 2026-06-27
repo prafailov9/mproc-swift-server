@@ -28,4 +28,6 @@ public interface LedgerAccountService {
   LedgerAccount getOrCreateMerchantSettlementAccount(Merchant merchant, Currency currency);
 
   LedgerAccount getOrCreateSystemAccount(String typeCode, Currency currency);
+
+  List<LedgerAccount> getAllAccountsByAccountNumber(String accountNumber);
 }

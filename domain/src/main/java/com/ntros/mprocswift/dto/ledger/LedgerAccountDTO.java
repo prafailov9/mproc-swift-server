@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class LedgerAccountDTO {
 
+  // temporary for debug TODO: remove after tests
+  private int ledgerAccountId;
   private String ledgerAccountType;
   private String ledgerAccountName;
   private String currencyCode;

@@ -13,68 +13,68 @@ import java.util.Optional;
 
 public interface LedgerAccountRepository extends JpaRepository<LedgerAccount, Integer> {
 
-    @Query("SELECT la from LedgerAccount la " + "WHERE la.wallet = :wallet")
-    List<LedgerAccount> findAllByWallet(@Param("wallet") Wallet wallet);
+  @Query("SELECT la from LedgerAccount la " + "WHERE la.wallet = :wallet")
+  List<LedgerAccount> findAllByWallet(@Param("wallet") Wallet wallet);
 
-    @Query(
-            """
+  @Query(
+      """
                         SELECT la
                         FROM LedgerAccount la
                         WHERE la.wallet IS NOT NULL
                           AND la.ledgerAccountType.ledgerAccountTypeId IN (1, 2)
                     """) // TODO: pull balances from ledger_balance table
-    List<LedgerAccount> findAllWalletLedgerAccounts();
+  List<LedgerAccount> findAllWalletLedgerAccounts();
 
-    @Query(
-            """
+  @Query(
+      """
                         SELECT la
                         FROM LedgerAccount la
                         WHERE la.merchant IS NOT NULL
                           AND la.ledgerAccountType.ledgerAccountTypeId = 3
                     """)
-    List<LedgerAccount> findAllMerchantSettlementLedgerAccounts();
+  List<LedgerAccount> findAllMerchantSettlementLedgerAccounts();
 
-    @Query(
-            """
+  @Query(
+      """
                     SELECT la
                     FROM LedgerAccount la
                     WHERE la.wallet = :wallet
                         AND la.ledgerAccountType.typeCode = :typeCode
                         AND la.currency.currencyCode = :currencyCode
                     """)
-    Optional<LedgerAccount> findOneByWalletLedgerTypeCurrencyCode(
-            @Param("wallet") Wallet wallet,
-            @Param("typeCode") String typeCode,
-            @Param("currencyCode") String currencyCode);
+  Optional<LedgerAccount> findOneByWalletLedgerTypeCurrencyCode(
+      @Param("wallet") Wallet wallet,
+      @Param("typeCode") String typeCode,
+      @Param("currencyCode") String currencyCode);
 
-    @Query(
-            """
+  @Query(
+      """
                     SELECT la
                     FROM LedgerAccount la
                     WHERE la.merchant = :merchant
                         AND la.ledgerAccountType.typeCode = :typeCode
                         AND la.currency.currencyCode = :currencyCode
                     """)
-    Optional<LedgerAccount> findOneByMerchantLedgerTypeCurrencyCode(
-            @Param("merchant") Merchant merchant,
-            @Param("typeCode") String typeCode,
-            @Param("currencyCode") String currencyCode);
+  Optional<LedgerAccount> findOneByMerchantLedgerTypeCurrencyCode(
+      @Param("merchant") Merchant merchant,
+      @Param("typeCode") String typeCode,
+      @Param("currencyCode") String currencyCode);
 
-    @Query(
-            """
+  @Query(
+      """
                     SELECT la
                     FROM LedgerAccount la
                     WHERE la.externalAccount = :externalAccount
                         AND la.ledgerAccountType.typeCode = :typeCode
                         AND la.currency.currencyCode = :currencyCode
                     """)
-    Optional<LedgerAccount> findOneByExternalAccountLedgerTypeCurrencyCode(
-            @Param("externalAccount") ExternalAccount externalAccount,
-            @Param("typeCode") String typeCode,
-            @Param("currencyCode") String currencyCode);
+  Optional<LedgerAccount> findOneByExternalAccountLedgerTypeCurrencyCode(
+      @Param("externalAccount") ExternalAccount externalAccount,
+      @Param("typeCode") String typeCode,
+      @Param("currencyCode") String currencyCode);
 
-    @Query(
-            """
+  @Query(
+      """
                     SELECT la
                     FROM LedgerAccount la
                     WHERE la.wallet IS NULL
@@ -83,6 +83,17 @@ public interface LedgerAccountRepository extends JpaRepository<LedgerAccount, In
                         AND la.ledgerAccountType.typeCode = :typeCode
                         AND la.currency.currencyCode = :currencyCode
                     """)
-    Optional<LedgerAccount> findSystemAccount(@Param("typeCode") String typeCode,
-                                              @Param("currencyCode") String currencyCode);
+  Optional<LedgerAccount> findSystemAccount(
+      @Param("typeCode") String typeCode, @Param("currencyCode") String currencyCode);
+
+  @Query(
+      """
+              Select la FROM LedgerAccount la
+              JOIN la.wallet w
+              JOIN la.ledgerAccountType lat
+              JOIN w.account acc
+              JOIN acc.accountDetails ad
+              WHERE la.wallet IS NOT NULL AND lat.typeCode IN('WALLET_HELD', 'WALLET_AVAILABLE') AND ad.accountNumber = :accountNumber
+              """)
+  List<LedgerAccount> findAllByAccountNumber(@Param("accountNumber") String accountNumber);
 }

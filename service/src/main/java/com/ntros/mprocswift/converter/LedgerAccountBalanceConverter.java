@@ -16,6 +16,7 @@ public class LedgerAccountBalanceConverter
     dto.setBalance(model.getBalanceMinor());
     dto.setUpdatedAt(model.getUpdatedAt().toString());
     var acc = model.getLedgerAccount();
+    dto.setAccountCurrency(acc.getCurrency().getCurrencyCode());
     dto.setType(acc.getLedgerAccountType().getTypeCode());
     dto.setOwnerId(resolveOwner(acc));
     return dto;

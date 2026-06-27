@@ -1,6 +1,7 @@
 package com.ntros.mprocswift.converter;
 
 import com.ntros.mprocswift.dto.ledger.LedgerAccountDTO;
+import com.ntros.mprocswift.model.currency.MoneyConverter;
 import com.ntros.mprocswift.model.ledger.LedgerAccount;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,13 +12,19 @@ public class LedgerAccountConverter implements Converter<LedgerAccountDTO, Ledge
   @Override
   public LedgerAccountDTO toDto(LedgerAccount model) {
     LedgerAccountDTO dto = new LedgerAccountDTO();
+    dto.setLedgerAccountId(model.getLedgerAccountId());
     dto.setActive(model.isActive());
     dto.setLedgerAccountName(model.getLedgerAccountName());
     dto.setCurrencyCode(model.getCurrency().getCurrencyCode());
     log.info("ledgerAccount: {}, wallet: {}", model, model.getWallet());
     dto.setOwnerAccountNumber(model.getWallet().getAccount().getAccNumber());
-
     dto.setLedgerAccountType(model.getLedgerAccountType().getTypeCode());
+
+    var balance = model.getBalance();
+    dto.setBalance(
+        MoneyConverter.toMajor(balance.getBalanceMinor(), model.getCurrency().getExponent())
+            .toString());
+    dto.setBalanceUpdatedAt(balance.getUpdatedAt().toString());
     return dto;
   }
 

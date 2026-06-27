@@ -1,5 +1,6 @@
 package com.ntros.mprocswift.repository.ledger;
 
+import com.ntros.mprocswift.model.ledger.LedgerAccount;
 import com.ntros.mprocswift.model.ledger.LedgerAccountBalance;
 import jakarta.persistence.LockModeType;
 
@@ -58,4 +59,24 @@ public interface LedgerAccountBalanceRepository
                   WHERE la.ledgerAccountType.typeCode = 'WALLET_AVAILABLE'
                   """)
   List<LedgerAccountBalance> findAllAvailable();
+
+  @Query(
+"""
+            SELECT lab FROM LedgerAccountBalance lab
+            JOIN lab.ledgerAccount la
+            JOIN la.wallet w
+            WHERE w IS NOT NULL AND la.ownerKey = CONCAT('W:', :accountNumber)
+        """)
+  List<LedgerAccountBalance> findAllForAccountNumber(@Param("accountNumber") String accountNumber);
+
+  @Query(
+"""
+    SELECT lab FROM LedgerAccountBalance lab
+    JOIN lab.ledgerAccount la
+    WHERE la.wallet IS NULL AND la.merchant IS NULL AND la.externalAccount IS NULL
+""")
+  List<LedgerAccountBalance> findAllSystemBalances();
+
+  Optional<LedgerAccountBalance> findByLedgerAccount(LedgerAccount ledgerAccount);
+
 }

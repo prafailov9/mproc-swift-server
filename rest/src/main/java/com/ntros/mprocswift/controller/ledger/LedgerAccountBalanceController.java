@@ -50,4 +50,12 @@ public class LedgerAccountBalanceController {
             .map(ledgerAccountBalanceConverter::toDto)
             .toList());
   }
+
+  @GetMapping("/all-sys")
+  public ResponseEntity<?> getAllSystemBalances() {
+    return ResponseEntity.ok(
+        ledgerAccountBalanceService.getAllSystemBalances().stream()
+            .map(ledgerAccountBalanceConverter::toDto)
+            .toList());
+  }
 }

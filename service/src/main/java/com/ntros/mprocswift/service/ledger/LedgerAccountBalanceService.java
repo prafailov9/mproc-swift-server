@@ -6,6 +6,9 @@ import com.ntros.mprocswift.model.ledger.LedgerAccountBalance;
 import java.util.List;
 
 public interface LedgerAccountBalanceService {
+
+  LedgerAccountBalance createLedgerAccountBalance(LedgerAccountBalance ledgerAccountBalance);
+
   LedgerAccountBalance getLedgerAccountBalance(LedgerAccount ledgerAccount);
 
   LedgerAccountBalance getLedgerAccountBalance(Integer ledgerAccountId);
@@ -15,5 +18,7 @@ public interface LedgerAccountBalanceService {
   List<LedgerAccountBalance> getAllLedgerAccountBalances();
   List<LedgerAccountBalance> getAllHeldLedgerAccountBalances();
   List<LedgerAccountBalance> getAllAvailableLedgerAccountBalances();
+  List<LedgerAccountBalance> getAllSystemBalances();
+
   boolean hasAvailableFunds(int walletId, long minAllowedFunds);
 }

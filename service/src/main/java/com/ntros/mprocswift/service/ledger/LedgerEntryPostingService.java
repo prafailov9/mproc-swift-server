@@ -55,11 +55,7 @@ public class LedgerEntryPostingService implements LedgerEntryService {
     Collections.sort(accountIds);
 
     for (Integer ledgerAccountId : accountIds) {
-      LedgerAccountBalance lockedBalance =
-          ledgerAccountBalanceService.getLedgerAccountBalance(ledgerAccountId);
-      if (lockedBalance == null) {
-        throw new NotFoundException("Missing balance row for ledgerAccountId=" + ledgerAccountId);
-      }
+      LedgerAccountBalance lockedBalance = getLockedBalance(ledgerAccountId, postings);
       log.info("locking balance: {}", lockedBalance);
 
       long delta = deltaByAccountId.get(ledgerAccountId);
@@ -75,6 +71,44 @@ public class LedgerEntryPostingService implements LedgerEntryService {
   @Override
   public List<LedgerEntry> getAllForTransaction(Transaction transaction) {
     return ledgerEntryRepository.findAllByTransaction(transaction);
+  }
+
+  private LedgerAccountBalance getLockedBalance(int ledgerAccountId, List<Posting> postings) {
+    // attempt locked balance read
+    try {
+      return ledgerAccountBalanceService.getLedgerAccountBalance(ledgerAccountId);
+    } catch (NotFoundException ex) {
+      log.error(
+          "Balance for ledgerAccountId:{} not found. Creating Balance row...", ledgerAccountId);
+    }
+
+    // thus far, we know the account exists but its balance row is missing, most probably for a
+    // FX_BRIDGE system account for a non-base currency(USD, EUR).
+    var balance = createBalanceForLedgerAccount(ledgerAccountId, postings);
+    // create the balance
+    ledgerAccountBalanceService.createLedgerAccountBalance(balance);
+    log.info("Balance row created. Attempting read again");
+    return ledgerAccountBalanceService.getLedgerAccountBalance(ledgerAccountId);
+  }
+
+  private LedgerAccountBalance createBalanceForLedgerAccount(
+      int ledgerAccountId, List<Posting> postings) {
+    var acc = new LedgerAccount();
+    // find the account from the postings
+    for (var posting : postings) {
+      if (posting.creditAccount().getLedgerAccountId() == ledgerAccountId) {
+        acc = posting.creditAccount();
+        break;
+      }
+      if (posting.debitAccount().getLedgerAccountId() == ledgerAccountId) {
+        acc = posting.debitAccount();
+        break;
+      }
+    }
+    var balance = new LedgerAccountBalance();
+    balance.setLedgerAccount(acc);
+    balance.setBalanceMinor(0);
+    return balance;
   }
 
   private void validateBalancedLedgersByCurrency(
