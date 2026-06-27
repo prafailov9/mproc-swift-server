@@ -11,25 +11,25 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class MoneyTransferDataService implements MoneyTransferService {
 
-    private final MoneyTransferRepository moneyTransferRepository;
+  private final MoneyTransferRepository moneyTransferRepository;
 
-    @Autowired
-    public MoneyTransferDataService(final MoneyTransferRepository moneyTransferRepository) {
-        this.moneyTransferRepository = moneyTransferRepository;
-    }
+  @Autowired
+  public MoneyTransferDataService(final MoneyTransferRepository moneyTransferRepository) {
+    this.moneyTransferRepository = moneyTransferRepository;
+  }
 
-    @Override
-    public CompletableFuture<List<MoneyTransfer>> getAllTransfersForAccount(String accountNumber) {
-        return CompletableFuture.supplyAsync(() -> moneyTransferRepository.findAllByAccount(accountNumber));
-    }
+  @Override
+  public List<MoneyTransfer> getAllTransfersForAccount(String accountNumber) {
+    return moneyTransferRepository.findAllByAccount(accountNumber);
+  }
 
-    @Override
-    public CompletableFuture<List<MoneyTransfer>> getAllWithdrawTransfersForAccount(String accountNumber) {
-        return CompletableFuture.supplyAsync(() -> moneyTransferRepository.findAllWithdrawsByAccount(accountNumber));
-    }
+  @Override
+  public List<MoneyTransfer> getAllWithdrawTransfersForAccount(String accountNumber) {
+    return moneyTransferRepository.findAllWithdrawsByAccount(accountNumber);
+  }
 
-    @Override
-    public CompletableFuture<List<MoneyTransfer>> getAllReceivedTransfersForAccount(String accountNumber) {
-        return CompletableFuture.supplyAsync(() -> moneyTransferRepository.findAllReceivedByAccount(accountNumber));
-    }
+  @Override
+  public List<MoneyTransfer> getAllReceivedTransfersForAccount(String accountNumber) {
+    return moneyTransferRepository.findAllReceivedByAccount(accountNumber);
+  }
 }

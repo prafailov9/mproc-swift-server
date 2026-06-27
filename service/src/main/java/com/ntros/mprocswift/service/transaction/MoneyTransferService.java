@@ -11,9 +11,9 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface MoneyTransferService {
 
-    CompletableFuture<List<MoneyTransfer>> getAllTransfersForAccount(String accountNumber);
+    List<MoneyTransfer> getAllTransfersForAccount(String accountNumber);
 
-    CompletableFuture<List<MoneyTransfer>> getAllWithdrawTransfersForAccount(String accountNumber);
+    List<MoneyTransfer> getAllWithdrawTransfersForAccount(String accountNumber);
 
-    CompletableFuture<List<MoneyTransfer>> getAllReceivedTransfersForAccount(String accountNumber);
+    List<MoneyTransfer> getAllReceivedTransfersForAccount(String accountNumber);
 }
