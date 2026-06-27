@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.model.currency.conversion;
+package com.ntros.mprocswift.dto.quotes.conversion;
 
 import com.ntros.mprocswift.model.currency.Money;
 

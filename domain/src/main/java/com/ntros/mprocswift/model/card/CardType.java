@@ -1,15 +1,13 @@
 package com.ntros.mprocswift.model.card;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "card_types")
 public class CardType {
 
     @Id

@@ -2,11 +2,8 @@ package com.ntros.mprocswift.service.account;
 
 import com.ntros.mprocswift.exceptions.AccountConstraintFailureException;
 import com.ntros.mprocswift.exceptions.AccountNotFoundException;
-import com.ntros.mprocswift.exceptions.NotFoundException;
-import com.ntros.mprocswift.exceptions.WalletNotFoundException;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.account.Account;
-import com.ntros.mprocswift.model.currency.ConvertedAmount;
 import com.ntros.mprocswift.repository.WalletRepository;
 import com.ntros.mprocswift.repository.account.AccountRepository;
 import com.ntros.mprocswift.service.currency.exchangerate.CurrencyExchangeRateDataService;
@@ -20,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.concurrent.CompletableFuture.supplyAsync;

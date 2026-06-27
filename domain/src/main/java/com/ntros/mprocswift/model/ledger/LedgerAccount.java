@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "ledger_accounts")
 public class LedgerAccount {
 
   @Id

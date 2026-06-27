@@ -2,7 +2,7 @@ package com.ntros.mprocswift.dto.quotes;
 
 import com.ntros.mprocswift.dto.MoneyDto;
 import com.ntros.mprocswift.model.currency.MoneyConverter;
-import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
+import com.ntros.mprocswift.dto.quotes.conversion.ConversionQuote;
 import lombok.Data;
 
 import java.util.List;

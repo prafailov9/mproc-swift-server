@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "fx_quotes")
 public class FxQuote {
 
   @Id

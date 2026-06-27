@@ -12,6 +12,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "card_authorizations")
 public class CardAuthorization {
     // the Primary key is a foreign key to the transaction table.
     @Id

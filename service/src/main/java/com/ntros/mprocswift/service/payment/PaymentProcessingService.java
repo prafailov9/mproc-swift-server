@@ -11,8 +11,6 @@ import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.card.Card;
 import com.ntros.mprocswift.model.currency.Currency;
 import com.ntros.mprocswift.model.currency.MoneyConverter;
-import com.ntros.mprocswift.model.currency.RatedMoneyMovement;
-import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.card.AuthorizedHold;
 import com.ntros.mprocswift.model.transactions.card.CardAuthorization;

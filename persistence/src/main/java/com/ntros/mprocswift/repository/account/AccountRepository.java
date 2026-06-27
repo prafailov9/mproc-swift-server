@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer> {
 
-    @Query(value = "SELECT a.* FROM account a " +
+    @Query(value = "SELECT a.* FROM accounts a " +
             "JOIN account_details ad ON a.account_details_id=ad.account_details_id " +
             "WHERE ad.account_number = :accountNumber", nativeQuery = true)
     Optional<Account> findByAccountNumber(@Param("accountNumber") String accountNumber);
@@ -22,8 +22,8 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
             "WHERE ad.accountName = :accountName")
     Optional<Account> findByAccountName(@Param("accountName") String accountName);
 
-    @Query(value = "SELECT a.* FROM account a " +
-            "JOIN wallet w ON a.account_id = w.account_id " +
+    @Query(value = "SELECT a.* FROM accounts a " +
+            "JOIN wallets w ON a.account_id = w.account_id " +
             "GROUP BY a.account_id " +
             "HAVING COUNT(w.wallet_id) = :count", nativeQuery = true)
     List<Account> findAllByWalletCount(@Param("count") int count);

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode
+@Table(name = "currencies")
 public class Currency {
 
   @Id

@@ -11,6 +11,7 @@ import java.time.OffsetDateTime;
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = {"userId", "username", "email"})
+@Table(name = "users")
 public class User {
 
     @Id

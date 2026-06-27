@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "currency_exchange_rates")
 public class CurrencyExchangeRate {
 
     @Id

@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(of = {"walletId", "account", "currency"})
+@Table(name = "wallets")
 public class Wallet {
 
   @Id

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "transactions")
 public class Transaction {
 
   @Id

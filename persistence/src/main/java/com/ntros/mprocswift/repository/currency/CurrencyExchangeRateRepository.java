@@ -22,9 +22,9 @@ public interface CurrencyExchangeRateRepository extends JpaRepository<CurrencyEx
 
 
     @Query(value = """
-            SELECT r.* FROM currency_exchange_rate r
-            JOIN currency sc ON sc.currency_id=r.source_currency_id
-            JOIN currency tc ON tc.currency_id=r.target_currency_id
+            SELECT r.* FROM currency_exchange_rates r
+            JOIN currencies sc ON sc.currency_id=r.source_currency_id
+            JOIN currencies tc ON tc.currency_id=r.target_currency_id
             WHERE sc.currency_code= :sourceCode AND tc.currency_code= :targetCode""", nativeQuery = true)
     Optional<CurrencyExchangeRate> findExchangeRateBySourceCodeAndTargetCode(@Param("sourceCode") String sourceCode, @Param("targetCode") String targetCode);
 

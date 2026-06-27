@@ -1,5 +1,5 @@
 -- ledger account types
-INSERT INTO ledger_account_type (type_code, type_description) VALUES
+INSERT INTO ledger_account_types (type_code, type_description) VALUES
 ('WALLET_AVAILABLE',   'Spendable funds in a user wallet'),
 ('WALLET_HELD',        'Funds reserved by card authorizations'),
 ('MERCHANT_SETTLEMENT','Money accumulated for merchant payouts'),

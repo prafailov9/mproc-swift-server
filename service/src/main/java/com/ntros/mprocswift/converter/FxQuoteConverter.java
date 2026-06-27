@@ -2,8 +2,7 @@ package com.ntros.mprocswift.converter;
 
 import com.ntros.mprocswift.model.currency.FxQuote;
 import com.ntros.mprocswift.model.currency.Money;
-import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ntros.mprocswift.dto.quotes.conversion.ConversionQuote;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package com.ntros.mprocswift.converter;
 
 import com.ntros.mprocswift.model.currency.FxLeg;
-import com.ntros.mprocswift.model.currency.conversion.ConversionLeg;
+import com.ntros.mprocswift.dto.quotes.conversion.ConversionLeg;
 import org.springframework.stereotype.Component;
 
 @Component

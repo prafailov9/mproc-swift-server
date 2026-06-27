@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "authorized_holds")
 public class AuthorizedHold {
 
   @Id

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode
+@Table(name = "account_details")
 public class AccountDetails {
 
     @Id

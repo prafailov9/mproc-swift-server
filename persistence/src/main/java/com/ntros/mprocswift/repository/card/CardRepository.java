@@ -14,7 +14,7 @@ public interface CardRepository extends JpaRepository<Card, Integer> {
 
     Optional<Card> findByCardIdHash(@Param("cardIdHash") String cardIdHash);
 
-    @Query(value = "SELECT * FROM card c " +
+    @Query(value = "SELECT * FROM cards c " +
             "WHERE c.card_provider= :cardProvider " +
             "AND c.card_number= :cardNumber " +
             "AND c.expiration_date= :expirationDate " +

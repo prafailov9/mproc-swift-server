@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "ledger_account_balance")
+@Table(name = "ledger_account_balances")
 @Data
 @RequiredArgsConstructor
 public class LedgerAccountBalance {

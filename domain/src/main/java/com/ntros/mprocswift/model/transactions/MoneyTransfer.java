@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "money_transfers")
 public class MoneyTransfer {
 
     // the Primary key is a foreign key to the transaction table.

@@ -1,15 +1,13 @@
 package com.ntros.mprocswift.model.transactions;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "transaction_types")
 public class TransactionType {
 
     @Id

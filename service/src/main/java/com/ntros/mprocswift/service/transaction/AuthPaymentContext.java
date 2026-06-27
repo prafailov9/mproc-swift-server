@@ -4,7 +4,7 @@ import com.ntros.mprocswift.model.Merchant;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.card.Card;
 import com.ntros.mprocswift.model.currency.Currency;
-import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
+import com.ntros.mprocswift.dto.quotes.conversion.ConversionQuote;
 
 public record AuthPaymentContext(
     Card card,

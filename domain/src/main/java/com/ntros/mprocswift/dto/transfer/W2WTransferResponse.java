@@ -1,19 +1,11 @@
 package com.ntros.mprocswift.dto.transfer;
 
-import com.ntros.mprocswift.dto.ExchangeRateDto;
 import com.ntros.mprocswift.dto.MoneyDto;
 import com.ntros.mprocswift.dto.quotes.FxQuoteDto;
-import com.ntros.mprocswift.model.currency.FxQuote;
-import com.ntros.mprocswift.model.currency.Money;
-import com.ntros.mprocswift.model.currency.MoneyMovement;
-import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
 @Data
 @EqualsAndHashCode(

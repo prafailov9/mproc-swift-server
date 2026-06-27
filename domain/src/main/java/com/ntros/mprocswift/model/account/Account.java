@@ -21,6 +21,7 @@ import java.util.Optional;
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"accountId", "user", "accountDetails"})
+@Table(name = "accounts")
 public class Account {
 
   @Id
@@ -71,7 +72,9 @@ public class Account {
   }
 
   public Optional<Wallet> getWallet(Currency currency) {
-    return wallets.stream().filter(x -> x.getCurrency().getCurrencyCode().equalsIgnoreCase(currency.getCurrencyCode())).findFirst();
+    return wallets.stream()
+        .filter(x -> x.getCurrency().getCurrencyCode().equalsIgnoreCase(currency.getCurrencyCode()))
+        .findFirst();
   }
 
   public Optional<Wallet> getMainWallet() {

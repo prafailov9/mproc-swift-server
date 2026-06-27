@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "fx_legs")
 public class FxLeg {
 
   @Id

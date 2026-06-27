@@ -1,7 +1,7 @@
 package com.ntros.mprocswift.dto.quotes;
 
 import com.ntros.mprocswift.model.currency.MoneyConverter;
-import com.ntros.mprocswift.model.currency.conversion.ConversionLeg;
+import com.ntros.mprocswift.dto.quotes.conversion.ConversionLeg;
 import lombok.Data;
 
 @Data

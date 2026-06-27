@@ -23,7 +23,7 @@ import java.time.OffsetDateTime;
  */
 @Entity
 @Data
-@Table(name = "idempotency_key")
+@Table(name = "idempotency_keys")
 public class IdempotencyKey implements Persistable<String> {
   @Id
   @Column(name = "idempotency_key", nullable = false)

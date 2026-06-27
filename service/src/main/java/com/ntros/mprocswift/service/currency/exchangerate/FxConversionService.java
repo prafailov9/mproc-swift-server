@@ -1,7 +1,7 @@
 package com.ntros.mprocswift.service.currency.exchangerate;
 
 import com.ntros.mprocswift.model.currency.Currency;
-import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
+import com.ntros.mprocswift.dto.quotes.conversion.ConversionQuote;
 
 public interface FxConversionService {
 

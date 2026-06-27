@@ -13,7 +13,7 @@ import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.exceptions.WalletNotFoundException;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.currency.*;
-import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
+import com.ntros.mprocswift.dto.quotes.conversion.ConversionQuote;
 import com.ntros.mprocswift.model.ledger.LedgerAccount;
 import com.ntros.mprocswift.model.transactions.*;
 import com.ntros.mprocswift.model.transactions.idempotency.IdempotencyKey;

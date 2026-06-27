@@ -13,6 +13,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "hold_settlements")
 public class HoldSettlement {
 
   @Id

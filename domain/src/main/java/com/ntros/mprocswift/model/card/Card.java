@@ -10,6 +10,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "cards")
 public class Card {
 
     @Id

@@ -13,9 +13,9 @@ public interface MoneyTransferRepository extends JpaRepository<MoneyTransfer, In
 
     @Query(value = """
             SELECT mt.*
-            FROM money_transfer mt
-            JOIN account sa ON mt.sender_account_id = sa.account_id
-            JOIN account ra ON mt.receiver_account_id = ra.account_id
+            FROM money_transfers mt
+            JOIN accounts sa ON mt.sender_account_id = sa.account_id
+            JOIN accounts ra ON mt.receiver_account_id = ra.account_id
             JOIN account_details sad ON sa.account_details_id=sad.account_details_id
             JOIN account_details rad ON ra.account_details_id=rad.account_details_id
             WHERE
@@ -24,8 +24,8 @@ public interface MoneyTransferRepository extends JpaRepository<MoneyTransfer, In
 
     @Query(value = """
             SELECT mt.*
-            FROM money_transfer mt
-            JOIN account a ON mt.sender_account_id=a.account_id
+            FROM money_transfers mt
+            JOIN accounts a ON mt.sender_account_id=a.account_id
             JOIN account_details ad ON a.account_id=ad.account_id
             WHERE
             ad.account_number= :accountNumber""", nativeQuery = true)
@@ -33,8 +33,8 @@ public interface MoneyTransferRepository extends JpaRepository<MoneyTransfer, In
 
     @Query(value = """
             SELECT mt.*
-            FROM money_transfer mt
-            JOIN account a ON mt.receiver_account_id=a.account_id
+            FROM money_transfers mt
+            JOIN accounts a ON mt.receiver_account_id=a.account_id
             JOIN account_details ad ON a.account_id=ad.account_id
             WHERE
             ad.account_number= :accountNumber""", nativeQuery = true)

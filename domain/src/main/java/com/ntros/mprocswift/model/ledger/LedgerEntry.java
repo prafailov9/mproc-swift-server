@@ -13,6 +13,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "ledger_entries")
 public class LedgerEntry {
 
   @Id

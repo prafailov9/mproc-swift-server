@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Data
 @RequiredArgsConstructor
+@Table(name = "external_accounts")
 public class ExternalAccount {
 
     @Id
