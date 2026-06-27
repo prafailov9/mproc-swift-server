@@ -117,11 +117,11 @@ CREATE TABLE IF NOT EXISTS currency_exchange_rate (
     source_currency_id INT NOT NULL,
     target_currency_id INT NOT NULL,
 
-    exchange_rate DECIMAL(24, 10) NOT NULL, -- 24 total digits, 10 after decimal point
+    exchange_rate DECIMAL(38, 18) NOT NULL, -- 24 total digits, 10 after decimal point
     updated_date DATETIME ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (source_currency_id) REFERENCES currency(currency_id) ON DELETE CASCADE,
-    FOREIGN KEY (target_currency_id) REFERENCES currency(currency_id) ON DELETE CASCADE
+    FOREIGN KEY (source_currency_id) REFERENCES currency(currency_id),
+    FOREIGN KEY (target_currency_id) REFERENCES currency(currency_id)
 );
 
 CREATE INDEX IDX_exchange_rate ON currency_exchange_rate(exchange_rate);
@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS ledger_account (
                 WHEN wallet_id IS NOT NULL THEN CONCAT('W:', wallet_id)
                 WHEN merchant_id IS NOT NULL THEN CONCAT('M:', merchant_id)
                 WHEN external_account_id IS NOT NULL THEN CONCAT('E:', external_account_id)
-                ELSE 'SYS'
+                ELSE 'SYSTEM_ACCOUNT'
             END
         ) STORED,
 
@@ -349,6 +349,48 @@ CREATE TABLE hold_settlement (
     FOREIGN KEY (merchant_id) REFERENCES merchant(merchant_id)
 );
 
+-- FX audit trail
+CREATE TABLE IF NOT EXISTS fx_quote (
+    fx_quote_id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id INT NOT NULL,
+
+    source_currency_id INT NOT NULL,
+    target_currency_id INT NOT NULL,
+
+    source_amount BIGINT NOT NULL,
+    target_amount BIGINT NOT NULL,
+
+    final_rate DECIMAL(38, 18) NOT NULL,
+
+    FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id),
+    FOREIGN KEY (source_currency_id) REFERENCES currency(currency_id),
+    FOREIGN KEY (target_currency_id) REFERENCES currency(currency_id)
+);
+
+-- snapshot if historical rate conversion. AS the exchange_rate table might change, it is not reliable for audit.
+-- Use this one to preserve historical accuracy.
+CREATE TABLE IF NOT EXISTS fx_leg(
+    fx_leg_id INT AUTO_INCREMENT PRIMARY KEY,
+    fx_quote_id INT NOT NULL,
+
+    seq INT NOT NULL, -- position within the quote
+
+    input_currency_id INT NOT NULL,
+    output_currency_id INT NOT NULL,
+
+    input_amount BIGINT NOT NULL,
+    output_amount BIGINT NOT NULL,
+
+    applied_rate DECIMAL(38, 18) NOT NULL,
+    FOREIGN KEY (fx_quote_id) REFERENCES fx_quote(fx_quote_id),
+    FOREIGN KEY (input_currency_id) REFERENCES currency(currency_id),
+    FOREIGN KEY (output_currency_id) REFERENCES currency(currency_id)
+);
+
+-- enforce unique sequence per quote row
+CREATE UNIQUE INDEX idx_uq_seq_quote_id ON fx_leg(fx_quote_id, seq);
+
+
 -- holds the entries of money movements for a user/merchant/external account, etc.
 -- For a given transaction_id and currency, the sum of amount across all rows must be 0.
 CREATE TABLE IF NOT EXISTS ledger_entry (
@@ -373,20 +415,6 @@ CREATE TABLE IF NOT EXISTS ledger_entry (
 );
 CREATE UNIQUE INDEX u_idx_entry_group_leg ON ledger_entry (entry_group_key, entry_seq);
 
--- CREATE TABLE idempotency_record (
---     idempotency_id BIGINT AUTO_INCREMENT PRIMARY KEY,
---     idempotency_key VARCHAR(255) NOT NULL,
---     request_hash CHAR(64),
---     transaction_id INT NULL,
---     status ENUM('IN_PROGRESS', 'COMPLETED', 'FAILED') NOT NULL,
---     status_code INT NULL,
---     response_body VARCHAR(5000) NULL,
---
---     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
---     expires_at DATETIME NULL,
---     CONSTRAINT uq_idempotency_key UNIQUE (idempotency_key),
---     CONSTRAINT fk_idempotency_transaction FOREIGN KEY (transaction_id) REFERENCES `transaction`(transaction_id)
--- );
 CREATE TABLE idempotency_key (
     idempotency_key   VARCHAR(255) PRIMARY KEY,   -- supplied by the client
     request_hash      CHAR(64),                   -- hash of the request params

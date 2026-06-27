@@ -12,6 +12,7 @@ import com.ntros.mprocswift.model.card.Card;
 import com.ntros.mprocswift.model.currency.Currency;
 import com.ntros.mprocswift.model.currency.MoneyConverter;
 import com.ntros.mprocswift.model.currency.RatedMoneyMovement;
+import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.card.AuthorizedHold;
 import com.ntros.mprocswift.model.transactions.card.CardAuthorization;
@@ -19,7 +20,9 @@ import com.ntros.mprocswift.model.transactions.card.HoldSettlement;
 import com.ntros.mprocswift.service.account.AccountService;
 import com.ntros.mprocswift.service.card.CardService;
 import com.ntros.mprocswift.service.currency.CurrencyDataService;
-import com.ntros.mprocswift.service.currency.CurrencyExchangeRateDataService;
+import com.ntros.mprocswift.service.currency.audit.FxQuoteService;
+import com.ntros.mprocswift.service.currency.exchangerate.CurrencyExchangeRateDataService;
+import com.ntros.mprocswift.service.currency.exchangerate.FxRateConversionService;
 import com.ntros.mprocswift.service.merchant.MerchantService;
 import com.ntros.mprocswift.service.transaction.AuthPaymentContext;
 import com.ntros.mprocswift.service.transaction.TransactionService;
@@ -28,7 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
@@ -37,28 +42,39 @@ public class PaymentProcessingService implements PaymentService {
   private final MerchantService merchantService;
   private final CardService cardService;
   private final CurrencyDataService currencyDataService;
-  private final CurrencyExchangeRateDataService currencyExchangeRateDataService;
   private final TransactionService transactionService;
   private final WalletService walletService;
   private final AccountService accountService;
+  private final FxRateConversionService fxRateConversionService;
+  private final FxQuoteService fxQuoteService;
+  private final PlatformTransactionManager platformTransactionManager;
+  private final TransactionTemplate transactionTemplate;
 
   @Autowired
   public PaymentProcessingService(
+      PlatformTransactionManager platformTransactionManager,
+      TransactionTemplate transactionTemplate,
       MerchantService merchantService,
       CardService cardService,
       CurrencyDataService currencyDataService,
       CurrencyExchangeRateDataService currencyExchangeRateDataService,
       TransactionService transactionService,
       WalletService walletService,
-      AccountService accountService) {
+      AccountService accountService,
+      FxRateConversionService fxRateConversionService,
+      FxQuoteService fxQuoteService) {
+
+    this.platformTransactionManager = platformTransactionManager;
+    this.transactionTemplate = new TransactionTemplate(platformTransactionManager);
 
     this.merchantService = merchantService;
     this.cardService = cardService;
     this.currencyDataService = currencyDataService;
-    this.currencyExchangeRateDataService = currencyExchangeRateDataService;
     this.transactionService = transactionService;
     this.walletService = walletService;
     this.accountService = accountService;
+    this.fxRateConversionService = fxRateConversionService;
+    this.fxQuoteService = fxQuoteService;
   }
 
   @Override
@@ -76,7 +92,14 @@ public class PaymentProcessingService implements PaymentService {
           walletService.getLockedWallet(getAvailableWallet(card, paymentRequest).getWalletId());
 
       // run FX conversion if needed
-      long convertedAmount = getAmount(lockedWallet, paymentRequest);
+      var quote =
+          fxRateConversionService.convert(
+              MoneyConverter.toMinor(
+                  paymentRequest.getAmount(), lockedWallet.getCurrency().getExponent()),
+              lockedWallet.getCurrency().getCurrencyCode(),
+              paymentRequest.getCurrency());
+
+      long convertedAmount = quote.targetMoney().minorAmount();
 
       // Sum active holds for this wallet inside the same TX
       long existingHolds = transactionService.getHoldAmountSumForWallet(lockedWallet);
@@ -89,7 +112,7 @@ public class PaymentProcessingService implements PaymentService {
                 totalReserved, lockedWallet.getBalance()));
       }
       AuthPaymentContext ctx =
-          new AuthPaymentContext(card, merchant, lockedWallet, convertedAmount, currency);
+          new AuthPaymentContext(card, merchant, lockedWallet, convertedAmount, currency, quote);
 
       // reserve money
       String authCode = transactionService.placeHold(ctx);
@@ -158,7 +181,8 @@ public class PaymentProcessingService implements PaymentService {
             cardAuth.getMerchant(),
             wallet,
             amountToSettle,
-            wallet.getCurrency()));
+            wallet.getCurrency(),
+            null));// TODO: decide if quotes should be used
 
     // build response
     return getHoldSettlementResponse(hold);
@@ -192,27 +216,21 @@ public class PaymentProcessingService implements PaymentService {
     }
     return account
         .getWalletByCurrencyCode(request.getCurrency())
-        .orElse(account.getMainWallet().orElse(account.getWallets().get(0)));
-  }
-
-  private RatedMoneyMovement getAmountV2(
-      Wallet wallet, AuthorizePaymentRequest authorizePaymentRequest) {
-
-    return currencyExchangeRateDataService.convert(
-        MoneyConverter.toMinor(
-            authorizePaymentRequest.getAmount(), wallet.getCurrency().getExponent()),
-        wallet.getCurrency().getCurrencyCode(),
-        authorizePaymentRequest.getCurrency());
+        .orElse(account.getMainWallet().orElse(account.getWallets().getFirst()));
   }
 
   private long getAmount(Wallet wallet, AuthorizePaymentRequest authorizePaymentRequest) {
-    var ratedMoneyMovement =
-        currencyExchangeRateDataService.convert(
-            MoneyConverter.toMinor(
-                authorizePaymentRequest.getAmount(), wallet.getCurrency().getExponent()),
+    var sourceAmount =
+        MoneyConverter.toMinor(
+            authorizePaymentRequest.getAmount(), wallet.getCurrency().getExponent());
+
+    var quote =
+        fxRateConversionService.convert(
+            sourceAmount,
             wallet.getCurrency().getCurrencyCode(),
             authorizePaymentRequest.getCurrency());
-    return ratedMoneyMovement.moneyMovement().receivedMoney().minorAmount();
+
+    return quote.targetMoney().minorAmount();
   }
 
   private AuthorizePaymentResponse buildSuccessAuthorizationResponse(

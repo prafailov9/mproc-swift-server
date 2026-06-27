@@ -1,6 +1,7 @@
 package com.ntros.mprocswift.handler.transfer;
 
 import com.ntros.mprocswift.dto.transfer.W2WTransferResponse;
+import com.ntros.mprocswift.exceptions.IdempotencyKeyConflictException;
 import com.ntros.mprocswift.exceptions.TransferProcessingFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,18 @@ public class FailedTransferResponseExceptionHandler {
   @ExceptionHandler(TransferProcessingFailedException.class)
   public W2WTransferResponse handleFailedResponse(TransferProcessingFailedException exception) {
     // TODO: make generic for all transfer types
+
+    W2WTransferResponse response = new W2WTransferResponse();
+    response.setStatus(FAILED);
+    response.setDesc("Error: " + exception.getMessage());
+    response.setFresh(true);
+    return response;
+  }
+
+  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  @ExceptionHandler(IdempotencyKeyConflictException.class)
+  public W2WTransferResponse handleFailedIdempotencyCheck(
+      IdempotencyKeyConflictException exception) {
 
     W2WTransferResponse response = new W2WTransferResponse();
     response.setStatus(FAILED);

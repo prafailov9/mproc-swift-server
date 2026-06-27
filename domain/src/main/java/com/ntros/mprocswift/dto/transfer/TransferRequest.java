@@ -16,10 +16,10 @@ import java.math.BigDecimal;
 @GreaterThanZeroTransferAmount
 public abstract class TransferRequest {
 
-  @NotNull(message = "source AN cannot be null.")
-  @NotBlank(message = "source AN cannot be empty.")
-  //    @Pattern(regexp = "\\d+", message = "source AN must be a number.")
-  @Size(min = 8, max = 12, message = "Invalid source AN: must be 8 - 12 digits.")
+  @NotNull(message = "inputCurrency AN cannot be null.")
+  @NotBlank(message = "inputCurrency AN cannot be empty.")
+  //    @Pattern(regexp = "\\d+", message = "inputCurrency AN must be a number.")
+  @Size(min = 8, max = 12, message = "Invalid inputCurrency AN: must be 8 - 12 digits.")
   private String sourceAccountNumber;
 
   @NotNull(message = "Transfer amount cannot be null.")

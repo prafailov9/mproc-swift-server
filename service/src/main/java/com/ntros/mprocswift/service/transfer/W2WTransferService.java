@@ -1,7 +1,11 @@
-package com.ntros.mprocswift.service.transfer.sync;
+package com.ntros.mprocswift.service.transfer;
 
-import com.ntros.mprocswift.dto.ExchangeRateDto;
+import static com.ntros.mprocswift.model.transactions.idempotency.IdempotencyStatus.COMPLETED;
+
+import com.ntros.mprocswift.converter.FxLegConverter;
+import com.ntros.mprocswift.converter.FxQuoteConverter;
 import com.ntros.mprocswift.dto.MoneyDto;
+import com.ntros.mprocswift.dto.quotes.FxQuoteDto;
 import com.ntros.mprocswift.dto.transfer.W2WTransferRequest;
 import com.ntros.mprocswift.dto.transfer.W2WTransferResponse;
 import com.ntros.mprocswift.exceptions.InsufficientFundsException;
@@ -9,6 +13,7 @@ import com.ntros.mprocswift.exceptions.NotFoundException;
 import com.ntros.mprocswift.exceptions.WalletNotFoundException;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.currency.*;
+import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
 import com.ntros.mprocswift.model.ledger.LedgerAccount;
 import com.ntros.mprocswift.model.transactions.*;
 import com.ntros.mprocswift.model.transactions.idempotency.IdempotencyKey;
@@ -17,23 +22,23 @@ import com.ntros.mprocswift.repository.transaction.MoneyTransferRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionStatusRepository;
 import com.ntros.mprocswift.repository.transaction.TransactionTypeRepository;
-import com.ntros.mprocswift.service.currency.CurrencyExchangeRateService;
+import com.ntros.mprocswift.service.currency.audit.FxLegService;
+import com.ntros.mprocswift.service.currency.audit.FxQuoteService;
+import com.ntros.mprocswift.service.currency.exchangerate.CurrencyExchangeRateService;
+import com.ntros.mprocswift.service.currency.exchangerate.FxRateConversionService;
 import com.ntros.mprocswift.service.idempotency.IdempotencyKeyMarkingService;
 import com.ntros.mprocswift.service.ledger.LedgerAccountBalanceService;
 import com.ntros.mprocswift.service.ledger.LedgerAccountService;
 import com.ntros.mprocswift.service.ledger.LedgerEntryService;
 import com.ntros.mprocswift.service.ledger.Posting;
+import com.ntros.mprocswift.service.wallet.WalletService;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
-
-import com.ntros.mprocswift.service.wallet.WalletService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import static com.ntros.mprocswift.model.transactions.idempotency.IdempotencyStatus.COMPLETED;
 
 @Service
 @Slf4j
@@ -43,7 +48,7 @@ public class W2WTransferService
   private static final long MIN_ALLOWED_FUNDS = 100; // 1 major
 
   public W2WTransferService(
-      PlatformTransactionManager tm,
+      PlatformTransactionManager platformTransactionManager,
       TransactionRepository transactionRepository,
       TransactionTypeRepository transactionTypeRepository,
       TransactionStatusRepository transactionStatusRepository,
@@ -54,9 +59,14 @@ public class W2WTransferService
       LedgerAccountService ledgerAccountService,
       LedgerEntryService ledgerEntryService,
       LedgerAccountBalanceService ledgerAccountBalanceService,
-      IdempotencyKeyMarkingService idempotencyKeyService) {
+      IdempotencyKeyMarkingService idempotencyKeyService,
+      FxQuoteService fxQuoteService,
+      FxLegService fxLegService,
+      FxRateConversionService fxRateConversionService,
+      FxQuoteConverter fxQuoteConverter,
+      FxLegConverter fxLegConverter) {
     super(
-        tm,
+        platformTransactionManager,
         transactionRepository,
         transactionTypeRepository,
         transactionStatusRepository,
@@ -67,11 +77,23 @@ public class W2WTransferService
         ledgerAccountService,
         ledgerEntryService,
         ledgerAccountBalanceService,
-        idempotencyKeyService);
+        idempotencyKeyService,
+        fxQuoteService,
+        fxLegService,
+        fxRateConversionService,
+        fxQuoteConverter,
+        fxLegConverter);
   }
 
   @Override
   protected TransferState createLockedTransferState(W2WTransferRequest req) {
+    // validate request
+    if (req.getCurrencyCode().equals(req.getToCurrencyCode())) {
+      throw new IllegalArgumentException(
+          String.format(
+              "W2W error: source and target currencies are equal: %s", req.getCurrencyCode()));
+    }
+
     // 1. lock all wallets for this account number, prevents deadlocks + ensures both rows locked
     List<Wallet> lockedWallets = walletService.getAllWalletsLocked(req.getSourceAccountNumber());
 
@@ -107,40 +129,34 @@ public class W2WTransferService
           "Insufficient funds. balance=" + sender.getBalance() + " required=" + sentMinor);
     }
 
-    // 5. always fetch the rate, even if currencies are the same
-    RatedMoneyMovement ratedMoneyMovement =
-        currencyExchangeRateService.convert(
+    // 5. apply FX conversion
+    ConversionQuote quote =
+        fxRateConversionService.convert(
             sentMinor,
             sender.getCurrency().getCurrencyCode(),
             receiver.getCurrency().getCurrencyCode());
-
-    // safety: ensure sent side matches what we calculated
-    // (optional, but nice for invariants)
-    if (ratedMoneyMovement.moneyMovement().sentMoney().minorAmount() != sentMinor) {
-      // you can choose to enforce or just log
+    // check if requested sent amount matches the calculation
+    if (quote.sourceMoney().minorAmount() != sentMinor) {
       log.warn(
           "FX sent mismatch. calculated={}, fxService={}",
           sentMinor,
-          ratedMoneyMovement.moneyMovement().sentMoney().minorAmount());
+          quote.sourceMoney().minorAmount());
     }
 
     // 6. build tx row (store amount in sender currency minor units)
     Transaction txn =
-        buildTransaction(
-            sender,
-            ratedMoneyMovement.moneyMovement().sentMoney().minorAmount(),
-            req.getDescription());
+        buildTransaction(sender, quote.sourceMoney().minorAmount(), req.getDescription());
 
     // 7. build transfer plan
-    return new TransferState(txn, sender, receiver, ratedMoneyMovement);
+    return new TransferState(txn, sender, receiver, quote);
   }
 
   @Override
-  protected void apply(TransferState plan) {
-    Transaction txn = plan.transaction();
-    MoneyMovement movement = plan.ratedMoneyMovement().moneyMovement();
-    var receiver = plan.receiverWallet();
-    var sender = plan.senderWallet();
+  protected void apply(TransferState transferState) {
+    Transaction txn = transferState.transaction();
+    ConversionQuote quote = transferState.conversionQuote();
+    var receiver = transferState.receiverWallet();
+    var sender = transferState.senderWallet();
 
     transactionRepository.saveAndFlush(txn);
     MoneyTransfer moneyTransfer = new MoneyTransfer();
@@ -148,19 +164,35 @@ public class W2WTransferService
     moneyTransfer.setTransaction(txn);
     moneyTransfer.setSenderAccount(sender.getAccount());
     moneyTransfer.setReceiverAccount(receiver.getAccount());
-    moneyTransfer.setReceivedAmount(movement.receivedMoney().minorAmount());
+    moneyTransfer.setReceivedAmount(quote.targetMoney().minorAmount());
     moneyTransfer.setTargetCurrencyCode(receiver.getCurrency().getCurrencyCode());
 
     moneyTransferRepository.save(moneyTransfer);
 
-    List<Posting> postings = buildPostings(txn, sender, receiver, movement);
+    FxQuote fxQuote = fxQuoteConverter.toModel(quote);
+    List<FxLeg> fxLegs =
+        quote.legs().stream()
+            .map(
+                leg -> {
+                  var model = fxLegConverter.toModel(leg);
+                  model.setFxQuote(fxQuote);
+                  return model;
+                })
+            .toList();
+    fxQuote.setTransaction(txn);
+    fxQuoteService.createFxQuote(fxQuote);
+
+    fxLegService.createAllFxLegs(fxLegs);
+    fxQuote.setLegs(fxLegs);
+
+    List<Posting> postings = buildPostings(txn, sender, receiver, quote);
 
     ledgerEntryService.createLedgerEntries(txn, postings);
   }
 
   @Override
   protected W2WTransferResponse buildResponse(W2WTransferRequest request, TransferState plan) {
-    W2WTransferResponse response = assembleResponse(plan.transaction(), plan.ratedMoneyMovement());
+    W2WTransferResponse response = assembleResponse(plan.transaction(), plan.conversionQuote());
     response.setIdemKey(request.getRequestId());
     response.setFresh(true);
     response.setDesc("transfer successful");
@@ -187,18 +219,15 @@ public class W2WTransferService
   private W2WTransferResponse completedResponse(IdempotencyKey idempotencyKey) {
     Integer txnId = idempotencyKey.getTransactionId();
     var txn = transactionRepository.findById(txnId).orElseThrow();
-    var moneyTransfer = moneyTransferRepository.findById(txnId).orElseThrow();
-    Currency senderCurrency =
-        currencyRepository.findByCurrencyCode(txn.getCurrency().getCurrencyCode()).orElseThrow();
-    Currency receiverCurrency =
-        currencyRepository.findByCurrencyCode(moneyTransfer.getTargetCurrencyCode()).orElseThrow();
 
-    // TODO: add fx_quote for full rate conversion trail
-    var rate = currencyExchangeRateService.getExchangeRate(senderCurrency, receiverCurrency);
-    var mm =
-        new MoneyMovement(
-            txn.getAmount(), senderCurrency, moneyTransfer.getReceivedAmount(), receiverCurrency);
-    var res = assembleResponse(txn, new RatedMoneyMovement(mm, rate));
+    var fxQuote = fxQuoteService.getQuoteByTransaction(txn);
+    var fxLegs = fxQuote.getLegs();
+    var fxQuoteDto = fxQuoteConverter.toDto(fxQuote);
+    for (var leg : fxLegs) {
+      var dto = fxLegConverter.toDto(leg);
+      fxQuoteDto.legs().add(dto);
+    }
+    var res = assembleResponse(txn, fxQuoteDto);
     res.setDesc("transfer successful");
     res.setIdemKey(idempotencyKey.getIdempotencyKey());
     res.setStatus(idempotencyKey.getStatus());
@@ -219,42 +248,30 @@ public class W2WTransferService
         + "_"
         + request.getSourceAccountNumber()
         + "_"
-        + request.getAmount()
+        + new BigDecimal(request.getAmount().toString()).stripTrailingZeros().toPlainString()
         + "_"
         + request.getCurrencyCode()
         + "_"
-        + request.getToCurrencyCode()
-        + "_"
-        + request.getDescription();
+        + request.getToCurrencyCode();
   }
 
-  private W2WTransferResponse assembleResponse(
-      Transaction txn, RatedMoneyMovement ratedMoneyMovement) {
+  private W2WTransferResponse assembleResponse(Transaction txn, ConversionQuote quote) {
     var res = new W2WTransferResponse();
 
-    MoneyDto debited = buildMoneyDto(ratedMoneyMovement.moneyMovement().sentMoney());
-    MoneyDto credited = buildMoneyDto(ratedMoneyMovement.moneyMovement().receivedMoney());
+    MoneyDto debited = buildMoneyDto(quote.targetMoney());
+    MoneyDto credited = buildMoneyDto(quote.sourceMoney());
     res.setDebited(debited); // sender side
     res.setCredited(credited); // receiver side
-    res.setExchangeRate(buildExchangeRateDto(ratedMoneyMovement));
+    res.setFxQuoteDto(new FxQuoteDto(debited, credited, quote));
+    res.setRateUpdatedAt(
+        currencyExchangeRateService
+            .getUpdateDateForRate(
+                quote.legs().getLast().inputCurrency(), quote.legs().getLast().outputCurrency())
+            .toString());
     res.setFees(MoneyConverter.toMajor(txn.getFees(), txn.getCurrency().getExponent()));
     res.setProcessedAt(txn.getTransactionDate().toString());
     res.setStatus(COMPLETED);
     return res;
-  }
-
-  private ExchangeRateDto buildExchangeRateDto(RatedMoneyMovement ratedMoneyMovement) {
-    var exchangeRate = ratedMoneyMovement.currencyExchangeRate();
-    BigDecimal appliedRateValue = exchangeRate.getExchangeRate();
-    String source = exchangeRate.getSourceCurrency().getCurrencyCode();
-    String target = exchangeRate.getTargetCurrency().getCurrencyCode();
-
-    var exchangeRateDto = new ExchangeRateDto();
-    exchangeRateDto.setRateValue(appliedRateValue);
-    exchangeRateDto.setSource(source);
-    exchangeRateDto.setTarget(target);
-
-    return exchangeRateDto;
   }
 
   private MoneyDto buildMoneyDto(Money money) {
@@ -292,7 +309,7 @@ public class W2WTransferService
    * cross-currency: >2
    */
   private List<Posting> buildPostings(
-      Transaction tx, Wallet sender, Wallet receiver, MoneyMovement movement) {
+      Transaction tx, Wallet sender, Wallet receiver, ConversionQuote quote) {
     String entryGroupKey = "W2W:" + tx.getTransactionId();
     LedgerAccount senderAvail = ledgerAccountService.getAvailableForWallet(sender);
     LedgerAccount receiverAvail = ledgerAccountService.getAvailableForWallet(receiver);
@@ -305,7 +322,7 @@ public class W2WTransferService
           new Posting(
               receiverAvail,
               senderAvail,
-              movement.sentMoney().minorAmount(),
+              quote.sourceMoney().minorAmount(),
               "W2W: same currency transfer",
               entryGroupKey));
     }
@@ -317,13 +334,13 @@ public class W2WTransferService
         new Posting(
             senderBridge,
             senderAvail,
-            movement.sentMoney().minorAmount(),
+            quote.sourceMoney().minorAmount(),
             "W2W: sender -> FX bridge (" + sc.getCurrencyCode() + ")",
             entryGroupKey),
         new Posting(
             receiverAvail,
             receiverBridge,
-            movement.receivedMoney().minorAmount(),
+            quote.targetMoney().minorAmount(),
             "W2W: FX bridge -> receiver (" + rc.getCurrencyCode() + ")",
             entryGroupKey));
   }

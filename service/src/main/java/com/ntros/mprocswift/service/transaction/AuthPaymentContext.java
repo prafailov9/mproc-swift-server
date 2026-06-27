@@ -4,12 +4,12 @@ import com.ntros.mprocswift.model.Merchant;
 import com.ntros.mprocswift.model.Wallet;
 import com.ntros.mprocswift.model.card.Card;
 import com.ntros.mprocswift.model.currency.Currency;
-
-import java.math.BigDecimal;
+import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
 
 public record AuthPaymentContext(
     Card card,
     Merchant merchant,
     Wallet wallet,
     long authorizedAmount,
-    Currency requestedCurrency) {}
+    Currency requestedCurrency,
+    ConversionQuote conversionQuote) {}

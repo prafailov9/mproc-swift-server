@@ -1,15 +1,22 @@
-package com.ntros.mprocswift.service.transfer.sync;
+package com.ntros.mprocswift.service.transfer;
 
+import com.ntros.mprocswift.converter.FxLegConverter;
+import com.ntros.mprocswift.converter.FxQuoteConverter;
 import com.ntros.mprocswift.dto.transfer.TransferRequest;
 import com.ntros.mprocswift.dto.transfer.TransferResponse;
+import com.ntros.mprocswift.exceptions.CurrencyNotFoundException;
+import com.ntros.mprocswift.exceptions.IdempotencyKeyConflictException;
 import com.ntros.mprocswift.exceptions.TransferProcessingFailedException;
 import com.ntros.mprocswift.model.Wallet;
-import com.ntros.mprocswift.model.currency.RatedMoneyMovement;
+import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
 import com.ntros.mprocswift.model.transactions.Transaction;
 import com.ntros.mprocswift.model.transactions.idempotency.IdempotencyKey;
 import com.ntros.mprocswift.repository.currency.CurrencyRepository;
 import com.ntros.mprocswift.repository.transaction.*;
-import com.ntros.mprocswift.service.currency.CurrencyExchangeRateService;
+import com.ntros.mprocswift.service.currency.audit.FxLegService;
+import com.ntros.mprocswift.service.currency.exchangerate.CurrencyExchangeRateService;
+import com.ntros.mprocswift.service.currency.audit.FxQuoteService;
+import com.ntros.mprocswift.service.currency.exchangerate.FxRateConversionService;
 import com.ntros.mprocswift.service.idempotency.IdempotencyKeyMarkingService;
 import com.ntros.mprocswift.service.ledger.LedgerAccountBalanceService;
 import com.ntros.mprocswift.service.ledger.LedgerAccountService;
@@ -18,9 +25,10 @@ import com.ntros.mprocswift.service.wallet.WalletService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -43,6 +51,12 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
   protected final LedgerEntryService ledgerEntryService;
   protected final LedgerAccountBalanceService ledgerAccountBalanceService;
   protected final IdempotencyKeyMarkingService idempotencyKeyService;
+  protected final FxQuoteService fxQuoteService;
+  protected final FxLegService fxLegService;
+  protected final FxRateConversionService fxRateConversionService;
+  protected final FxQuoteConverter fxQuoteConverter;
+  protected final FxLegConverter fxLegConverter;
+  // transaction configs
   protected final PlatformTransactionManager platformTransactionManager;
   private final TransactionTemplate transactionTemplate;
 
@@ -59,7 +73,12 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
       LedgerAccountService ledgerAccountService,
       LedgerEntryService ledgerEntryService,
       LedgerAccountBalanceService ledgerAccountBalanceService,
-      IdempotencyKeyMarkingService idempotencyKeyService) {
+      IdempotencyKeyMarkingService idempotencyKeyService,
+      FxQuoteService fxQuoteService,
+      FxLegService fxLegService,
+      FxRateConversionService fxRateConversionService,
+      FxQuoteConverter fxQuoteConverter,
+      FxLegConverter fxLegConverter) {
     this.platformTransactionManager = platformTransactionManager;
     transactionTemplate = new TransactionTemplate(platformTransactionManager);
 
@@ -74,6 +93,11 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
     this.ledgerEntryService = ledgerEntryService;
     this.ledgerAccountBalanceService = ledgerAccountBalanceService;
     this.idempotencyKeyService = idempotencyKeyService;
+    this.fxQuoteService = fxQuoteService;
+    this.fxLegService = fxLegService;
+    this.fxRateConversionService = fxRateConversionService;
+    this.fxQuoteConverter = fxQuoteConverter;
+    this.fxLegConverter = fxLegConverter;
   }
 
   /**
@@ -88,7 +112,13 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
 
     // attempt to save the key
     if (!idempotencyKeyService.tryClaim(key, hash)) {
-      // save failed -> request already processed. Replay it.
+      // save failed -> request already processed. Check hash.
+      var existingKey = idempotencyKeyService.load(key);
+      if (!existingKey.getRequestHash().equals(hash)) {
+        throw new IdempotencyKeyConflictException(
+            "Idempotency-Key " + key + " was already used with a different request payload.");
+      }
+      // new hash for that key: Replay it.
       return replayResponse(request, idempotencyKeyService.load(key));
     }
     // execute the transfer in its own transaction
@@ -150,14 +180,14 @@ public abstract class AbstractTransferService<T extends TransferRequest, R exten
    * receiver.
    *
    * @param transaction - the logical transaction, explaining the money transfer
-   * @param senderWallet - source, from which the monetary amount will be withdrawn
-   * @param receiverWallet - target, receiving the amount
-   * @param ratedMoneyMovement - holds the source-to-target movement data with the applied exchange
-   *     rate, if any.
+   * @param senderWallet - inputCurrency, from which the monetary amount will be withdrawn
+   * @param receiverWallet - outputCurrency, receiving the amount
+   * @param conversionQuote - holds the inputCurrency-to-outputCurrency movement data with the
+   *     applied exchange appliedRate, if any.
    */
   protected record TransferState(
       Transaction transaction,
       Wallet senderWallet,
       Wallet receiverWallet,
-      RatedMoneyMovement ratedMoneyMovement) {}
+      ConversionQuote conversionQuote) {}
 }

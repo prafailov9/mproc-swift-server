@@ -99,9 +99,4 @@ public class AccountController extends AbstractApiController {
         .handleAsync((this::handleResponseAsync));
   }
 
-  @PatchMapping("update/all")
-  public ResponseEntity<?> updateTotalBalanceForAllAccounts() {
-    String res = accountService.calculateTotalBalanceForAllAccounts();
-    return ResponseEntity.ok().body(res);
-  }
 }

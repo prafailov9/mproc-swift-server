@@ -2,8 +2,11 @@ package com.ntros.mprocswift.dto.transfer;
 
 import com.ntros.mprocswift.dto.ExchangeRateDto;
 import com.ntros.mprocswift.dto.MoneyDto;
+import com.ntros.mprocswift.dto.quotes.FxQuoteDto;
+import com.ntros.mprocswift.model.currency.FxQuote;
 import com.ntros.mprocswift.model.currency.Money;
 import com.ntros.mprocswift.model.currency.MoneyMovement;
+import com.ntros.mprocswift.model.currency.conversion.ConversionQuote;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,15 +22,12 @@ public class W2WTransferResponse extends TransferResponse {
 
   private MoneyDto debited;
   private MoneyDto credited;
-  private ExchangeRateDto exchangeRate;
+  private FxQuoteDto fxQuoteDto;
   private String rateUpdatedAt;
   private BigDecimal fees;
   private String processedAt;
   // 1:new execution, 0: idempotent replay
   private boolean fresh;
 
-  public W2WTransferResponse() {
-
-  }
-
+  public W2WTransferResponse() {}
 }

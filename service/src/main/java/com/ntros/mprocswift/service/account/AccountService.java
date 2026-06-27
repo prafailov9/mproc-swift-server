@@ -19,8 +19,6 @@ public interface AccountService {
 
     CompletableFuture<Account> createAccount(final Account account);
 
-    String calculateTotalBalanceForAllAccounts();
     Account updateTotalBalance(final Account account);
-    CompletableFuture<Account> calculateTotalBalanceForAccount(final Account account);
 
 }

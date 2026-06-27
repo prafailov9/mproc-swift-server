@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.service.transfer.sync;
+package com.ntros.mprocswift.service.transfer;
 
 public interface SyncTransferService<T, R> {
 

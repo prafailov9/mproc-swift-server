@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Repository
@@ -17,7 +18,7 @@ public interface CurrencyExchangeRateRepository extends JpaRepository<CurrencyEx
     Optional<CurrencyExchangeRate> findExchangeRateBySourceAndTarget(@Param("source") Currency source, @Param("target") Currency target);
 
     @Query(value = "SELECT r.exchangeRate FROM CurrencyExchangeRate r WHERE r.sourceCurrency = :source AND r.targetCurrency = :target")
-    Optional<Long> findExchangeRateValueBySourceAndTarget(@Param("source") Currency source, @Param("target") Currency target);
+    Optional<BigDecimal> findExchangeRateValueBySourceAndTarget(@Param("source") Currency source, @Param("target") Currency target);
 
 
     @Query(value = """
@@ -26,5 +27,8 @@ public interface CurrencyExchangeRateRepository extends JpaRepository<CurrencyEx
             JOIN currency tc ON tc.currency_id=r.target_currency_id
             WHERE sc.currency_code= :sourceCode AND tc.currency_code= :targetCode""", nativeQuery = true)
     Optional<CurrencyExchangeRate> findExchangeRateBySourceCodeAndTargetCode(@Param("sourceCode") String sourceCode, @Param("targetCode") String targetCode);
+
+    @Query(value = "SELECT r.updatedDate FROM CurrencyExchangeRate r WHERE r.sourceCurrency = :source AND r.targetCurrency = :target")
+    Optional<OffsetDateTime> findUpdatedDateForRate(@Param("source") Currency source, @Param("target") Currency target);
 
 }
