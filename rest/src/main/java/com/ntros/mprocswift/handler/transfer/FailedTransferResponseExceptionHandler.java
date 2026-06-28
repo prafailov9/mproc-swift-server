@@ -4,7 +4,6 @@ import com.ntros.mprocswift.dto.transfer.W2WTransferResponse;
 import com.ntros.mprocswift.exceptions.IdempotencyKeyConflictException;
 import com.ntros.mprocswift.exceptions.TransferProcessingFailedException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,7 +20,7 @@ public class FailedTransferResponseExceptionHandler {
 
     W2WTransferResponse response = new W2WTransferResponse();
     response.setStatus(FAILED);
-    response.setDesc("Error: " + exception.getMessage());
+    response.setDescription("Error: " + exception.getMessage());
     response.setFresh(true);
     return response;
   }
@@ -33,7 +32,7 @@ public class FailedTransferResponseExceptionHandler {
 
     W2WTransferResponse response = new W2WTransferResponse();
     response.setStatus(FAILED);
-    response.setDesc("Error: " + exception.getMessage());
+    response.setDescription("Error: " + exception.getMessage());
     response.setFresh(true);
     return response;
   }

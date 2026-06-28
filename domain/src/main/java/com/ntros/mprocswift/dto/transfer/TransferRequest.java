@@ -1,15 +1,12 @@
 package com.ntros.mprocswift.dto.transfer;
 
-import com.ntros.mprocswift.utils.TransferRequestHasher;
 import com.ntros.mprocswift.validation.GreaterThanZeroTransferAmount;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
-import java.math.BigDecimal;
 
 @Data
 @RequiredArgsConstructor
@@ -32,5 +29,4 @@ public abstract class TransferRequest {
   private String description;
   // idempotency key
   private String requestId;
-
 }

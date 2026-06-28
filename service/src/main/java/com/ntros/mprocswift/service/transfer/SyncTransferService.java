@@ -1,7 +1,9 @@
 package com.ntros.mprocswift.service.transfer;
 
-public interface SyncTransferService<T, R> {
+import com.ntros.mprocswift.dto.transfer.synch.MoneyTransferResponse;
 
-    R transfer(T transferRequest);
+public interface SyncTransferService<T> {
+
+    MoneyTransferResponse transfer(T transferRequest);
 
 }

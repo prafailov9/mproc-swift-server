@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/transfer/w2w")
 public class W2WTransferController {
 
-  private final SyncTransferService<W2WTransferRequest, W2WTransferResponse> transferService;
+  private final SyncTransferService<W2WTransferRequest> transferService;
 
   @Autowired
   public W2WTransferController(W2WTransferService transferService) {
