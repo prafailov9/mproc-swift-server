@@ -25,7 +25,11 @@ import com.ntros.mprocswift.service.ledger.LedgerEntryService;
 import com.ntros.mprocswift.service.wallet.WalletService;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -102,22 +106,48 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
     return INTERNAL;
   }
 
+  /**
+   *
+   *
+   * <pre>
+   * Find correct wallet for receiver in the following order:
+   * 1. try find wallet with requestedCurrency
+   * 2. else, try find main wallet
+   * 3. else, try find base
+   * Throw if none found
+   * </pre>
+   */
   private Wallet getReceiverWallet(List<Wallet> wallets, String requestedCurrency) {
+    Map<String, Wallet> walletsByCurrency = new HashMap<>();
     for (var wallet : wallets) {
-
-      var curr = wallet.getCurrency().getCurrencyCode();
-      if (curr.equalsIgnoreCase(requestedCurrency)) {
-        return wallet;
-      } else if (wallet.isMain()) {
-        return wallet;
-      }
-      if (BASE_CURRENCIES.contains(curr)) {
-        return wallet;
-      }
+      walletsByCurrency.put(wallet.getCurrency().getCurrencyCode(), wallet);
     }
-    throw new NotFoundException(
-        String.format(
-            "Account: %s does have main wallet, wallet in requested currency: %s or wallet in base currencies: %s",
-            wallets.getFirst().getAccount().getAccNumber(), requestedCurrency, BASE_CURRENCIES));
+
+    return Optional.of(walletsByCurrency.get(requestedCurrency))
+        .orElse(
+            walletsByCurrency.values().stream()
+                .filter(Wallet::isMain)
+                .findFirst()
+                .orElse(
+                    walletsByCurrency.entrySet().stream()
+                        .filter(
+                            entry -> {
+                              for (var base : BASE_CURRENCIES) {
+                                if (entry.getKey().equalsIgnoreCase(base)) {
+                                  return true;
+                                }
+                              }
+                              return false;
+                            })
+                        .map(Map.Entry::getValue)
+                        .findFirst()
+                        .orElseThrow(
+                            () ->
+                                new NotFoundException(
+                                    String.format(
+                                        "Account: %s does have main wallet, wallet in requested currency: %s or wallet in base currencies: %s",
+                                        wallets.getFirst().getAccount().getAccNumber(),
+                                        requestedCurrency,
+                                        BASE_CURRENCIES)))));
   }
 }
