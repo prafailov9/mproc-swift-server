@@ -131,8 +131,8 @@ public abstract class AbstractTransferService<T extends TransferRequest>
         throw new IdempotencyKeyConflictException(
             "Idempotency-Key " + key + " was already used with a different request payload.");
       }
-      // new hash for that key: Replay it.
-      return replayTransferResponse(request, idempotencyKeyService.load(key));
+
+      return replayTransferResponse(idempotencyKeyService.load(key));
     }
     // execute the transfer in its own transaction
     try {
@@ -252,7 +252,7 @@ public abstract class AbstractTransferService<T extends TransferRequest>
     return response;
   }
 
-  protected MoneyTransferResponse replayTransferResponse(T request, IdempotencyKey idempotencyKey) {
+  protected MoneyTransferResponse replayTransferResponse(IdempotencyKey idempotencyKey) {
     log.info("replaying response for key:{}", idempotencyKey);
     MoneyTransferResponse replayed;
     switch (idempotencyKey.getStatus()) {
