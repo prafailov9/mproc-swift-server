@@ -2,9 +2,8 @@ package com.ntros.mprocswift.converter;
 
 import com.ntros.mprocswift.dto.WalletDTO;
 import com.ntros.mprocswift.model.Wallet;
+import com.ntros.mprocswift.model.currency.MoneyConverter;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 
 @Component
 public class WalletConverter implements Converter<WalletDTO, Wallet> {
@@ -14,7 +13,7 @@ public class WalletConverter implements Converter<WalletDTO, Wallet> {
     WalletDTO form = new WalletDTO();
     form.setCurrencyCode(model.getCurrency().getCurrencyCode());
     form.setAccountNumber(model.getAccount().getAccountDetails().getAccountNumber());
-    form.setBalance(BigDecimal.valueOf(model.getBalance()));
+    form.setBalance(MoneyConverter.toMajor(model.getBalance(), model.getCurrency().getExponent()));
     form.setMain(model.isMain());
     return form;
   }

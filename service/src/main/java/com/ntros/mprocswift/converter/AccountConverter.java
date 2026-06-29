@@ -1,18 +1,17 @@
 package com.ntros.mprocswift.converter;
 
-import com.ntros.mprocswift.dto.AccountDTO;
-import com.ntros.mprocswift.dto.AccountWalletCountDTO;
 import com.ntros.mprocswift.dto.WalletDTO;
+import com.ntros.mprocswift.dto.account.AccountDTO;
+import com.ntros.mprocswift.dto.account.AccountWalletCountDTO;
 import com.ntros.mprocswift.model.account.Account;
 import com.ntros.mprocswift.model.account.AccountDetails;
+import com.ntros.mprocswift.model.currency.MoneyConverter;
 import com.ntros.mprocswift.repository.account.AccountDetailsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class AccountConverter implements Converter<AccountDTO, Account> {
@@ -37,7 +36,13 @@ public class AccountConverter implements Converter<AccountDTO, Account> {
     form.setAccountNumber(model.getAccountDetails().getAccountNumber());
     form.setRoutingNumber(model.getAccountDetails().getRoutingNumber());
     form.setIban(model.getAccountDetails().getIban());
-    form.setTotalBalance(BigDecimal.valueOf(model.getTotalBalance()));
+
+    var mainWallet = model.getMainWallet().orElseThrow();
+
+    var total =
+        MoneyConverter.toMajor(model.getTotalBalance(), mainWallet.getCurrency().getExponent());
+
+    form.setTotalBalance(total);
     form.setBicswift(model.getAccountDetails().getBicswift());
     form.setBankAddress(model.getAccountDetails().getBankAddress());
     form.setCreatedDate(model.getCreatedDate());

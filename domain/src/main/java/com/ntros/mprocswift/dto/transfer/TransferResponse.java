@@ -18,7 +18,7 @@ public abstract class TransferResponse {
 
   private MoneyDto debited;
   private MoneyDto credited;
-  private FxQuoteDto fxQuoteDto;
+  private FxQuoteDto fxQuote;
   private String rateUpdatedAt;
   private BigDecimal fees;
   private String processedAt;

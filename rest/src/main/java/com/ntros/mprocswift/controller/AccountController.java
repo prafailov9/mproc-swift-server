@@ -2,12 +2,16 @@ package com.ntros.mprocswift.controller;
 
 import com.ntros.mprocswift.converter.AccountConverter;
 import com.ntros.mprocswift.dto.RangeRequest;
+import com.ntros.mprocswift.dto.account.AccountBatchRequest;
+import com.ntros.mprocswift.service.account.AccountBalanceUpdaterService;
 import com.ntros.mprocswift.service.account.AccountService;
+import com.ntros.mprocswift.service.account.AccountUpdaterService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +25,23 @@ public class AccountController extends AbstractApiController {
 
   private final AccountService accountService;
   private final AccountConverter accountModelConverter;
+  private final AccountUpdaterService accountUpdaterService;
 
   @Autowired
   public AccountController(
-      final AccountService accountService, final AccountConverter accountModelConverter) {
+      AccountService accountService,
+      AccountConverter accountModelConverter,
+      AccountUpdaterService accountUpdaterService) {
     this.accountService = accountService;
     this.accountModelConverter = accountModelConverter;
+    this.accountUpdaterService = accountUpdaterService;
+  }
+
+  @PostMapping("/{accountNumber}/balance-refresh")
+  public ResponseEntity<?> refreshBalanceAndFetchAccount(@PathVariable String accountNumber) {
+    return ResponseEntity.ok(
+        accountModelConverter.toDto(
+            accountUpdaterService.updateAndFetchWalletAccount(accountNumber)));
   }
 
   @GetMapping("/{accountId}")
@@ -99,4 +114,11 @@ public class AccountController extends AbstractApiController {
         .handleAsync((this::handleResponseAsync));
   }
 
+  @PostMapping("/batch")
+  public ResponseEntity<?> getAccountsBatch(@RequestBody AccountBatchRequest accountBatchRequest) {
+    return ResponseEntity.ok(
+        accountService.getBatchAccounts(accountBatchRequest.getAccountNumbers()).stream()
+            .map(accountModelConverter::toDto)
+            .toList());
+  }
 }

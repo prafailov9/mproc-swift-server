@@ -1,5 +1,6 @@
-package com.ntros.mprocswift.dto;
+package com.ntros.mprocswift.dto.account;
 
+import com.ntros.mprocswift.dto.WalletDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

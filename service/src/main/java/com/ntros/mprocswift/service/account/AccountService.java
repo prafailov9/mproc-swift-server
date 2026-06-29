@@ -20,5 +20,5 @@ public interface AccountService {
     CompletableFuture<Account> createAccount(final Account account);
 
     Account updateTotalBalance(final Account account);
-
+    List<Account> getBatchAccounts(List<String> accountNumbers);
 }

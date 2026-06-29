@@ -5,9 +5,6 @@ import com.ntros.mprocswift.converter.FxQuoteConverter;
 import com.ntros.mprocswift.dto.MoneyDto;
 import com.ntros.mprocswift.dto.quotes.FxQuoteDto;
 import com.ntros.mprocswift.dto.transfer.TransferRequest;
-import com.ntros.mprocswift.dto.transfer.TransferResponse;
-import com.ntros.mprocswift.dto.transfer.W2WTransferRequest;
-import com.ntros.mprocswift.dto.transfer.W2WTransferResponse;
 import com.ntros.mprocswift.dto.transfer.synch.MoneyTransferResponse;
 import com.ntros.mprocswift.exceptions.*;
 import com.ntros.mprocswift.exceptions.TransferProcessingFailedException;
@@ -300,7 +297,7 @@ public abstract class AbstractTransferService<T extends TransferRequest>
     MoneyDto credited = buildMoneyDto(quote.sourceMoney());
     res.setDebited(debited); // sender side
     res.setCredited(credited); // receiver side
-    res.setFxQuoteDto(new FxQuoteDto(debited, credited, quote));
+    res.setFxQuote(new FxQuoteDto(debited, credited, quote));
     res.setRateUpdatedAt(
         currencyExchangeRateService
             .getUpdateDateForRate(

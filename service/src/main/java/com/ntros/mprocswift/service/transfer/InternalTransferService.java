@@ -118,36 +118,60 @@ public class InternalTransferService extends AbstractTransferService<InternalTra
    * </pre>
    */
   private Wallet getReceiverWallet(List<Wallet> wallets, String requestedCurrency) {
-    Map<String, Wallet> walletsByCurrency = new HashMap<>();
-    for (var wallet : wallets) {
-      walletsByCurrency.put(wallet.getCurrency().getCurrencyCode(), wallet);
+    // requested currency
+    var walletOpt =
+        wallets.stream()
+            .filter(x -> x.getCurrency().getCurrencyCode().equalsIgnoreCase(requestedCurrency))
+            .findFirst();
+    if (walletOpt.isPresent()) {
+      return walletOpt.get();
     }
 
-    return Optional.of(walletsByCurrency.get(requestedCurrency))
-        .orElse(
-            walletsByCurrency.values().stream()
-                .filter(Wallet::isMain)
-                .findFirst()
-                .orElse(
-                    walletsByCurrency.entrySet().stream()
-                        .filter(
-                            entry -> {
-                              for (var base : BASE_CURRENCIES) {
-                                if (entry.getKey().equalsIgnoreCase(base)) {
-                                  return true;
-                                }
-                              }
-                              return false;
-                            })
-                        .map(Map.Entry::getValue)
-                        .findFirst()
-                        .orElseThrow(
-                            () ->
-                                new NotFoundException(
-                                    String.format(
-                                        "Account: %s does have main wallet, wallet in requested currency: %s or wallet in base currencies: %s",
-                                        wallets.getFirst().getAccount().getAccNumber(),
-                                        requestedCurrency,
-                                        BASE_CURRENCIES)))));
+    // main
+    walletOpt = wallets.stream().filter(Wallet::isMain).findFirst();
+    if (walletOpt.isPresent()) {
+      return walletOpt.get();
+    }
+
+    // bases
+    for (var w : wallets) {
+      if (BASE_CURRENCIES.stream()
+          .anyMatch(base -> base.equalsIgnoreCase(w.getCurrency().getCurrencyCode()))) {
+        return w;
+      }
+    }
+    // throw if none valid found
+    throw new NotFoundException(
+        String.format(
+            "Account: %s does have main wallet, wallet in requested currency: %s or wallet in base currencies: %s",
+            wallets.getFirst().getAccount().getAccNumber(), requestedCurrency, BASE_CURRENCIES));
+
+    //    return Optional.of(walletsByCurrency.get(requestedCurrency))
+    //        .orElse(
+    //            walletsByCurrency.values().stream()
+    //                .filter(Wallet::isMain)
+    //                .findFirst()
+    //                .orElse(
+    //                    walletsByCurrency.entrySet().stream()
+    //                        .filter(
+    //                            entry -> {
+    //                              for (var base : BASE_CURRENCIES) {
+    //                                if (entry.getKey().equalsIgnoreCase(base)) {
+    //                                  return true;
+    //                                }
+    //                              }
+    //                              return false;
+    //                            })
+    //                        .map(Map.Entry::getValue)
+    //                        .findFirst()
+    //                        .orElseThrow(
+    //                            () ->
+    //                                new NotFoundException(
+    //                                    String.format(
+    //                                        "Account: %s does have main wallet, wallet in
+    // requested currency: %s or wallet in base currencies: %s",
+    //                                        wallets.getFirst().getAccount().getAccNumber(),
+    //                                        requestedCurrency,
+    //                                        BASE_CURRENCIES)))));
   }
 }

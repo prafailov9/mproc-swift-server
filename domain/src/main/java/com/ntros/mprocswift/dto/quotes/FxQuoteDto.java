@@ -12,7 +12,7 @@ public class FxQuoteDto {
   private MoneyDto sourceMoney;
   private MoneyDto targetMoney;
   private String finalRate;
-  private List<FxLegDto> legDtos;
+  private List<FxLegDto> fxLegs;
 
   public FxQuoteDto(ConversionQuote quote) {
     sourceMoney =
@@ -30,13 +30,13 @@ public class FxQuoteDto {
                     quote.targetMoney().currency().getExponent())),
             quote.targetMoney().currency().getCurrencyCode());
     finalRate = quote.effectiveRate().toString();
-    legDtos = quote.legs().stream().map(FxLegDto::new).toList();
+    fxLegs = quote.legs().stream().map(FxLegDto::new).toList();
   }
 
   public FxQuoteDto(MoneyDto sourceMoney, MoneyDto targetMoney, ConversionQuote quote) {
     this.sourceMoney = sourceMoney;
     this.targetMoney = targetMoney;
     finalRate = quote.effectiveRate().toString();
-    legDtos = quote.legs().stream().map(FxLegDto::new).toList();
+    fxLegs = quote.legs().stream().map(FxLegDto::new).toList();
   }
 }

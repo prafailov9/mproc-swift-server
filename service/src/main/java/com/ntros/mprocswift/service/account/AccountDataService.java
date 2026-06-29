@@ -32,16 +32,11 @@ public class AccountDataService implements AccountService {
 
   private final WalletRepository walletRepository;
 
-  private final CurrencyExchangeRateDataService currencyExchangeRateDataService;
-
   @Autowired
   AccountDataService(
-      final AccountRepository accountRepository,
-      final WalletRepository walletRepository,
-      final CurrencyExchangeRateDataService currencyExchangeRateDataService) {
+      final AccountRepository accountRepository, final WalletRepository walletRepository) {
     this.accountRepository = accountRepository;
     this.walletRepository = walletRepository;
-    this.currencyExchangeRateDataService = currencyExchangeRateDataService;
   }
 
   @Override
@@ -121,6 +116,16 @@ public class AccountDataService implements AccountService {
   @Transactional
   public Account updateTotalBalance(Account account) {
     throw new UnsupportedOperationException("Implement with ledger entries");
+  }
+
+  @Transactional
+  @Override
+  public List<Account> getBatchAccounts(List<String> accountNumbers) {
+    List<Account> accounts = new ArrayList<>();
+    for (String accountNumber : accountNumbers) {
+      accounts.add(getAccountByAccountNumber(accountNumber));
+    }
+    return accounts;
   }
 
   private Account create(Account account) {

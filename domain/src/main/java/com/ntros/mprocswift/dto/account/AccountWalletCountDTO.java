@@ -1,4 +1,4 @@
-package com.ntros.mprocswift.dto;
+package com.ntros.mprocswift.dto.account;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
